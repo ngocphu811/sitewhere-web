@@ -1,0 +1,93 @@
+package com.sitewhere.web.rest.model;
+
+import com.sitewhere.rest.model.asset.HardwareAsset;
+import com.sitewhere.rest.model.device.Device;
+import com.sitewhere.rest.model.device.MetadataProviderEntity;
+import com.sitewhere.server.SiteWhereServer;
+import com.sitewhere.spi.SiteWhereException;
+import com.sitewhere.spi.asset.AssetType;
+import com.sitewhere.spi.asset.IAssetModuleManager;
+import com.sitewhere.spi.device.IDevice;
+import com.sitewhere.spi.device.IDeviceAssignment;
+
+/**
+ * Configurable helper class that allows Device model objects to be created from IDevice SPI objects.
+ * 
+ * @author dadams
+ */
+public class DeviceMarshalHelper {
+
+	/** Indicates whether device asset information is to be included */
+	private boolean includeAsset = true;
+
+	/** Indicates whether device assignment information is to be copied */
+	private boolean includeAssignment = false;
+
+	/** Helper for marshaling device assignement information */
+	private DeviceAssignmentMarshalHelper assignmentHelper;
+
+	/**
+	 * Convert an IDevice SPI object into a model object for marshaling.
+	 * 
+	 * @param source
+	 * @param manager
+	 * @return
+	 * @throws SiteWhereException
+	 */
+	public Device convert(IDevice source, IAssetModuleManager manager) throws SiteWhereException {
+		Device result = new Device();
+		result.setHardwareId(source.getHardwareId());
+		result.setComments(source.getComments());
+		result.setCreatedDate(source.getCreatedDate());
+		MetadataProviderEntity.copy(source, result);
+		HardwareAsset deviceAsset = (HardwareAsset) manager.getAssetById(AssetType.Hardware,
+				source.getAssetId());
+		if (includeAsset) {
+			result.setDeviceAsset(deviceAsset);
+		} else {
+			result.setAssetId(source.getAssetId());
+			result.setAssetName(deviceAsset.getName());
+		}
+		if (source.getAssignmentToken() != null) {
+			if (includeAssignment) {
+				IDeviceAssignment assignment = SiteWhereServer.getInstance().getDeviceManagement()
+						.getCurrentDeviceAssignment(source);
+				result.setAssignment(getAssignmentHelper().convert(assignment, manager));
+			} else {
+				result.setAssignmentToken(source.getAssignmentToken());
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Get helper class for marshaling assignment.
+	 * 
+	 * @return
+	 */
+	protected DeviceAssignmentMarshalHelper getAssignmentHelper() {
+		if (assignmentHelper == null) {
+			assignmentHelper = new DeviceAssignmentMarshalHelper();
+			assignmentHelper.setIncludeAsset(true);
+			assignmentHelper.setIncludeDevice(false);
+			assignmentHelper.setIncludeSite(false);
+		}
+		return assignmentHelper;
+	}
+
+	public boolean isIncludeAsset() {
+		return includeAsset;
+	}
+
+	public void setIncludeAsset(boolean includeAsset) {
+		this.includeAsset = includeAsset;
+	}
+
+	public boolean isIncludeAssignment() {
+		return includeAssignment;
+	}
+
+	public void setIncludeAssignment(boolean includeAssignment) {
+		this.includeAssignment = includeAssignment;
+	}
+}

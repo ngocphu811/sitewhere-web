@@ -1,0 +1,18 @@
+.actions-before-grid {
+	margin-bottom: 10px;
+}
+
+.actions-after-grid {
+	margin-top: 10px;
+}
+
+.alert-buttons {
+	float: right;
+	margin: -5px -20px;
+}
+
+.modal-backdrop,
+.modal-backdrop.fade.in {
+	opacity: 0.5;
+	filter: alpha(opacity=50);
+}
