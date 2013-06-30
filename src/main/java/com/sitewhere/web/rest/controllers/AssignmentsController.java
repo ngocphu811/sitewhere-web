@@ -1,12 +1,12 @@
 /*
-* $Id$
-* --------------------------------------------------------------------------------------
-* Copyright (c) Reveal Technologies, LLC. All rights reserved. http://www.reveal-tech.com
-*
-* The software in this package is published under the terms of the CPAL v1.0
-* license, a copy of which has been included with this distribution in the
-* LICENSE.txt file.
-*/
+ * $Id$
+ * --------------------------------------------------------------------------------------
+ * Copyright (c) Reveal Technologies, LLC. All rights reserved. http://www.reveal-tech.com
+ *
+ * The software in this package is published under the terms of the CPAL v1.0
+ * license, a copy of which has been included with this distribution in the
+ * LICENSE.txt file.
+ */
 package com.sitewhere.web.rest.controllers;
 
 import java.util.ArrayList;
@@ -28,6 +28,7 @@ import com.sitewhere.rest.model.device.DeviceAssignment;
 import com.sitewhere.rest.model.device.DeviceLocation;
 import com.sitewhere.rest.model.device.DeviceMeasurements;
 import com.sitewhere.rest.model.device.MetadataProvider;
+import com.sitewhere.rest.service.device.CreateDeviceAssignmentRequest;
 import com.sitewhere.rest.service.search.DeviceAlertSearchResults;
 import com.sitewhere.rest.service.search.DeviceAssignmentSearchResults;
 import com.sitewhere.rest.service.search.DeviceLocationSearchResults;
@@ -66,10 +67,13 @@ public class AssignmentsController extends SiteWhereController {
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
 	@ApiOperation(value = "Create a new device assignment")
-	public DeviceAssignment createDeviceAssignment(@RequestBody DeviceAssignment request)
+	public DeviceAssignment createDeviceAssignment(@RequestBody CreateDeviceAssignmentRequest request)
 			throws SiteWhereException {
 		if (StringUtils.isEmpty(request.getDeviceHardwareId())) {
 			throw new SiteWhereException("Hardware id required.");
+		}
+		if (StringUtils.isEmpty(request.getSiteToken())) {
+			throw new SiteWhereException("Site token required.");
 		}
 		if (request.getAssetType() == null) {
 			throw new SiteWhereException("Asset type required.");

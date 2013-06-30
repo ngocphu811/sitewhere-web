@@ -1,12 +1,12 @@
 /*
-* $Id$
-* --------------------------------------------------------------------------------------
-* Copyright (c) Reveal Technologies, LLC. All rights reserved. http://www.reveal-tech.com
-*
-* The software in this package is published under the terms of the CPAL v1.0
-* license, a copy of which has been included with this distribution in the
-* LICENSE.txt file.
-*/
+ * $Id$
+ * --------------------------------------------------------------------------------------
+ * Copyright (c) Reveal Technologies, LLC. All rights reserved. http://www.reveal-tech.com
+ *
+ * The software in this package is published under the terms of the CPAL v1.0
+ * license, a copy of which has been included with this distribution in the
+ * LICENSE.txt file.
+ */
 package com.sitewhere.web.rest.controllers;
 
 import java.io.IOException;
@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.SiteWhereSystemException;
 import com.sitewhere.web.ISiteWhereWebConstants;
 
@@ -38,7 +39,7 @@ public class SiteWhereController {
 	 * @param response
 	 */
 	@ExceptionHandler
-	protected void handleSystemException(SiteWhereSystemException e, HttpServletRequest request,
+	protected void handleSystemException(SiteWhereException e, HttpServletRequest request,
 			HttpServletResponse response) {
 		try {
 			String flexMode = request.getHeader("X-SiteWhere-Error-Mode");
@@ -47,14 +48,20 @@ public class SiteWhereController {
 				mapper.writeValue(response.getOutputStream(), e);
 				response.flushBuffer();
 			} else {
-				String combined = e.getCode() + ":" + e.getMessage();
-				response.setHeader(ISiteWhereWebConstants.HEADER_SITEWHERE_ERROR, e.getMessage());
-				response.setHeader(ISiteWhereWebConstants.HEADER_SITEWHERE_ERROR_CODE,
-						String.valueOf(e.getCode()));
-				if (e.hasHttpResponseCode()) {
-					response.sendError(e.getHttpResponseCode(), combined);
+				if (e instanceof SiteWhereSystemException) {
+					SiteWhereSystemException sse = (SiteWhereSystemException) e;
+					String combined = sse.getCode() + ":" + e.getMessage();
+					response.setHeader(ISiteWhereWebConstants.HEADER_SITEWHERE_ERROR, e.getMessage());
+					response.setHeader(ISiteWhereWebConstants.HEADER_SITEWHERE_ERROR_CODE,
+							String.valueOf(sse.getCode()));
+					if (sse.hasHttpResponseCode()) {
+						response.sendError(sse.getHttpResponseCode(), combined);
+					} else {
+						response.sendError(HttpServletResponse.SC_BAD_REQUEST, combined);
+					}
 				} else {
-					response.sendError(HttpServletResponse.SC_BAD_REQUEST, combined);
+					response.setHeader(ISiteWhereWebConstants.HEADER_SITEWHERE_ERROR, e.getMessage());
+					response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
 				}
 			}
 		} catch (IOException e1) {
