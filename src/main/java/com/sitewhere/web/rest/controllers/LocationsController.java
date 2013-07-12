@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sitewhere.core.device.InterpolatedHistoryBuilder;
+import com.sitewhere.core.device.Utils;
 import com.sitewhere.rest.model.device.DeviceAlert;
 import com.sitewhere.rest.model.device.DeviceLocation;
 import com.sitewhere.rest.model.device.InterpolatedAssignmentHistory;
@@ -58,7 +59,7 @@ public class LocationsController extends SiteWhereController {
 			@PathVariable String locationId) throws SiteWhereException {
 		IDeviceAssignment assignment = SiteWhereServer.getInstance().getDeviceManagement()
 				.getDeviceAssignmentByToken(alert.getDeviceAssignmentToken());
-		alert.setAssetName(Utils.getAssetnameForAssignment(assignment));
+		alert.setAssetName(Utils.getAssetNameForAssignment(assignment));
 		IDeviceAlert result = SiteWhereServer.getInstance().getDeviceManagement()
 				.addAlertForLocation(locationId, alert);
 		return DeviceAlert.copy(result);

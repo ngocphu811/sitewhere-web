@@ -1,12 +1,12 @@
 /*
-* $Id$
-* --------------------------------------------------------------------------------------
-* Copyright (c) Reveal Technologies, LLC. All rights reserved. http://www.reveal-tech.com
-*
-* The software in this package is published under the terms of the CPAL v1.0
-* license, a copy of which has been included with this distribution in the
-* LICENSE.txt file.
-*/
+ * $Id$
+ * --------------------------------------------------------------------------------------
+ * Copyright (c) Reveal Technologies, LLC. All rights reserved. http://www.reveal-tech.com
+ *
+ * The software in this package is published under the terms of the CPAL v1.0
+ * license, a copy of which has been included with this distribution in the
+ * LICENSE.txt file.
+ */
 package com.sitewhere.web.rest.controllers;
 
 import java.util.ArrayList;
@@ -24,9 +24,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sitewhere.rest.model.device.Device;
 import com.sitewhere.rest.model.device.DeviceAssignment;
+import com.sitewhere.rest.model.device.DeviceEventBatch;
 import com.sitewhere.rest.model.device.DeviceSearchCriteria;
 import com.sitewhere.rest.model.device.MetadataProvider;
-import com.sitewhere.rest.service.device.CreateDeviceRequest;
+import com.sitewhere.rest.model.device.request.DeviceCreateRequest;
 import com.sitewhere.rest.service.search.DeviceAssignmentSearchResults;
 import com.sitewhere.rest.service.search.SearchResults;
 import com.sitewhere.server.SiteWhereServer;
@@ -54,6 +55,28 @@ import com.wordnik.swagger.annotations.ApiOperation;
 public class DevicesController extends SiteWhereController {
 
 	/**
+	 * Create a device.
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "Create a new device")
+	public Device createDevice(@RequestBody DeviceCreateRequest request) throws SiteWhereException {
+		IAsset asset = SiteWhereServer.getInstance().getAssetModuleManager()
+				.getAssetById(AssetType.Hardware, request.getAssetId());
+		if (asset == null) {
+			throw new SiteWhereException("Device asset not found.");
+		}
+		IDevice result = SiteWhereServer.getInstance().getDeviceManagement().createDevice(request);
+		DeviceMarshalHelper helper = new DeviceMarshalHelper();
+		helper.setIncludeAsset(false);
+		helper.setIncludeAssignment(false);
+		return helper.convert(result, SiteWhereServer.getInstance().getAssetModuleManager());
+	}
+
+	/**
 	 * Used by AJAX calls to find a device by hardware id.
 	 * 
 	 * @param hardwareId
@@ -63,12 +86,7 @@ public class DevicesController extends SiteWhereController {
 	@ResponseBody
 	@ApiOperation(value = "Get a device by unique hardware id")
 	public Device getDeviceByHardwareId(@PathVariable String hardwareId) throws SiteWhereException {
-		IDevice result = SiteWhereServer.getInstance().getDeviceManagement()
-				.getDeviceByHardwareId(hardwareId);
-		if (result == null) {
-			throw new SiteWhereSystemException(ErrorCode.InvalidHardwareId, ErrorLevel.ERROR,
-					HttpServletResponse.SC_NOT_FOUND);
-		}
+		IDevice result = assertDeviceByHardwareId(hardwareId);
 		DeviceMarshalHelper helper = new DeviceMarshalHelper();
 		helper.setIncludeAsset(true);
 		helper.setIncludeAssignment(true);
@@ -104,12 +122,6 @@ public class DevicesController extends SiteWhereController {
 	@ApiOperation(value = "Get assignment history for a device")
 	public DeviceAssignmentSearchResults listDeviceAssignmentHistory(@PathVariable String hardwareId)
 			throws SiteWhereException {
-		IDevice result = SiteWhereServer.getInstance().getDeviceManagement()
-				.getDeviceByHardwareId(hardwareId);
-		if (result == null) {
-			throw new SiteWhereSystemException(ErrorCode.InvalidHardwareId, ErrorLevel.ERROR,
-					HttpServletResponse.SC_NOT_FOUND);
-		}
 		List<IDeviceAssignment> history = SiteWhereServer.getInstance().getDeviceManagement()
 				.getDeviceAssignmentHistory(hardwareId);
 		DeviceAssignmentMarshalHelper helper = new DeviceAssignmentMarshalHelper();
@@ -121,32 +133,6 @@ public class DevicesController extends SiteWhereController {
 			converted.add(helper.convert(assignment, SiteWhereServer.getInstance().getAssetModuleManager()));
 		}
 		return new DeviceAssignmentSearchResults(converted);
-	}
-
-	/**
-	 * Create a device.
-	 * 
-	 * @param request
-	 * @return
-	 */
-	@RequestMapping(method = RequestMethod.POST)
-	@ResponseBody
-	@ApiOperation(value = "Create a new device")
-	public Device createDevice(@RequestBody CreateDeviceRequest request) throws SiteWhereException {
-		IAsset asset = SiteWhereServer.getInstance().getAssetModuleManager()
-				.getAssetById(AssetType.Hardware, request.getAssetId());
-		if (asset == null) {
-			throw new SiteWhereException("Device asset not found.");
-		}
-		Device created = new Device();
-		created.setAssetId(request.getAssetId());
-		created.setHardwareId(request.getHardwareId());
-		created.setComments(request.getComments());
-		IDevice result = SiteWhereServer.getInstance().getDeviceManagement().createDevice(created);
-		DeviceMarshalHelper helper = new DeviceMarshalHelper();
-		helper.setIncludeAsset(false);
-		helper.setIncludeAssignment(false);
-		return helper.convert(result, SiteWhereServer.getInstance().getAssetModuleManager());
 	}
 
 	/**
@@ -194,6 +180,27 @@ public class DevicesController extends SiteWhereController {
 	}
 
 	/**
+	 * Add a batch of events for the current assignment of the given device. Note that the hardware id in the
+	 * URL overrides the one specified in the {@link DeviceEventBatch} object.
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/{hardwareId}/batch", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "Send a batch of events for the current assignment of the given device.")
+	public void addDeviceEventBatch(@PathVariable String hardwareId, @RequestBody DeviceEventBatch batch,
+			HttpServletResponse response) throws SiteWhereException {
+		IDevice device = assertDeviceByHardwareId(hardwareId);
+		if (device.getAssignmentToken() == null) {
+			throw new SiteWhereSystemException(ErrorCode.DeviceNotAssigned, ErrorLevel.ERROR);
+		}
+		SiteWhereServer.getInstance().getDeviceManagement()
+				.addDeviceEventBatch(device.getAssignmentToken(), batch);
+		handleSuccessfulAdd(response);
+	}
+
+	/**
 	 * List all unassigned devices.
 	 * 
 	 * @return
@@ -213,5 +220,22 @@ public class DevicesController extends SiteWhereController {
 		}
 		SearchResults<Device> results = new SearchResults<Device>(devicesConv);
 		return results;
+	}
+
+	/**
+	 * Gets a device by unique hardware id and throws an exception if not found.
+	 * 
+	 * @param hardwareId
+	 * @return
+	 * @throws SiteWhereException
+	 */
+	protected IDevice assertDeviceByHardwareId(String hardwareId) throws SiteWhereException {
+		IDevice result = SiteWhereServer.getInstance().getDeviceManagement()
+				.getDeviceByHardwareId(hardwareId);
+		if (result == null) {
+			throw new SiteWhereSystemException(ErrorCode.InvalidHardwareId, ErrorLevel.ERROR,
+					HttpServletResponse.SC_NOT_FOUND);
+		}
+		return result;
 	}
 }

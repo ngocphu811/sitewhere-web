@@ -33,6 +33,20 @@ public class SiteWhereController {
 	private static Logger LOGGER = Logger.getLogger(SiteWhereController.class);
 
 	/**
+	 * Send message back to called indicating successful add.
+	 * 
+	 * @param response
+	 */
+	protected void handleSuccessfulAdd(HttpServletResponse response) {
+		response.setStatus(HttpServletResponse.SC_CREATED);
+		try {
+			response.flushBuffer();
+		} catch (IOException e) {
+			// Ignore failed flush.
+		}
+	}
+
+	/**
 	 * Handles a system exception by setting the HTML response code and response headers.
 	 * 
 	 * @param e
