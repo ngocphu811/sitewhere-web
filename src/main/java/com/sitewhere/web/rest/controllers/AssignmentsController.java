@@ -23,14 +23,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.sitewhere.core.device.Utils;
 import com.sitewhere.rest.model.device.DeviceAlert;
 import com.sitewhere.rest.model.device.DeviceAssignment;
 import com.sitewhere.rest.model.device.DeviceLocation;
 import com.sitewhere.rest.model.device.DeviceMeasurements;
 import com.sitewhere.rest.model.device.MetadataProvider;
+import com.sitewhere.rest.model.device.request.DeviceAlertCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceAssignmentCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceLocationCreateRequest;
+import com.sitewhere.rest.model.device.request.DeviceMeasurementsCreateRequest;
 import com.sitewhere.rest.service.search.DeviceAlertSearchResults;
 import com.sitewhere.rest.service.search.DeviceAssignmentSearchResults;
 import com.sitewhere.rest.service.search.DeviceLocationSearchResults;
@@ -190,13 +191,13 @@ public class AssignmentsController extends SiteWhereController {
 	@RequestMapping(value = "/{token}/measurements", method = RequestMethod.POST)
 	@ResponseBody
 	@ApiOperation(value = "Create measurements to be associated with a device assignment")
-	public DeviceMeasurements createAssignmentMeasurements(@RequestBody DeviceMeasurements input,
-			@PathVariable String token) throws SiteWhereException {
+	public DeviceMeasurements createAssignmentMeasurements(
+			@RequestBody DeviceMeasurementsCreateRequest input, @PathVariable String token)
+			throws SiteWhereException {
 		IDeviceAssignment assignment = SiteWhereServer.getInstance().getDeviceManagement()
-				.getDeviceAssignmentByToken(input.getDeviceAssignmentToken());
-		input.setAssetName(Utils.getAssetNameForAssignment(assignment));
+				.getDeviceAssignmentByToken(token);
 		IDeviceMeasurements result = SiteWhereServer.getInstance().getDeviceManagement()
-				.addDeviceMeasurements(input);
+				.addDeviceMeasurements(assignment, input);
 		return DeviceMeasurements.copy(result);
 	}
 
@@ -274,12 +275,12 @@ public class AssignmentsController extends SiteWhereController {
 	@RequestMapping(value = "/{token}/alerts", method = RequestMethod.POST)
 	@ResponseBody
 	@ApiOperation(value = "Create an alert that will be associated with a device assignment")
-	public DeviceAlert createAssignmentAlert(@RequestBody DeviceAlert input, @PathVariable String token)
-			throws SiteWhereException {
+	public DeviceAlert createAssignmentAlert(@RequestBody DeviceAlertCreateRequest input,
+			@PathVariable String token) throws SiteWhereException {
 		IDeviceAssignment assignment = SiteWhereServer.getInstance().getDeviceManagement()
-				.getDeviceAssignmentByToken(input.getDeviceAssignmentToken());
-		input.setAssetName(Utils.getAssetNameForAssignment(assignment));
-		IDeviceAlert result = SiteWhereServer.getInstance().getDeviceManagement().addDeviceAlert(input);
+				.getDeviceAssignmentByToken(token);
+		IDeviceAlert result = SiteWhereServer.getInstance().getDeviceManagement()
+				.addDeviceAlert(assignment, input);
 		return DeviceAlert.copy(result);
 	}
 

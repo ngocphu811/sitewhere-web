@@ -37,6 +37,7 @@ import com.sitewhere.spi.asset.AssetType;
 import com.sitewhere.spi.asset.IAsset;
 import com.sitewhere.spi.device.IDevice;
 import com.sitewhere.spi.device.IDeviceAssignment;
+import com.sitewhere.spi.device.IDeviceEventBatchResponse;
 import com.sitewhere.spi.error.ErrorCode;
 import com.sitewhere.spi.error.ErrorLevel;
 import com.sitewhere.web.rest.model.DeviceAssignmentMarshalHelper;
@@ -189,15 +190,15 @@ public class DevicesController extends SiteWhereController {
 	@RequestMapping(value = "/{hardwareId}/batch", method = RequestMethod.POST)
 	@ResponseBody
 	@ApiOperation(value = "Send a batch of events for the current assignment of the given device.")
-	public void addDeviceEventBatch(@PathVariable String hardwareId, @RequestBody DeviceEventBatch batch,
-			HttpServletResponse response) throws SiteWhereException {
+	public IDeviceEventBatchResponse addDeviceEventBatch(@PathVariable String hardwareId,
+			@RequestBody DeviceEventBatch batch) throws SiteWhereException {
 		IDevice device = assertDeviceByHardwareId(hardwareId);
 		if (device.getAssignmentToken() == null) {
 			throw new SiteWhereSystemException(ErrorCode.DeviceNotAssigned, ErrorLevel.ERROR);
 		}
-		SiteWhereServer.getInstance().getDeviceManagement()
+		IDeviceEventBatchResponse response = SiteWhereServer.getInstance().getDeviceManagement()
 				.addDeviceEventBatch(device.getAssignmentToken(), batch);
-		handleSuccessfulAdd(response);
+		return response;
 	}
 
 	/**
