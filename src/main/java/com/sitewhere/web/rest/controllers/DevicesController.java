@@ -110,9 +110,10 @@ public class DevicesController extends SiteWhereController {
 	@ResponseBody
 	@ApiOperation(value = "Delete a device based on unique hardware id")
 	public Device deleteDevice(
-			@ApiParam(value = "Hardware id", required = true) @PathVariable String hardwareId)
+			@ApiParam(value = "Hardware id", required = true) @PathVariable String hardwareId,
+			@ApiParam(value = "Delete permanently", required = false) @RequestParam(defaultValue = "false") boolean force)
 			throws SiteWhereException {
-		IDevice result = SiteWhereServer.getInstance().getDeviceManagement().deleteDevice(hardwareId);
+		IDevice result = SiteWhereServer.getInstance().getDeviceManagement().deleteDevice(hardwareId, force);
 		DeviceMarshalHelper helper = new DeviceMarshalHelper();
 		helper.setIncludeAsset(true);
 		helper.setIncludeAssignment(true);
