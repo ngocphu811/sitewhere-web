@@ -43,7 +43,9 @@ import com.sitewhere.spi.error.ErrorLevel;
 import com.sitewhere.web.rest.model.DeviceAssignmentMarshalHelper;
 import com.sitewhere.web.rest.model.DeviceMarshalHelper;
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiError;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
 /**
  * Controller for device operations.
@@ -64,6 +66,7 @@ public class DevicesController extends SiteWhereController {
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
 	@ApiOperation(value = "Create a new device")
+	@ApiError(code = HttpServletResponse.SC_NOT_FOUND, reason = "Device references unknown hardware asset id")
 	public Device createDevice(@RequestBody DeviceCreateRequest request) throws SiteWhereException {
 		IAsset asset = SiteWhereServer.getInstance().getAssetModuleManager()
 				.getAssetById(AssetType.Hardware, request.getAssetId());
@@ -87,7 +90,9 @@ public class DevicesController extends SiteWhereController {
 	@RequestMapping(value = "/{hardwareId}", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "Get a device by unique hardware id")
-	public Device getDeviceByHardwareId(@PathVariable String hardwareId) throws SiteWhereException {
+	public Device getDeviceByHardwareId(
+			@ApiParam(value = "Hardware id", required = true) @PathVariable String hardwareId)
+			throws SiteWhereException {
 		IDevice result = assertDeviceByHardwareId(hardwareId);
 		DeviceMarshalHelper helper = new DeviceMarshalHelper();
 		helper.setIncludeAsset(true);
@@ -104,7 +109,9 @@ public class DevicesController extends SiteWhereController {
 	@RequestMapping(value = "/{hardwareId}", method = RequestMethod.DELETE)
 	@ResponseBody
 	@ApiOperation(value = "Delete a device based on unique hardware id")
-	public Device deleteDevice(@PathVariable String hardwareId) throws SiteWhereException {
+	public Device deleteDevice(
+			@ApiParam(value = "Hardware id", required = true) @PathVariable String hardwareId)
+			throws SiteWhereException {
 		IDevice result = SiteWhereServer.getInstance().getDeviceManagement().deleteDevice(hardwareId);
 		DeviceMarshalHelper helper = new DeviceMarshalHelper();
 		helper.setIncludeAsset(true);
@@ -119,10 +126,38 @@ public class DevicesController extends SiteWhereController {
 	 * @return
 	 * @throws SiteWhereException
 	 */
+	@RequestMapping(value = "/{hardwareId}/assignment", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(value = "Get the current assignment for a device")
+	public DeviceAssignment getDeviceCurrentAssignment(
+			@ApiParam(value = "Hardware id", required = true) @PathVariable String hardwareId)
+			throws SiteWhereException {
+		IDevice device = assertDeviceByHardwareId(hardwareId);
+		IDeviceAssignment assignment = SiteWhereServer.getInstance().getDeviceManagement()
+				.getCurrentDeviceAssignment(device);
+		if (assignment == null) {
+			throw new SiteWhereSystemException(ErrorCode.DeviceNotAssigned, ErrorLevel.INFO,
+					HttpServletResponse.SC_NOT_FOUND);
+		}
+		DeviceAssignmentMarshalHelper helper = new DeviceAssignmentMarshalHelper();
+		helper.setIncludeAsset(true);
+		helper.setIncludeDevice(false);
+		helper.setIncludeSite(true);
+		return helper.convert(assignment, SiteWhereServer.getInstance().getAssetModuleManager());
+	}
+
+	/**
+	 * List device assignment history for a given device hardware id.
+	 * 
+	 * @param hardwareId
+	 * @return
+	 * @throws SiteWhereException
+	 */
 	@RequestMapping(value = "/{hardwareId}/assignments", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "Get assignment history for a device")
-	public DeviceAssignmentSearchResults listDeviceAssignmentHistory(@PathVariable String hardwareId)
+	public DeviceAssignmentSearchResults listDeviceAssignmentHistory(
+			@ApiParam(value = "Hardware id", required = true) @PathVariable String hardwareId)
 			throws SiteWhereException {
 		List<IDeviceAssignment> history = SiteWhereServer.getInstance().getDeviceManagement()
 				.getDeviceAssignmentHistory(hardwareId);
@@ -146,8 +181,9 @@ public class DevicesController extends SiteWhereController {
 	@RequestMapping(value = "/{hardwareId}/metadata", method = RequestMethod.PUT)
 	@ResponseBody
 	@ApiOperation(value = "Update metadata associated with a device")
-	public Device updateDeviceMetadata(@PathVariable String hardwareId, @RequestBody MetadataProvider metadata)
-			throws SiteWhereException {
+	public Device updateDeviceMetadata(
+			@ApiParam(value = "Hardware id", required = true) @PathVariable String hardwareId,
+			@RequestBody MetadataProvider metadata) throws SiteWhereException {
 		IDevice result = SiteWhereServer.getInstance().getDeviceManagement()
 				.updateDeviceMetadata(hardwareId, metadata);
 		DeviceMarshalHelper helper = new DeviceMarshalHelper();
@@ -191,7 +227,8 @@ public class DevicesController extends SiteWhereController {
 	@RequestMapping(value = "/{hardwareId}/batch", method = RequestMethod.POST)
 	@ResponseBody
 	@ApiOperation(value = "Send a batch of events for the current assignment of the given device.")
-	public IDeviceEventBatchResponse addDeviceEventBatch(@PathVariable String hardwareId,
+	public IDeviceEventBatchResponse addDeviceEventBatch(
+			@ApiParam(value = "Hardware id", required = true) @PathVariable String hardwareId,
 			@RequestBody DeviceEventBatch batch) throws SiteWhereException {
 		IDevice device = assertDeviceByHardwareId(hardwareId);
 		if (device.getAssignmentToken() == null) {

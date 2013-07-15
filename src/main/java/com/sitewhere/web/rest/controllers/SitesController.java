@@ -113,24 +113,6 @@ public class SitesController extends SiteWhereController {
 	}
 
 	/**
-	 * List all sites.
-	 * 
-	 * @return
-	 * @throws SiteWhereException
-	 */
-	@RequestMapping(value = "/simple", method = RequestMethod.GET)
-	@ResponseBody
-	@ApiOperation(value = "Get a simplified list of sites")
-	public List<Site> listSitesSimple() throws SiteWhereException {
-		List<Site> sitesConv = new ArrayList<Site>();
-		List<ISite> sites = SiteWhereServer.getInstance().getDeviceManagement().listSites();
-		for (ISite site : sites) {
-			sitesConv.add(Site.copy(site));
-		}
-		return sitesConv;
-	}
-
-	/**
 	 * Get device measurements for a given site.
 	 * 
 	 * @param siteToken
