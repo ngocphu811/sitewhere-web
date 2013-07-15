@@ -68,7 +68,8 @@ public class DevicesController extends SiteWhereController {
 		IAsset asset = SiteWhereServer.getInstance().getAssetModuleManager()
 				.getAssetById(AssetType.Hardware, request.getAssetId());
 		if (asset == null) {
-			throw new SiteWhereException("Device asset not found.");
+			throw new SiteWhereSystemException(ErrorCode.InvalidAssetReferenceId, ErrorLevel.ERROR,
+					HttpServletResponse.SC_NOT_FOUND);
 		}
 		IDevice result = SiteWhereServer.getInstance().getDeviceManagement().createDevice(request);
 		DeviceMarshalHelper helper = new DeviceMarshalHelper();

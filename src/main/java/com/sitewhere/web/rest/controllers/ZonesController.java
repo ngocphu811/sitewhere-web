@@ -1,17 +1,16 @@
 /*
-* $Id$
-* --------------------------------------------------------------------------------------
-* Copyright (c) Reveal Technologies, LLC. All rights reserved. http://www.reveal-tech.com
-*
-* The software in this package is published under the terms of the CPAL v1.0
-* license, a copy of which has been included with this distribution in the
-* LICENSE.txt file.
-*/
+ * $Id$
+ * --------------------------------------------------------------------------------------
+ * Copyright (c) Reveal Technologies, LLC. All rights reserved. http://www.reveal-tech.com
+ *
+ * The software in this package is published under the terms of the CPAL v1.0
+ * license, a copy of which has been included with this distribution in the
+ * LICENSE.txt file.
+ */
 package com.sitewhere.web.rest.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,21 +30,6 @@ import com.wordnik.swagger.annotations.ApiParam;
 @Controller
 @RequestMapping(value = "/zones")
 public class ZonesController extends SiteWhereController {
-
-	/**
-	 * Create a new zone.
-	 * 
-	 * @param input
-	 * @return
-	 * @throws SiteWhereException
-	 */
-	@RequestMapping(method = RequestMethod.POST)
-	@ResponseBody
-	@ApiOperation(value = "Create a new zone")
-	public Zone createZone(@RequestBody Zone input) throws SiteWhereException {
-		IZone zone = SiteWhereServer.getInstance().getDeviceManagement().createZone(input);
-		return Zone.copy(zone);
-	}
 
 	@RequestMapping(value = "/{zoneToken}", method = RequestMethod.GET)
 	@ResponseBody

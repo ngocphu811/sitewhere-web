@@ -1,12 +1,12 @@
 /*
-* $Id$
-* --------------------------------------------------------------------------------------
-* Copyright (c) Reveal Technologies, LLC. All rights reserved. http://www.reveal-tech.com
-*
-* The software in this package is published under the terms of the CPAL v1.0
-* license, a copy of which has been included with this distribution in the
-* LICENSE.txt file.
-*/
+ * $Id$
+ * --------------------------------------------------------------------------------------
+ * Copyright (c) Reveal Technologies, LLC. All rights reserved. http://www.reveal-tech.com
+ *
+ * The software in this package is published under the terms of the CPAL v1.0
+ * license, a copy of which has been included with this distribution in the
+ * LICENSE.txt file.
+ */
 package com.sitewhere.web.rest.controllers;
 
 import java.util.ArrayList;
@@ -26,6 +26,8 @@ import com.sitewhere.rest.model.device.DeviceLocation;
 import com.sitewhere.rest.model.device.DeviceMeasurements;
 import com.sitewhere.rest.model.device.Site;
 import com.sitewhere.rest.model.device.Zone;
+import com.sitewhere.rest.model.device.request.SiteCreateRequest;
+import com.sitewhere.rest.model.device.request.ZoneCreateRequest;
 import com.sitewhere.rest.service.search.DeviceAlertSearchResults;
 import com.sitewhere.rest.service.search.DeviceAssignmentSearchResults;
 import com.sitewhere.rest.service.search.DeviceLocationSearchResults;
@@ -34,12 +36,16 @@ import com.sitewhere.rest.service.search.SearchResults;
 import com.sitewhere.rest.service.search.ZoneSearchResults;
 import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.spi.SiteWhereException;
+import com.sitewhere.spi.SiteWhereSystemException;
 import com.sitewhere.spi.device.IDeviceAlert;
 import com.sitewhere.spi.device.IDeviceAssignment;
 import com.sitewhere.spi.device.IDeviceLocation;
 import com.sitewhere.spi.device.IDeviceMeasurements;
 import com.sitewhere.spi.device.ISite;
 import com.sitewhere.spi.device.IZone;
+import com.sitewhere.spi.device.request.ISiteCreateRequest;
+import com.sitewhere.spi.error.ErrorCode;
+import com.sitewhere.spi.error.ErrorLevel;
 import com.sitewhere.web.rest.model.DeviceAssignmentMarshalHelper;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -65,7 +71,7 @@ public class SitesController extends SiteWhereController {
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
 	@ApiOperation(value = "Create a new site")
-	public Site createSite(@RequestBody Site input) throws SiteWhereException {
+	public Site createSite(@RequestBody SiteCreateRequest input) throws SiteWhereException {
 		ISite site = SiteWhereServer.getInstance().getDeviceManagement().createSite(input);
 		return Site.copy(site);
 	}
@@ -81,10 +87,9 @@ public class SitesController extends SiteWhereController {
 	@ResponseBody
 	@ApiOperation(value = "Update an existing site")
 	public Site updateSite(
-			@RequestBody Site input,
-			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken)
-			throws SiteWhereException {
-		ISite site = SiteWhereServer.getInstance().getDeviceManagement().updateSite(input);
+			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken,
+			@RequestBody ISiteCreateRequest request) throws SiteWhereException {
+		ISite site = SiteWhereServer.getInstance().getDeviceManagement().updateSite(siteToken, request);
 		return Site.copy(site);
 	}
 
@@ -221,6 +226,27 @@ public class SitesController extends SiteWhereController {
 			converted.add(helper.convert(assignment, SiteWhereServer.getInstance().getAssetModuleManager()));
 		}
 		return new DeviceAssignmentSearchResults(converted);
+	}
+
+	/**
+	 * Create a new zone for a site.
+	 * 
+	 * @param input
+	 * @return
+	 * @throws SiteWhereException
+	 */
+	@RequestMapping(value = "/{siteToken}/zones", method = RequestMethod.POST)
+	@ResponseBody
+	@ApiOperation(value = "Create a new zone associated with a site")
+	public Zone createZone(
+			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken,
+			@RequestBody ZoneCreateRequest request) throws SiteWhereException {
+		ISite site = SiteWhereServer.getInstance().getDeviceManagement().getSiteByToken(siteToken);
+		if (site == null) {
+			throw new SiteWhereSystemException(ErrorCode.InvalidSiteToken, ErrorLevel.ERROR);
+		}
+		IZone zone = SiteWhereServer.getInstance().getDeviceManagement().createZone(site, request);
+		return Zone.copy(zone);
 	}
 
 	/**
