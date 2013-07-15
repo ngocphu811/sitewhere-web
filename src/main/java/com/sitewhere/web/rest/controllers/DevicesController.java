@@ -26,7 +26,6 @@ import com.sitewhere.rest.model.device.Device;
 import com.sitewhere.rest.model.device.DeviceAssignment;
 import com.sitewhere.rest.model.device.DeviceEventBatch;
 import com.sitewhere.rest.model.device.DeviceSearchCriteria;
-import com.sitewhere.rest.model.device.MetadataProvider;
 import com.sitewhere.rest.model.device.request.DeviceCreateRequest;
 import com.sitewhere.rest.service.search.DeviceAssignmentSearchResults;
 import com.sitewhere.rest.service.search.SearchResults;
@@ -94,6 +93,30 @@ public class DevicesController extends SiteWhereController {
 			@ApiParam(value = "Hardware id", required = true) @PathVariable String hardwareId)
 			throws SiteWhereException {
 		IDevice result = assertDeviceByHardwareId(hardwareId);
+		DeviceMarshalHelper helper = new DeviceMarshalHelper();
+		helper.setIncludeAsset(true);
+		helper.setIncludeAssignment(true);
+		return helper.convert(result, SiteWhereServer.getInstance().getAssetModuleManager());
+	}
+
+	/**
+	 * Update device information.
+	 * 
+	 * @param hardwareId
+	 *            unique hardware id
+	 * @param request
+	 *            updated information
+	 * @return the updated device
+	 * @throws SiteWhereException
+	 */
+	@RequestMapping(value = "/{hardwareId}", method = RequestMethod.PUT)
+	@ResponseBody
+	@ApiOperation(value = "Update device information")
+	public Device updateDevice(
+			@ApiParam(value = "Hardware id", required = true) @PathVariable String hardwareId,
+			@RequestBody DeviceCreateRequest request) throws SiteWhereException {
+		IDevice result = SiteWhereServer.getInstance().getDeviceManagement()
+				.updateDevice(hardwareId, request);
 		DeviceMarshalHelper helper = new DeviceMarshalHelper();
 		helper.setIncludeAsset(true);
 		helper.setIncludeAssignment(true);
@@ -171,26 +194,6 @@ public class DevicesController extends SiteWhereController {
 			converted.add(helper.convert(assignment, SiteWhereServer.getInstance().getAssetModuleManager()));
 		}
 		return new DeviceAssignmentSearchResults(converted);
-	}
-
-	/**
-	 * Update metadata associated with a device.
-	 * 
-	 * @param request
-	 * @return
-	 */
-	@RequestMapping(value = "/{hardwareId}/metadata", method = RequestMethod.PUT)
-	@ResponseBody
-	@ApiOperation(value = "Update metadata associated with a device")
-	public Device updateDeviceMetadata(
-			@ApiParam(value = "Hardware id", required = true) @PathVariable String hardwareId,
-			@RequestBody MetadataProvider metadata) throws SiteWhereException {
-		IDevice result = SiteWhereServer.getInstance().getDeviceManagement()
-				.updateDeviceMetadata(hardwareId, metadata);
-		DeviceMarshalHelper helper = new DeviceMarshalHelper();
-		helper.setIncludeAsset(true);
-		helper.setIncludeAssignment(true);
-		return helper.convert(result, SiteWhereServer.getInstance().getAssetModuleManager());
 	}
 
 	/**
