@@ -120,6 +120,29 @@ public class AssignmentsController extends SiteWhereController {
 	}
 
 	/**
+	 * Get an assignment by its unique token.
+	 * 
+	 * @param token
+	 * @return
+	 * @throws SiteWhereException
+	 */
+	@RequestMapping(value = "/{token}", method = RequestMethod.DELETE)
+	@ResponseBody
+	@ApiOperation(value = "Delete a device assignment")
+	public DeviceAssignment deleteDeviceAssignment(
+			@ApiParam(value = "Assignment token", required = true) @PathVariable String token,
+			@ApiParam(value = "Delete permanently", required = false) @RequestParam(defaultValue = "false") boolean force)
+			throws SiteWhereException {
+		IDeviceAssignment assignment = SiteWhereServer.getInstance().getDeviceManagement()
+				.deleteDeviceAssignment(token, force);
+		DeviceAssignmentMarshalHelper helper = new DeviceAssignmentMarshalHelper();
+		helper.setIncludeAsset(true);
+		helper.setIncludeDevice(true);
+		helper.setIncludeSite(true);
+		return helper.convert(assignment, SiteWhereServer.getInstance().getAssetModuleManager());
+	}
+
+	/**
 	 * Update metadata associated with an assignment.
 	 * 
 	 * @param request

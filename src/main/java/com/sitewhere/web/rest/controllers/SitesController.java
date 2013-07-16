@@ -221,7 +221,7 @@ public class SitesController extends SiteWhereController {
 	@ResponseBody
 	@ApiOperation(value = "Create a new zone associated with a site")
 	public Zone createZone(
-			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken,
+			@ApiParam(value = "Unique site token", required = true) @PathVariable String siteToken,
 			@RequestBody ZoneCreateRequest request) throws SiteWhereException {
 		ISite site = SiteWhereServer.getInstance().getDeviceManagement().getSiteByToken(siteToken);
 		if (site == null) {
