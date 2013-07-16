@@ -18,9 +18,9 @@ import org.apache.log4j.Logger;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sitewhere.rest.service.ISiteWhereWebConstants;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.SiteWhereSystemException;
-import com.sitewhere.web.ISiteWhereWebConstants;
 
 /**
  * Base class for common controller functionality.

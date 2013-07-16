@@ -47,7 +47,6 @@ public class DeviceMarshalHelper {
 		Device result = new Device();
 		result.setHardwareId(source.getHardwareId());
 		result.setComments(source.getComments());
-		result.setCreatedDate(source.getCreatedDate());
 		MetadataProviderEntity.copy(source, result);
 		HardwareAsset deviceAsset = (HardwareAsset) manager.getAssetById(AssetType.Hardware,
 				source.getAssetId());
