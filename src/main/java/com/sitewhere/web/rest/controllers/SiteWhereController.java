@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -94,6 +95,21 @@ public class SiteWhereController {
 		LOGGER.error("Unhandled runtime exception.", e);
 		try {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	/**
+	 * Handles situations where user does not pass exprected content for a POST.
+	 * 
+	 * @param e
+	 * @param response
+	 */
+	@ExceptionHandler
+	protected void handleMissingContent(HttpMessageNotReadableException e, HttpServletResponse response) {
+		try {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No body content passed for POST request.");
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
