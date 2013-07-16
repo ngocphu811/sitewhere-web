@@ -148,14 +148,16 @@ public class AssignmentsController extends SiteWhereController {
 	 * @return
 	 * @throws SiteWhereException
 	 */
-	@RequestMapping(value = "/{token}/location", method = RequestMethod.PUT)
+	@RequestMapping(value = "/{token}/location/{locationId}", method = RequestMethod.PUT)
 	@ResponseBody
 	@ApiOperation(value = "Update current location for a device assignment")
 	public DeviceAssignment updateDeviceAssignmentLocation(
 			@ApiParam(value = "Assignment token", required = true) @PathVariable String token,
-			@RequestBody DeviceLocation location, HttpServletResponse response) throws SiteWhereException {
+			@ApiParam(value = "Location Id", required = true) @PathVariable String locationId,
+			HttpServletResponse response) throws SiteWhereException {
+
 		IDeviceAssignment result = SiteWhereServer.getInstance().getDeviceManagement()
-				.updateDeviceAssignmentLocation(token, location);
+				.updateDeviceAssignmentLocation(token, locationId);
 		DeviceAssignmentMarshalHelper helper = new DeviceAssignmentMarshalHelper();
 		helper.setIncludeAsset(true);
 		helper.setIncludeDevice(true);
