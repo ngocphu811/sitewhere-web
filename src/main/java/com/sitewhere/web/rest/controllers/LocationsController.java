@@ -12,8 +12,6 @@ package com.sitewhere.web.rest.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,6 +29,7 @@ import com.sitewhere.spi.device.IDeviceLocation;
 import com.sitewhere.web.rest.model.AssignmentHistoryRequest;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
 /**
  * Controller for location operations.
@@ -43,20 +42,25 @@ import com.wordnik.swagger.annotations.ApiOperation;
 public class LocationsController extends SiteWhereController {
 
 	/**
-	 * Add an alert and associate it with the given location.
+	 * Associates an alert with a device location.
 	 * 
-	 * @param alert
 	 * @param locationId
-	 * @return
+	 *            unique location id
+	 * @param alertId
+	 *            unique alert id
+	 * @return updated device location
 	 * @throws SiteWhereException
 	 */
-	@RequestMapping(value = "/{locationId}/alerts/{alertId}", method = RequestMethod.POST)
+	@RequestMapping(value = "/{locationId}/alerts/{alertId}", method = RequestMethod.PUT)
 	@ResponseBody
-	@ApiOperation(value = "Add alert for an existing location")
-	public void addAlertForAssignmentLocation(@PathVariable String locationId, @PathVariable String alertId,
-			HttpServletResponse response) throws SiteWhereException {
-		SiteWhereServer.getInstance().getDeviceManagement().associateAlertWithLocation(alertId, locationId);
-		handleSuccessfulAdd(response);
+	@ApiOperation(value = "Associate an alert with a device location")
+	public DeviceLocation associateAlertWithDeviceLocation(
+			@ApiParam(value = "Location id", required = true) @PathVariable String locationId,
+			@ApiParam(value = "Alert Id", required = true) @PathVariable String alertId)
+			throws SiteWhereException {
+		IDeviceLocation updated = SiteWhereServer.getInstance().getDeviceManagement()
+				.associateAlertWithLocation(alertId, locationId);
+		return DeviceLocation.copy(updated);
 	}
 
 	/**
