@@ -1,4 +1,7 @@
 	</div>
+	<div class="sw-footer">
+		Copyright © 2013 Reveal Technologies, LLC.
+	</div>
 <script src="${pageContext.request.contextPath}/scripts/bootstrap.min.js"></script>
 <script src="${pageContext.request.contextPath}/scripts/bootbox.min.js"></script>
 </body>

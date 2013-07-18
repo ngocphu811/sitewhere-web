@@ -1,3 +1,45 @@
+.sw-top-bar {
+	height: 2px;
+	background-color: #dc0000;
+}
+
+.sw-header {
+	background-color: #ffffff;
+	border-bottom: 1px solid #dddddd;
+	position: relative;
+	padding: 10px;
+}
+
+.sw-main-nav {
+	position: absolute;
+	top: 24px;
+	right: 150px;
+}
+
+.sw-main-nav .nav-pills > .active > a:hover, .nav-pills > .active > a {
+    color: rgb(255, 255, 255);
+    background-color: #dc0000;
+}
+
+.sw-main-nav a {
+    color: #dc0000;
+}
+.sw-user-info {
+	position: absolute;
+	top: 25px;
+	right: 20px;
+}
+
+.sw-footer {
+	font-size: 9pt;
+	font-weight: bold;
+	color: #1a1a1a;
+	text-align: center;
+	background-color: #f0f0f0;
+	border-top: solid 1px #dddddd;
+	margin-top: 20px;
+}
+
 .actions-before-grid {
 	margin-bottom: 10px;
 }
