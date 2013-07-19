@@ -66,14 +66,19 @@
 
 <!-- Asset item template -->
 <script type="text/x-kendo-tmpl" id="siteEntry">
-	<div class="sw-site-list-entry gradient-bg">
+	<div class="sw-site-list-entry gradient-bg" onclick="onOpenClicked(event, '#:token#')">
 		<img class="sw-site-list-entry-logo" src="#:imageUrl#" width="100"/>
 		<div class="sw-site-list-entry-buttons">
 			<div class="btn-group">
-				<a class="btn btn-small" title="Edit Site" href="javascript:void()">
-					<i class="icon-pencil"></i></a>
-				<a class="btn btn-small btn-danger" title="Delete Site" href="javascript:void()">
+				<a class="btn btn-small btn-primary" title="Edit Site" 
+					href="javascript:void(0)" onclick="onEditClicked(event, '#:token#');">
+					<i class="icon-pencil icon-white"></i></a>
+				<a class="btn btn-small btn-danger" title="Delete Site" 
+					href="javascript:void(0)" onclick="onDeleteClicked(event, '#:token#')">
 					<i class="icon-remove icon-white"></i></a>
+				<a class="btn btn-small btn-success" title="Site Contents" 
+					href="javascript:void(0)" onclick="onOpenClicked(event, '#:token#')">
+					<i class="icon-chevron-right icon-white"></i></a>
 			</div>
 		</div>
 		<div>
@@ -84,6 +89,27 @@
 </script>
 
 <script>
+	/** Called when edit button is clicked */
+	function onEditClicked(e, siteToken) {
+		alert("Edit " + siteToken);
+		var event = e || window.event;
+		event.stopPropagation();
+	}
+	
+	/** Called when edit button is clicked */
+	function onDeleteClicked(e, siteToken) {
+		alert("Delete " + siteToken);
+		var event = e || window.event;
+		event.stopPropagation();
+	}
+	
+	/** Called when edit button is clicked */
+	function onOpenClicked(e, siteToken) {
+		alert("Open " + siteToken);
+		var event = e || window.event;
+		event.stopPropagation();
+	}
+	
     $(document).ready(function() {
 		/** Create AJAX datasource for sites list */
 		var sitesDS = new kendo.data.DataSource({

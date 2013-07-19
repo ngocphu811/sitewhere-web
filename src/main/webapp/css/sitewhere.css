@@ -94,6 +94,7 @@
 	font-size: 10pt;
 	text-align: left;
 	display: block;
+	cursor: pointer;
 }
 
 .sw-site-list-entry img {
