@@ -2,15 +2,6 @@
 <c:set var="swtitle" value="Manage Sites" />
 <%@ include file="../top.inc"%>
 
-<!-- Breadcrumb -->
-<ul class="breadcrumb">
-	<li><a href="../home">Home</a> <span class="divider">/</span>
-	</li>
-	<li><a href="#">Sites</a> <span class="divider">/</span>
-	</li>
-	<li class="active">Manage Sites</li>
-</ul>
-
 <!-- Dialog for create/update -->
 <div id="dialog" class="modal hide">
 	<div class="modal-header">
@@ -54,29 +45,33 @@
 <div id="submitResult"></div>
 
 <!-- Actions that show up above the grid -->
-<div class="actions-before-grid">
-	<a id="btnAdd" class="btn btn-primary" href="#"><i
-		class="icon-plus icon-white"></i> Add New Site</a>
+<div class="sw-title-bar">
+	<div class="sw-title-bar-left">
+		<ul class="breadcrumb sw-breadcrumb">
+			<li><a href="../home">Home</a> <span class="divider">/</span>
+			</li>
+			<li><a href="#">Sites</a> <span class="divider">/</span>
+			</li>
+			<li class="active">Manage Sites</li>
+		</ul>
+	</div>
+	<h1>Manage Sites</h1>
+	<div class="sw-title-bar-right">
+		<a id="btnAdd" class="btn" href="#"><i
+			class="icon-plus icon-white"></i> Add New Site</a>
+	</div>
 </div>
 
-<div id="grid" style="height: 450px"></div>
+<div id="sites" class="sw-site-list"></div>
 
-<!-- Actions that show up below the grid -->
-<div class="pull-right actions-after-grid">
-	<a id="btnEdit" class="btn btn-primary" href="#dialog"><i
-		class="icon-pencil icon-white"></i> Edit</a> 
-	<a id="btnDelete"
-		class="btn btn-primary" href="#dialog"><i
-		class="icon-remove icon-white"></i> Delete</a>
-	<a id="btnAssignments"
-		class="btn btn-primary" href="#dialog"><i
-		class="icon-tag icon-white"></i> View Assignments</a>
-</div>
-
-<!-- Used to redirect to the assignment view page -->
-<form id="viewForm" method="get" action="assignments">
-	<input id="viewToken" name="siteToken" type="hidden"/>
-</form>
+<!-- Asset item template -->
+<script type="text/x-kendo-tmpl" id="siteEntry">
+	<div class="sw-site-list-entry gradient-bg">
+		<img src="#:imageUrl#" width="100"/>
+		<h1>#:name#</h1>
+		<p>#:description#</p>
+	</div>
+</script>
 
 <script>
     $(document).ready(function() {
@@ -103,36 +98,12 @@
 			pageSize: 10
 		});
 		
-        $("#grid").kendoGrid({
-            dataSource: sitesDS,
-            sortable: true,
-            selectable: "single",
-            pageable: {
-                refresh: true,
-                pageSizes: true
-            },
-            columns: [ {
-                    field: "name",
-                    width: 80,
-                    title: "Site Name"
-                } , {
-                    field: "description",
-                    width: 150,
-                    title: "Description"
-                } , {
-                	field: "imageUrl",
-                    width: 80,
-                    title: "Image URL"
-                } , {
-                	field: "createdDate",
-                    width: 80,
-                    title: "Created Date",
-                    format: "{0:MM/dd/yyyy HH:mm:ss}"
-                }
-            ]
-        });
-        var grid = $("#grid").data("kendoGrid");
-        var selectedRows;
+
+		/** Create the hardware list */
+		$("#sites").kendoListView({
+			dataSource : sitesDS,
+			template : kendo.template($("#siteEntry").html())
+		});
         
         /** Handle create dialog */
 		$('#btnAdd').click(function(event) {
@@ -157,16 +128,6 @@
 				$('#siteDesc').val(dataItem.description);
 				$('#siteImgUrl').val(dataItem.imageUrl);
 				$('#siteToken').val(dataItem.token);
-			}
-		});
-        
-        /** Handle view assignment */
-		$('#btnAssignments').click(function(event) {
-			selectedRows = grid.select();
-			if (selectedRows.length > 0) {
-				var dataItem = grid.dataItem(selectedRows[0]);
-				$("#viewToken").val(dataItem.token);
-				$("#viewForm").submit();
 			}
 		});
         
