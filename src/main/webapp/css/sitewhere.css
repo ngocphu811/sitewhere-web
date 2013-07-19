@@ -1,6 +1,6 @@
 .sw-body {
 	height: 100%;
-	font-family: "Khmer UI", arial;
+	font-family: "Calibri", "Khmer UI", arial;
 	color: #333333;
 }
 
@@ -24,10 +24,14 @@
 	padding: 10px;
 }
 
+.sw-logo {
+	margin-left: -15px;
+}
+
 .sw-main-nav {
 	position: absolute;
 	top: 24px;
-	right: 150px;
+	right: 350px;
 }
 
 .sw-main-nav .nav-pills > .active > a:hover, .nav-pills > .active > a {
@@ -43,9 +47,9 @@
 	position: relative;
 	border-top: 1px solid #eeeeee;
 	border-bottom: 1px solid #eeeeee;
-	margin-bottom: 10px;
-	padding-top: 8px;
-	padding-bottom: 10px;
+	margin-bottom: 15px;
+	padding-top: 3px;
+	padding-bottom: 7px;
 }
 
 .sw-title-bar h1 {
@@ -53,19 +57,20 @@
 	padding: 0;
 	margin: 0;
 	font-size: 22pt;
+	font-weight: normal;
     text-align: center;
-    font-weight: normal;
+	text-shadow: 2px 2px #eeeeee;
 }
 
 .sw-title-bar-left {
 	position: absolute;
-	top: 22px;
+	top: 18px;
 	left: 0px;
 }
 
 .sw-title-bar-right {
 	position: absolute;
-	top: 17px;
+	top: 14px;
 	right: 0px;
 }
 
@@ -87,6 +92,8 @@
 	padding: 10px;
 	margin-bottom: 15px;
 	font-size: 10pt;
+	text-align: left;
+	display: block;
 }
 
 .sw-site-list-entry img {
@@ -97,8 +104,24 @@
 
 .sw-site-list-entry h1 {
 	line-height: 0px;
-	font-size: 14pt;
+	font-size: 16pt;
 	padding-bottom: 10px;
+}
+
+.sw-site-list-entry-logo {
+    width: 100px;
+    max-width: 100px;
+    max-height: 100px;
+}
+
+.sw-site-list-entry-buttons {
+	float: right;
+	width: 150px;
+	height: 100%;
+	padding-left: 10px;
+	margin-left: 10px;
+	border-left: solid 1px #eeeeee;
+	text-align: right;
 }
 
 .sw-user-info {

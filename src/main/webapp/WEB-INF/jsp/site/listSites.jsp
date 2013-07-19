@@ -2,6 +2,24 @@
 <c:set var="swtitle" value="Manage Sites" />
 <%@ include file="../top.inc"%>
 
+<!-- Title Bar -->
+<div class="sw-title-bar content">
+	<div class="sw-title-bar-left">
+		<ul class="breadcrumb sw-breadcrumb">
+			<li><a href="../home">Home</a> <span class="divider">/</span>
+			</li>
+			<li><a href="#">Sites</a> <span class="divider">/</span>
+			</li>
+			<li class="active">Manage Sites</li>
+		</ul>
+	</div>
+	<h1>Manage Sites</h1>
+	<div class="sw-title-bar-right">
+		<a id="btnAdd" class="btn" href="#"><i
+			class="icon-plus icon-white"></i> Add New Site</a>
+	</div>
+</div>
+
 <!-- Dialog for create/update -->
 <div id="dialog" class="modal hide">
 	<div class="modal-header">
@@ -44,32 +62,24 @@
 
 <div id="submitResult"></div>
 
-<!-- Actions that show up above the grid -->
-<div class="sw-title-bar">
-	<div class="sw-title-bar-left">
-		<ul class="breadcrumb sw-breadcrumb">
-			<li><a href="../home">Home</a> <span class="divider">/</span>
-			</li>
-			<li><a href="#">Sites</a> <span class="divider">/</span>
-			</li>
-			<li class="active">Manage Sites</li>
-		</ul>
-	</div>
-	<h1>Manage Sites</h1>
-	<div class="sw-title-bar-right">
-		<a id="btnAdd" class="btn" href="#"><i
-			class="icon-plus icon-white"></i> Add New Site</a>
-	</div>
-</div>
-
 <div id="sites" class="sw-site-list"></div>
 
 <!-- Asset item template -->
 <script type="text/x-kendo-tmpl" id="siteEntry">
 	<div class="sw-site-list-entry gradient-bg">
-		<img src="#:imageUrl#" width="100"/>
-		<h1>#:name#</h1>
-		<p>#:description#</p>
+		<img class="sw-site-list-entry-logo" src="#:imageUrl#" width="100"/>
+		<div class="sw-site-list-entry-buttons">
+			<div class="btn-group">
+				<a class="btn btn-small" title="Edit Site" href="javascript:void()">
+					<i class="icon-pencil"></i></a>
+				<a class="btn btn-small btn-danger" title="Delete Site" href="javascript:void()">
+					<i class="icon-remove icon-white"></i></a>
+			</div>
+		</div>
+		<div>
+			<h1>#:name#</h1>
+			<p>#:description#</p>
+		</div>
 	</div>
 </script>
 
