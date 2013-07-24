@@ -51,6 +51,10 @@
 	min-height: 200px;
 }
 
+.command-buttons {
+	text-align: center;
+}
+
 #metadataGrid {
 	margin-top: 15px;
 	margin-bottom: 15px;
@@ -90,62 +94,99 @@
 				<li>Map Information</li>
 			</ul>
 			<div>
-				<form class="form-horizontal" style="padding-top: 20px;">
+				<form id="general-form" class="form-horizontal" style="padding-top: 20px;">
 					<div class="control-group">
-						<label class="control-label" for="siteName">Site Name</label>
+						<label class="control-label" for="cSiteName">Site Name</label>
 						<div class="controls">
-							<input type="text" id="siteName" placeholder="Name Shown for Site"
-								class="input-xlarge">
+							<input type="text" id="cSiteName" name="siteName" required class="input-xlarge">
 						</div>
 					</div>
 					<div class="control-group">
-						<label class="control-label" for="siteDesc">Site
+						<label class="control-label" for="cSiteDesc">Site
 							Description</label>
 						<div class="controls">
-							<textarea id="siteDesc" placeholder="Longer Description of Site"
-								class="input-xlarge" style="height: 120px;"></textarea>
+							<textarea id="cSiteDesc" name="siteDesc" class="input-xlarge" style="height: 120px;"></textarea>
 						</div>
 					</div>
 					<div class="control-group">
-						<label class="control-label" for="siteImgUrl">Image URL</label>
+						<label class="control-label" for="cSiteImgUrl">Image URL</label>
 						<div class="controls">
-							<input type="text" id="siteImgUrl" placeholder="URL for Site Logo"
-								class="input-xlarge">
+							<input type="text" id="cSiteImgUrl" name="siteImgUrl" class="input-xlarge">
 						</div>
 					</div>
 				</form>
 			</div>
 			<div>
 				<div id="metadataGrid"></div>
-				<!--  
-	            <table id="metadataGrid">
-	                <colgroup>
-	                    <col/>
-	                    <col/>
-	                    <col/>
-	                </colgroup>
-	                <thead>
-	                    <tr>
-	                        <th>
-	                            Name
-	                        </th>
-	                        <th>
-	                            Value
-	                        </th>
-	                        <th>
-	                            &nbsp;
-	                        </th>
-	                    </tr>
-	                </thead>
-	                <tbody>
-	                    <tr>
-	                        <td colspan="3"></td>
-	                    </tr>
-	                </tbody>
-	            </table>			
-				-->
             </div>
-			<div>Map Information</div>
+			<div>
+				<form class="form-horizontal" style="padding-top: 15px;">
+					<div class="control-group" style="border-bottom: 1px solid #eeeeee; padding-bottom: 10px;">
+						<label class="control-label" for="mapType">Map Type</label>
+						<div class="controls">
+							<input id="mapType" value="mapquest"/>
+						</div>
+					</div>
+				</form>
+				<div id="mapTypePanels">
+					<div id="mapquest">
+						<form class="form-horizontal">
+							<div class="control-group">
+								<label class="control-label" for="mqCenterLatitude">Center Latitude</label>
+								<div class="controls">
+									<input type="text" id="mqCenterLatitude" class="input-large">
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="mqCenterLongitude">Center Longitude</label>
+								<div class="controls">
+									<input type="text" id="mqCenterLongitude" class="input-large">
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="mqScale">Scale</label>
+								<div class="controls">
+									<input type="text" id="mqScale" class="input-large">
+								</div>
+							</div>
+						</form>
+					</div>
+					<div id="geoserver" class="hide">
+						<form id="geoserver-form" class="form-horizontal">
+							<div class="control-group">
+								<label class="control-label" for="gsBaseUrl">GeoServer Base URL</label>
+								<div class="controls">
+									<input type="text" id="gsBaseUrl" name="baseUrl" required class="input-xlarge">
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="gsLayerName">GeoServer Layer</label>
+								<div class="controls">
+									<input type="text" id="gsLayerName" name="layerName" required class="input-xlarge">
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="gsCenterLatitude">Center Latitude</label>
+								<div class="controls">
+									<input type="text" id="gsCenterLatitude" class="input-large">
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="gsCenterLongitude">Center Longitude</label>
+								<div class="controls">
+									<input type="text" id="gsCenterLongitude" class="input-large">
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="gsScale">Scale</label>
+								<div class="controls">
+									<input type="text" id="gsScale" class="input-large">
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 	<input id="siteToken" type="hidden" value="" />
@@ -231,6 +272,12 @@
 	var gridData = [{name:"phone.number", value:"777-555-1212"}];
 	var metaDatasource;
 	
+	/** Available map types shown in dropdown */
+    var mapTypes = [
+		{ text: "MapQuest World Map", value: "mapquest" },
+		{ text: "GeoServer Layer", value: "geoserver" },
+	];
+	
     $(document).ready(function() {
 		/** Create AJAX datasource for sites list */
 		var sitesDS = new kendo.data.DataSource({
@@ -264,6 +311,7 @@
 		
 		/** Create the tab strip */
 		$("#tabs").kendoTabStrip({
+			animation: false
 		});
 		
 		/** Local source for metadata entries */
@@ -286,32 +334,22 @@
             sortable: true,
             toolbar: ["create"],
 			columns: [
-				{ field: "name", title: "Name", width: "120px" },
-				{ field: "value", title: "Value", width: "150px" },
-				{ command: ["edit", "destroy"], title: "&nbsp;", width: "190px" },
+				{ field: "name", title: "Name", width: "125px" },
+				{ field: "value", title: "Value", width: "125px" },
+				{ command: ["edit", "destroy"], title: "&nbsp;", width: "175px", 
+						attributes: { "class" : "command-buttons"} },
 			],
             editable: "inline"
         });
-		/*
-        $("#metadataGrid").kendoGrid({
-            dataSource: {
-                data: gridData,
-				schema: {
-					id: "name",
-					fields: {
-						name: { 
-							validation: { required: true } 
-        				},
-						value: { 
-						}
-					}
-				}
-            },
-            sortable: true,
-            rowTemplate: kendo.template($("#rowTemplate").html()),
-            editable: "inline"
-        });
-		*/
+
+    	// create DropDownList from input HTML element
+    	$("#mapType").kendoDropDownList({
+    		dataTextField: "text",
+    		dataValueField: "value",
+    	    dataSource: mapTypes,
+    	    index: 0,
+    	    change: onMapTypeChanged
+    	});
         
         /** Handle create dialog */
 		$('#btnAdd').click(function(event) {
@@ -339,9 +377,41 @@
 			}
 		});
         
+		$('#general-form').validate({
+			rules: {
+				siteName: {
+					required: true
+				},
+			},
+			highlight: function(element) {
+				$(element).closest('.control-group').removeClass('success').addClass('error');
+			},
+			success: function(element) {
+				element.addClass('valid').closest('.control-group').removeClass('error').addClass('success');
+			}
+		});
+        
+		$('#geoserver-form').validate({
+			rules: {
+				baseUrl: {
+					required: true,
+				},
+				layerName: {
+					required: true
+				},
+			},
+			highlight: function(element) {
+				$(element).closest('.control-group').removeClass('success').addClass('error');
+			},
+			success: function(element) {
+				element.addClass('valid').closest('.control-group').removeClass('error').addClass('success');
+			}
+		});
+		
         /** Handle dialog submit */
 		$('#dialogSubmit').click(function(event) {
 			event.preventDefault();
+			var valid = $('#general-form').validate();
 			var siteData = {
 				"token": $('#siteToken').val(), 
 				"name": $('#siteName').val(), 
@@ -373,6 +443,18 @@
 			var respError = jqXHR.getResponseHeader("SiteWhere-Error");
 			$('#submitResult').html(createAlertHtml("alert-error", "Update Failed", 
 				"Site was not updated. " + respError));
+		}
+		
+		/** Called when map type dropdown value changes */
+		function onMapTypeChanged() {
+			var selectedMapType = $("#mapType").val();
+			$("#mapTypePanels").children().each(function(i) {
+				if (selectedMapType == $(this).attr("id")) {
+					$(this).removeClass("hide");
+				} else if (!$(this).hasClass("hide")) {
+					$(this).addClass("hide");
+				}
+			});
 		}
     });
 </script>

@@ -129,6 +129,35 @@
    background-image: -o-linear-gradient(top, #fcfcfc, #eeeeee);
 }
 
-.control-label {
-	font-size: 16px;
+.controls {
+	position: relative;
+}
+
+.form-horizontal .control-group {
+	margin-bottom: 15px;
+}
+
+td[role="gridcell"] > input[type="text"] {
+	height: 24px;
+}
+
+.k-grid-add {
+	float: right;
+}
+
+label.valid {
+    width: 24px;
+    height: 24px;
+    background: url(/sitewhere/img/valid.png) center center no-repeat;
+    text-indent: -9999px;
+    position: absolute;
+    right: -5px;
+    top: 0px;
+}
+
+label.error {
+    font-weight: bold;
+    color: red;
+    padding: 2px 8px;
+    margin-top: 2px;
 }
