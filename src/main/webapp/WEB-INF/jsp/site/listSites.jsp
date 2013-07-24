@@ -2,6 +2,61 @@
 <c:set var="swtitle" value="Manage Sites" />
 <%@ include file="../top.inc"%>
 
+<style>
+.sw-site-list {
+	border: 0px;
+}
+
+.sw-site-list-entry {
+	clear: both;
+	height: 100px;
+	border: 1px solid #dcdcdc;
+	padding: 10px;
+	margin-bottom: 15px;
+	font-size: 10pt;
+	text-align: left;
+	display: block;
+	cursor: pointer;
+}
+
+.sw-site-list-entry img {
+	float: left;
+    border: 1px solid #cccccc;
+    margin-right: 15px;
+}
+
+.sw-site-list-entry h1 {
+	line-height: 0px;
+	font-size: 16pt;
+	padding-bottom: 10px;
+}
+
+.sw-site-list-entry-logo {
+    width: 100px;
+    max-width: 100px;
+    max-height: 100px;
+}
+
+.sw-site-list-entry-buttons {
+	float: right;
+	width: 150px;
+	height: 100%;
+	padding-left: 10px;
+	margin-left: 10px;
+	border-left: solid 1px #eeeeee;
+	text-align: right;
+}
+
+.k-grid-content {
+	min-height: 200px;
+}
+
+#metadataGrid {
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+</style>
+
 <!-- Title Bar -->
 <div class="sw-title-bar content">
 	<div class="sw-title-bar-left">
@@ -28,30 +83,70 @@
 		<h3 id="dialogHeader">Create Site</h3>
 	</div>
 	<div class="modal-body">
-		<form class="form-horizontal">
-			<div class="control-group">
-				<label class="control-label" for="siteName">Site Name:</label>
-				<div class="controls">
-					<input type="text" id="siteName" placeholder="Name"
-						class="input-xlarge">
-				</div>
+		<div id="tabs">
+			<ul>
+				<li class="k-state-active">Site Details</li>
+				<li>Metadata</li>
+				<li>Map Information</li>
+			</ul>
+			<div>
+				<form class="form-horizontal" style="padding-top: 20px;">
+					<div class="control-group">
+						<label class="control-label" for="siteName">Site Name</label>
+						<div class="controls">
+							<input type="text" id="siteName" placeholder="Name Shown for Site"
+								class="input-xlarge">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="siteDesc">Site
+							Description</label>
+						<div class="controls">
+							<textarea id="siteDesc" placeholder="Longer Description of Site"
+								class="input-xlarge" style="height: 120px;"></textarea>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="siteImgUrl">Image URL</label>
+						<div class="controls">
+							<input type="text" id="siteImgUrl" placeholder="URL for Site Logo"
+								class="input-xlarge">
+						</div>
+					</div>
+				</form>
 			</div>
-			<div class="control-group">
-				<label class="control-label" for="siteDesc">Site
-					Description:</label>
-				<div class="controls">
-					<textarea id="siteDesc" placeholder="Description"
-						class="input-xlarge"></textarea>
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="siteImgUrl">Image URL:</label>
-				<div class="controls">
-					<input type="text" id="siteImgUrl" placeholder="Image URL"
-						class="input-xlarge">
-				</div>
-			</div>
-		</form>
+			<div>
+				<div id="metadataGrid"></div>
+				<!--  
+	            <table id="metadataGrid">
+	                <colgroup>
+	                    <col/>
+	                    <col/>
+	                    <col/>
+	                </colgroup>
+	                <thead>
+	                    <tr>
+	                        <th>
+	                            Name
+	                        </th>
+	                        <th>
+	                            Value
+	                        </th>
+	                        <th>
+	                            &nbsp;
+	                        </th>
+	                    </tr>
+	                </thead>
+	                <tbody>
+	                    <tr>
+	                        <td colspan="3"></td>
+	                    </tr>
+	                </tbody>
+	            </table>			
+				-->
+            </div>
+			<div>Map Information</div>
+		</div>
 	</div>
 	<input id="siteToken" type="hidden" value="" />
 	<div class="modal-footer">
@@ -71,13 +166,13 @@
 		<div class="sw-site-list-entry-buttons">
 			<div class="btn-group">
 				<a class="btn btn-small btn-primary" title="Edit Site" 
-					href="javascript:void(0)" onclick="onEditClicked(event, '#:token#');">
+					href="javascript:void(0)" onclick="onSiteEditClicked(event, '#:token#');">
 					<i class="icon-pencil icon-white"></i></a>
 				<a class="btn btn-small btn-danger" title="Delete Site" 
-					href="javascript:void(0)" onclick="onDeleteClicked(event, '#:token#')">
+					href="javascript:void(0)" onclick="onSiteDeleteClicked(event, '#:token#')">
 					<i class="icon-remove icon-white"></i></a>
 				<a class="btn btn-small btn-success" title="Site Contents" 
-					href="javascript:void(0)" onclick="onOpenClicked(event, '#:token#')">
+					href="javascript:void(0)" onclick="onSiteOpenClicked(event, '#:token#')">
 					<i class="icon-chevron-right icon-white"></i></a>
 			</div>
 		</div>
@@ -88,27 +183,53 @@
 	</div>
 </script>
 
+<!-- Template for each row in metadata table -->
+<script id="rowTemplate" type="text/x-kendo-tmpl">
+	<tr data-uid="#:data.uid#">
+		<td role="gridcell">
+			#:data.name#
+		</td>
+		<td role="gridcell">
+			#:data.value#
+		</td>
+		<td>
+			<div class="btn-group">
+				<a class="btn btn-small btn-primary" title="Edit Entry" 
+					href="javascript:void(0)" onclick="onMetadataEditClicked(this);">
+					<i class="icon-pencil icon-white"></i></a>
+				<a class="btn btn-small btn-danger" title="Delete Entry" 
+					href="javascript:void(0)" onclick="onMetadataEditClicked(this);">
+					<i class="icon-remove icon-white"></i></a>
+			</div>
+		</td>
+	</tr>
+</script>
+
 <script>
 	/** Called when edit button is clicked */
-	function onEditClicked(e, siteToken) {
+	function onSiteEditClicked(e, siteToken) {
 		alert("Edit " + siteToken);
 		var event = e || window.event;
 		event.stopPropagation();
 	}
 	
 	/** Called when edit button is clicked */
-	function onDeleteClicked(e, siteToken) {
+	function onSiteDeleteClicked(e, siteToken) {
 		alert("Delete " + siteToken);
 		var event = e || window.event;
 		event.stopPropagation();
 	}
 	
 	/** Called when edit button is clicked */
-	function onOpenClicked(e, siteToken) {
+	function onSiteOpenClicked(e, siteToken) {
 		alert("Open " + siteToken);
 		var event = e || window.event;
 		event.stopPropagation();
 	}
+	
+	/** Initial grid data */
+	var gridData = [{name:"phone.number", value:"777-555-1212"}];
+	var metaDatasource;
 	
     $(document).ready(function() {
 		/** Create AJAX datasource for sites list */
@@ -140,6 +261,57 @@
 			dataSource : sitesDS,
 			template : kendo.template($("#siteEntry").html())
 		});
+		
+		/** Create the tab strip */
+		$("#tabs").kendoTabStrip({
+		});
+		
+		/** Local source for metadata entries */
+		metaDatasource = new kendo.data.DataSource({
+	        data: gridData,
+	        schema: {
+	        	model: {
+	        		id: "name",
+	        		fields: {
+	        			name: { type: "string" },
+	        			value: { type: "string" }
+	        		}
+	        	}
+	        }
+		});
+		
+		/** Grid for metadata */
+        $("#metadataGrid").kendoGrid({
+            dataSource: metaDatasource,
+            sortable: true,
+            toolbar: ["create"],
+			columns: [
+				{ field: "name", title: "Name", width: "120px" },
+				{ field: "value", title: "Value", width: "150px" },
+				{ command: ["edit", "destroy"], title: "&nbsp;", width: "190px" },
+			],
+            editable: "inline"
+        });
+		/*
+        $("#metadataGrid").kendoGrid({
+            dataSource: {
+                data: gridData,
+				schema: {
+					id: "name",
+					fields: {
+						name: { 
+							validation: { required: true } 
+        				},
+						value: { 
+						}
+					}
+				}
+            },
+            sortable: true,
+            rowTemplate: kendo.template($("#rowTemplate").html()),
+            editable: "inline"
+        });
+		*/
         
         /** Handle create dialog */
 		$('#btnAdd').click(function(event) {
