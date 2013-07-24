@@ -74,17 +74,16 @@
 	</div>
 	<h1>Manage Sites</h1>
 	<div class="sw-title-bar-right">
-		<a id="btnAdd" class="btn" href="#"><i
-			class="icon-plus icon-white"></i> Add New Site</a>
+		<a id="btn-add-site" class="btn" href="javascript:void(0)">
+			<i class="icon-plus icon-white"></i> Add New Site</a>
 	</div>
 </div>
 
 <!-- Dialog for create/update -->
 <div id="dialog" class="modal hide">
 	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal"
-			aria-hidden="true">&times;</button>
-		<h3 id="dialogHeader">Create Site</h3>
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h3 id="dialog-header">Create Site</h3>
 	</div>
 	<div class="modal-body">
 		<div id="tabs">
@@ -96,22 +95,22 @@
 			<div>
 				<form id="general-form" class="form-horizontal" style="padding-top: 20px;">
 					<div class="control-group">
-						<label class="control-label" for="cSiteName">Site Name</label>
+						<label class="control-label" for="gen-site-name">Site Name</label>
 						<div class="controls">
-							<input type="text" id="cSiteName" name="siteName" required class="input-xlarge">
+							<input type="text" id="gen-site-name" name="siteName" required class="input-xlarge">
 						</div>
 					</div>
 					<div class="control-group">
-						<label class="control-label" for="cSiteDesc">Site
+						<label class="control-label" for="gen-site-desc">Site
 							Description</label>
 						<div class="controls">
-							<textarea id="cSiteDesc" name="siteDesc" class="input-xlarge" style="height: 120px;"></textarea>
+							<textarea id="gen-site-desc" name="siteDesc" class="input-xlarge" style="height: 120px;"></textarea>
 						</div>
 					</div>
 					<div class="control-group">
-						<label class="control-label" for="cSiteImgUrl">Image URL</label>
+						<label class="control-label" for="gen-site-image-url">Image URL</label>
 						<div class="controls">
-							<input type="text" id="cSiteImgUrl" name="siteImgUrl" class="input-xlarge">
+							<input type="text" id="gen-site-image-url" name="siteImageUrl" class="input-xlarge">
 						</div>
 					</div>
 				</form>
@@ -122,77 +121,73 @@
 			<div>
 				<form class="form-horizontal" style="padding-top: 15px;">
 					<div class="control-group" style="border-bottom: 1px solid #eeeeee; padding-bottom: 10px;">
-						<label class="control-label" for="mapType">Map Type</label>
+						<label class="control-label" for="map-type">Map Type</label>
 						<div class="controls">
-							<input id="mapType" value="mapquest"/>
+							<input id="map-type"/>
 						</div>
 					</div>
 				</form>
-				<div id="mapTypePanels">
-					<div id="mapquest">
-						<form class="form-horizontal">
-							<div class="control-group">
-								<label class="control-label" for="mqCenterLatitude">Center Latitude</label>
-								<div class="controls">
-									<input type="text" id="mqCenterLatitude" class="input-large">
-								</div>
+				<div id="map-type-forms">
+					<form id="mapquest" class="form-horizontal">
+						<div class="control-group">
+							<label class="control-label" for="mqCenterLatitude">Center Latitude</label>
+							<div class="controls">
+								<input type="text" id="mqCenterLatitude" class="input-large">
 							</div>
-							<div class="control-group">
-								<label class="control-label" for="mqCenterLongitude">Center Longitude</label>
-								<div class="controls">
-									<input type="text" id="mqCenterLongitude" class="input-large">
-								</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="mqCenterLongitude">Center Longitude</label>
+							<div class="controls">
+								<input type="text" id="mqCenterLongitude" class="input-large">
 							</div>
-							<div class="control-group">
-								<label class="control-label" for="mqScale">Scale</label>
-								<div class="controls">
-									<input type="text" id="mqScale" class="input-large">
-								</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="mqScale">Scale</label>
+							<div class="controls">
+								<input type="text" id="mqScale" class="input-large">
 							</div>
-						</form>
-					</div>
-					<div id="geoserver" class="hide">
-						<form id="geoserver-form" class="form-horizontal">
-							<div class="control-group">
-								<label class="control-label" for="gsBaseUrl">GeoServer Base URL</label>
-								<div class="controls">
-									<input type="text" id="gsBaseUrl" name="baseUrl" required class="input-xlarge">
-								</div>
+						</div>
+					</form>
+					<form id="geoserver" class="form-horizontal hide">
+						<div class="control-group">
+							<label class="control-label" for="gsBaseUrl">GeoServer Base URL</label>
+							<div class="controls">
+								<input type="text" id="gsBaseUrl" name="baseUrl" required class="input-xlarge">
 							</div>
-							<div class="control-group">
-								<label class="control-label" for="gsLayerName">GeoServer Layer</label>
-								<div class="controls">
-									<input type="text" id="gsLayerName" name="layerName" required class="input-xlarge">
-								</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="gsLayerName">GeoServer Layer</label>
+							<div class="controls">
+								<input type="text" id="gsLayerName" name="layerName" required class="input-xlarge">
 							</div>
-							<div class="control-group">
-								<label class="control-label" for="gsCenterLatitude">Center Latitude</label>
-								<div class="controls">
-									<input type="text" id="gsCenterLatitude" class="input-large">
-								</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="gsCenterLatitude">Center Latitude</label>
+							<div class="controls">
+								<input type="text" id="gsCenterLatitude" class="input-large">
 							</div>
-							<div class="control-group">
-								<label class="control-label" for="gsCenterLongitude">Center Longitude</label>
-								<div class="controls">
-									<input type="text" id="gsCenterLongitude" class="input-large">
-								</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="gsCenterLongitude">Center Longitude</label>
+							<div class="controls">
+								<input type="text" id="gsCenterLongitude" class="input-large">
 							</div>
-							<div class="control-group">
-								<label class="control-label" for="gsScale">Scale</label>
-								<div class="controls">
-									<input type="text" id="gsScale" class="input-large">
-								</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="gsScale">Scale</label>
+							<div class="controls">
+								<input type="text" id="gsScale" class="input-large">
 							</div>
-						</form>
-					</div>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>
 	</div>
-	<input id="siteToken" type="hidden" value="" />
+	<input id="site-token" type="hidden" value="" />
 	<div class="modal-footer">
-		<a href="#" class="btn" data-dismiss="modal">Cancel</a> <a
-			id="dialogSubmit" href="#" class="btn btn-primary">Create</a>
+		<a href="javascript:void(0)" class="btn" data-dismiss="modal">Cancel</a> 
+		<a id="site-submit" href="javascript:void(0)" class="btn btn-primary">Create</a>
 	</div>
 </div>
 
@@ -249,9 +244,28 @@
 <script>
 	/** Called when edit button is clicked */
 	function onSiteEditClicked(e, siteToken) {
-		alert("Edit " + siteToken);
 		var event = e || window.event;
 		event.stopPropagation();
+		$.getJSON("${pageContext.request.contextPath}/api/sites/" + siteToken, 
+			onSiteGetSuccess, onSiteGetFailed);
+	}
+    
+    /** Called on successful site load request */
+    function onSiteGetSuccess(data, status, jqXHR) {
+		$('#dialog-header').html("Edit Site");
+		$('#dialog-submit').html("Save");
+		$('#dialog').modal('show');
+		$('#site-name').val(data.name);
+		$('#site-desc').val(data.description);
+		$('#site-image-url').val(data.imageUrl);
+		$('#site-token').val(data.token);
+    }
+    
+	/** Handle error on getting site */
+	function onSiteGetFailed(jqXHR, textStatus, errorThrown) {
+		var respError = jqXHR.getResponseHeader("X-SiteWhere-Error");
+		$('#submitResult').html(createAlertHtml("alert-error", "Edit Failed", 
+			"Unable to load site for edit. " + respError));
 	}
 	
 	/** Called when edit button is clicked */
@@ -352,76 +366,52 @@
     	});
         
         /** Handle create dialog */
-		$('#btnAdd').click(function(event) {
-			$('#dialogHeader').html("Create Site");
-			$('#dialogSubmit').html("Create");
+		$('#btn-add-site').click(function(event) {
+			$('#dialog-header').html("Create Site");
+			$('#dialog-submit').html("Create");
 			$('#dialog').modal('show');
-			$('#siteName').val("");
-			$('#siteDesc').val("");
-			$('#siteImgUrl').val("");
-			$('#siteToken').val("");
+			$('#site-name').val("");
+			$('#site-desc').val("");
+			$('#site-image-url').val("");
+			$('#site-token').val("");
 		});
         
-        /** Handle edit dialog */
-		$('#btnEdit').click(function(event) {
-			selectedRows = grid.select();
-			if (selectedRows.length > 0) {
-				var dataItem = grid.dataItem(selectedRows[0]);
-				$('#dialogHeader').html("Edit Site");
-				$('#dialogSubmit').html("Save");
-				$('#dialog').modal('show');
-				$('#siteName').val(dataItem.name);
-				$('#siteDesc').val(dataItem.description);
-				$('#siteImgUrl').val(dataItem.imageUrl);
-				$('#siteToken').val(dataItem.token);
-			}
-		});
-        
+        /** Validation for main form */
 		$('#general-form').validate({
 			rules: {
-				siteName: {
-					required: true
-				},
+				siteName: { required: true },
 			},
-			highlight: function(element) {
-				$(element).closest('.control-group').removeClass('success').addClass('error');
-			},
-			success: function(element) {
-				element.addClass('valid').closest('.control-group').removeClass('error').addClass('success');
-			}
+			highlight: doHighlight,
+			success: doSuccess
 		});
         
-		$('#geoserver-form').validate({
+        /** Validation for GeoServer form */
+		$('#geoserver').validate({
 			rules: {
-				baseUrl: {
-					required: true,
-				},
-				layerName: {
-					required: true
-				},
+				baseUrl: { required: true },
+				layerName: { required: true },
 			},
-			highlight: function(element) {
-				$(element).closest('.control-group').removeClass('success').addClass('error');
-			},
-			success: function(element) {
-				element.addClass('valid').closest('.control-group').removeClass('error').addClass('success');
-			}
+			highlight: doHighlight,
+			success: doSuccess
 		});
 		
         /** Handle dialog submit */
-		$('#dialogSubmit').click(function(event) {
+		$('#site-submit').click(function(event) {
 			event.preventDefault();
-			var valid = $('#general-form').validate();
-			var siteData = {
-				"token": $('#siteToken').val(), 
-				"name": $('#siteName').val(), 
-				"description": $('#siteDesc').val(), 
-				"imageUrl": $('#siteImgUrl').val(), 
-			}
-			if ($('#siteToken').val() == "") {
-				$.postJSON("${pageContext.request.contextPath}/api/sites", siteData, onSuccess, onCreateFail);
-			} else {
-				$.postJSON("${pageContext.request.contextPath}/api/sites/" + $('#siteToken').val(), siteData, onSuccess, onUpdateFail);
+			var mainValid = validateMainForm();
+			var mapValid = validateSelectedMapForm();
+			if (mainValid && mapValid) {
+				var siteToken = $('#site-token').val();
+				var siteData = {
+					"name": $('#siteName').val(), 
+					"description": $('#siteDesc').val(), 
+					"imageUrl": $('#siteImgUrl').val(), 
+				}
+				if ($('#site-token').val() == "") {
+					$.postJSON("${pageContext.request.contextPath}/api/sites", siteData, onSuccess, onCreateFail);
+				} else {
+					$.postJSON("${pageContext.request.contextPath}/api/sites/" + $('#site-token').val(), siteData, onSuccess, onUpdateFail);
+				}
 			}
 		});
         
@@ -447,14 +437,42 @@
 		
 		/** Called when map type dropdown value changes */
 		function onMapTypeChanged() {
-			var selectedMapType = $("#mapType").val();
-			$("#mapTypePanels").children().each(function(i) {
+			var selectedMapType = $("#map-type").val();
+			$("#map-type-forms").children().each(function(i) {
 				if (selectedMapType == $(this).attr("id")) {
 					$(this).removeClass("hide");
 				} else if (!$(this).hasClass("hide")) {
 					$(this).addClass("hide");
 				}
 			});
+		}
+		
+		/** Validate the main form */
+		function validateMainForm() {
+			return $('#general-form').valid();
+		}
+		
+		/** Validate form for the currently selected map type */
+		function validateSelectedMapForm() {
+			var valid = false;
+			var selectedMapType = $("#map-type").val();
+			$("#map-type-forms").children().each(function(i) {
+				var form = $(this);
+				if (selectedMapType == form.attr("id")) {
+					valid = valid || form.valid();
+				}
+			});
+			return valid;
+		}
+		
+		/** Handle highlighting errors */
+		function doHighlight(element) {
+			$(element).closest('.control-group').removeClass('success').addClass('error');
+		}
+		
+		/** Handle showing successful validation */
+		function doSuccess(element) {
+			element.addClass('valid').closest('.control-group').removeClass('error').addClass('success');
 		}
     });
 </script>
