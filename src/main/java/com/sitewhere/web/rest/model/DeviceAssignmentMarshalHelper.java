@@ -66,7 +66,7 @@ public class DeviceAssignmentMarshalHelper {
 		}
 		if (source.getAssetType() != AssetType.Unassociated) {
 			IAsset asset = manager.getAssetById(source.getAssetType(), source.getAssetId());
-			if (isIncludeAsset()) {
+			if (isIncludeAsset() || (asset == null)) {
 				if (asset instanceof HardwareAsset) {
 					result.setAssociatedHardware((HardwareAsset) asset);
 				}
@@ -77,9 +77,11 @@ public class DeviceAssignmentMarshalHelper {
 				result.setAssetId(source.getAssetId());
 				if (asset instanceof HardwareAsset) {
 					result.setAssetName(((HardwareAsset) asset).getName());
+					result.setAssetImageUrl(((HardwareAsset) asset).getImageUrl());
 				}
 				if (asset instanceof PersonAsset) {
 					result.setAssetName(((PersonAsset) asset).getName());
+					result.setAssetImageUrl(((PersonAsset) asset).getPhotoUrl());
 				}
 			}
 		}

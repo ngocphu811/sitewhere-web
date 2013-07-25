@@ -9,6 +9,8 @@
  */
 package com.sitewhere.web.rest.model;
 
+import org.apache.log4j.Logger;
+
 import com.sitewhere.rest.model.asset.HardwareAsset;
 import com.sitewhere.rest.model.device.Device;
 import com.sitewhere.rest.model.device.MetadataProviderEntity;
@@ -25,6 +27,9 @@ import com.sitewhere.spi.device.IDeviceAssignment;
  * @author dadams
  */
 public class DeviceMarshalHelper {
+
+	/** Static logger instance */
+	private static Logger LOGGER = Logger.getLogger(DeviceMarshalHelper.class);
 
 	/** Indicates whether device asset information is to be included */
 	private boolean includeAsset = true;
@@ -55,12 +60,17 @@ public class DeviceMarshalHelper {
 		} else {
 			result.setAssetId(source.getAssetId());
 			result.setAssetName(deviceAsset.getName());
+			result.setAssetImageUrl(deviceAsset.getImageUrl());
 		}
 		if (source.getAssignmentToken() != null) {
 			if (includeAssignment) {
-				IDeviceAssignment assignment = SiteWhereServer.getInstance().getDeviceManagement()
-						.getCurrentDeviceAssignment(source);
-				result.setAssignment(getAssignmentHelper().convert(assignment, manager));
+				try {
+					IDeviceAssignment assignment = SiteWhereServer.getInstance().getDeviceManagement()
+							.getCurrentDeviceAssignment(source);
+					result.setAssignment(getAssignmentHelper().convert(assignment, manager));
+				} catch (SiteWhereException e) {
+					LOGGER.warn("Device has token for non-existent assignment.");
+				}
 			} else {
 				result.setAssignmentToken(source.getAssignmentToken());
 			}
@@ -76,7 +86,7 @@ public class DeviceMarshalHelper {
 	protected DeviceAssignmentMarshalHelper getAssignmentHelper() {
 		if (assignmentHelper == null) {
 			assignmentHelper = new DeviceAssignmentMarshalHelper();
-			assignmentHelper.setIncludeAsset(true);
+			assignmentHelper.setIncludeAsset(false);
 			assignmentHelper.setIncludeDevice(false);
 			assignmentHelper.setIncludeSite(false);
 		}

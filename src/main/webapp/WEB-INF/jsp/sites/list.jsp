@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<c:set var="swtitle" value="Manage Sites" />
-<%@ include file="../top.inc"%>
+<c:set var="sitewhere_title" value="Manage Sites" />
+<c:set var="sitewhere_section" value="sites" />
+<%@ include file="../includes/top.inc"%>
 
 <style>
 .sw-site-list {
@@ -74,10 +75,10 @@
 			</li>
 			<li><a href="#">Sites</a> <span class="divider">/</span>
 			</li>
-			<li class="active">Manage Sites</li>
+			<li class="active"><c:out value="${sitewhere_title}"/></li>
 		</ul>
 	</div>
-	<h1>Manage Sites</h1>
+	<h1><c:out value="${sitewhere_title}"/></h1>
 	<div class="sw-title-bar-right">
 		<a id="btn-add-site" class="btn" href="javascript:void(0)">
 			<i class="icon-plus icon-white"></i> Add New Site</a>
@@ -195,8 +196,6 @@
 		<a id="dialog-submit" href="javascript:void(0)" class="btn btn-primary">Create</a>
 	</div>
 </div>
-
-<div id="submit-result"></div>
 
 <div id="sites" class="sw-site-list"></div>
 
@@ -562,4 +561,4 @@
     });
 </script>
 
-<%@ include file="../bottom.inc"%>
+<%@ include file="../includes/bottom.inc"%>

@@ -197,7 +197,7 @@ public class DevicesController extends SiteWhereController {
 	}
 
 	/**
-	 * List all devices.
+	 * List devices that match given criteria.
 	 * 
 	 * @return
 	 * @throws SiteWhereException
@@ -205,15 +205,18 @@ public class DevicesController extends SiteWhereController {
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "List devices that match certain criteria")
-	public SearchResults<Device> listDevices(@RequestParam(defaultValue = "false") boolean includeDeleted,
-			@RequestParam(defaultValue = "100") int count) throws SiteWhereException {
+	public SearchResults<Device> listDevices(
+			@ApiParam(value = "Include deleted", required = false) @RequestParam(defaultValue = "false") boolean includeDeleted,
+			@ApiParam(value = "Include assignment if associated", required = false) @RequestParam(defaultValue = "false") boolean includeAssignment,
+			@ApiParam(value = "Max records to return", required = false) @RequestParam(defaultValue = "100") int count)
+			throws SiteWhereException {
 		List<Device> devicesConv = new ArrayList<Device>();
 		DeviceSearchCriteria criteria = new DeviceSearchCriteria();
 		criteria.setIncludeDeleted(includeDeleted);
 		List<IDevice> devices = SiteWhereServer.getInstance().getDeviceManagement().listDevices(criteria);
 		DeviceMarshalHelper helper = new DeviceMarshalHelper();
 		helper.setIncludeAsset(false);
-		helper.setIncludeAssignment(false);
+		helper.setIncludeAssignment(includeAssignment);
 		for (IDevice device : devices) {
 			devicesConv.add(helper.convert(device, SiteWhereServer.getInstance().getAssetModuleManager()));
 		}
