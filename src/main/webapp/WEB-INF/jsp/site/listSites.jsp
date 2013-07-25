@@ -89,8 +89,8 @@
 		<div id="tabs">
 			<ul>
 				<li class="k-state-active">Site Details</li>
-				<li>Metadata</li>
 				<li>Map Information</li>
+				<li>Metadata</li>
 			</ul>
 			<div>
 				<form id="general-form" class="form-horizontal" style="padding-top: 20px;">
@@ -116,9 +116,6 @@
 				</form>
 			</div>
 			<div>
-				<div id="metadataGrid"></div>
-            </div>
-			<div>
 				<form class="form-horizontal" style="padding-top: 15px;">
 					<div class="control-group" style="border-bottom: 1px solid #eeeeee; padding-bottom: 10px;">
 						<label class="control-label" for="map-type">Map Type</label>
@@ -130,68 +127,71 @@
 				<div id="map-type-forms">
 					<form id="mapquest" class="form-horizontal">
 						<div class="control-group">
-							<label class="control-label" for="mqCenterLatitude">Center Latitude</label>
+							<label class="control-label" for="mq-center-latitude">Center Latitude</label>
 							<div class="controls">
-								<input type="text" id="mqCenterLatitude" class="input-large">
+								<input type="text" id="mq-center-latitude" class="input-large">
 							</div>
 						</div>
 						<div class="control-group">
-							<label class="control-label" for="mqCenterLongitude">Center Longitude</label>
+							<label class="control-label" for="mq-center-longitude">Center Longitude</label>
 							<div class="controls">
-								<input type="text" id="mqCenterLongitude" class="input-large">
+								<input type="text" id="mq-center-longitude" class="input-large">
 							</div>
 						</div>
 						<div class="control-group">
-							<label class="control-label" for="mqScale">Scale</label>
+							<label class="control-label" for="mq-scale">Scale</label>
 							<div class="controls">
-								<input type="text" id="mqScale" class="input-large">
+								<input type="text" id="mq-scale" class="input-large">
 							</div>
 						</div>
 					</form>
 					<form id="geoserver" class="form-horizontal hide">
 						<div class="control-group">
-							<label class="control-label" for="gsBaseUrl">GeoServer Base URL</label>
+							<label class="control-label" for="gs-base-url">GeoServer Base URL</label>
 							<div class="controls">
-								<input type="text" id="gsBaseUrl" name="baseUrl" required class="input-xlarge">
+								<input type="text" id="gs-base-url" name="baseUrl" required class="input-xlarge">
 							</div>
 						</div>
 						<div class="control-group">
-							<label class="control-label" for="gsLayerName">GeoServer Layer</label>
+							<label class="control-label" for="gs-layer-name">GeoServer Layer</label>
 							<div class="controls">
-								<input type="text" id="gsLayerName" name="layerName" required class="input-xlarge">
+								<input type="text" id="gs-layer-name" name="layerName" required class="input-xlarge">
 							</div>
 						</div>
 						<div class="control-group">
-							<label class="control-label" for="gsCenterLatitude">Center Latitude</label>
+							<label class="control-label" for="gs-center-latitude">Center Latitude</label>
 							<div class="controls">
-								<input type="text" id="gsCenterLatitude" class="input-large">
+								<input type="text" id="gs-center-latitude" class="input-large">
 							</div>
 						</div>
 						<div class="control-group">
-							<label class="control-label" for="gsCenterLongitude">Center Longitude</label>
+							<label class="control-label" for="gs-center-longitude">Center Longitude</label>
 							<div class="controls">
-								<input type="text" id="gsCenterLongitude" class="input-large">
+								<input type="text" id="gs-center-longitude" class="input-large">
 							</div>
 						</div>
 						<div class="control-group">
-							<label class="control-label" for="gsScale">Scale</label>
+							<label class="control-label" for="gs-scale">Scale</label>
 							<div class="controls">
-								<input type="text" id="gsScale" class="input-large">
+								<input type="text" id="gs-scale" class="input-large">
 							</div>
 						</div>
 					</form>
 				</div>
 			</div>
+			<div>
+				<div id="metadataGrid"></div>
+            </div>
 		</div>
 	</div>
 	<input id="site-token" type="hidden" value="" />
 	<div class="modal-footer">
 		<a href="javascript:void(0)" class="btn" data-dismiss="modal">Cancel</a> 
-		<a id="site-submit" href="javascript:void(0)" class="btn btn-primary">Create</a>
+		<a id="dialog-submit" href="javascript:void(0)" class="btn btn-primary">Create</a>
 	</div>
 </div>
 
-<div id="submitResult"></div>
+<div id="submit-result"></div>
 
 <div id="sites" class="sw-site-list"></div>
 
@@ -255,10 +255,69 @@
 		$('#dialog-header').html("Edit Site");
 		$('#dialog-submit').html("Save");
 		$('#dialog').modal('show');
-		$('#site-name').val(data.name);
-		$('#site-desc').val(data.description);
-		$('#site-image-url').val(data.imageUrl);
+		$('#gen-site-name').val(data.name);
+		$('#gen-site-desc').val(data.description);
+		$('#gen-site-image-url').val(data.imageUrl);
 		$('#site-token').val(data.token);
+		metaDatasource.data(data.metadata);
+		selectMapType(data.mapType);
+		loadMapFormFromMetadata(data);
+		validateMainForm();
+		validateSelectedMapForm();
+    }
+    
+    /** Based on map type, load fields into proper form */
+    function loadMapFormFromMetadata(data) {
+    	var metadata = data.mapMetadata.metadata;
+    	var lookup = {};
+    	for (var i = 0, len = metadata.length; i < len; i++) {
+    	    lookup[metadata[i].name] = metadata[i];
+    	}
+    	
+    	if (data.mapType == "mapquest") {
+    		$('#mq-center-latitude').val(getMetadataValue(lookup, 'centerLatitude'));
+    		$('#mq-center-longitude').val(getMetadataValue(lookup, 'centerLongitude'));
+    		$('#mq-scale').val(getMetadataValue(lookup, 'scale'));
+    	} else if (data.mapType == "geoserver") {
+    		$('#gs-base-url').val(getMetadataValue(lookup, 'geoserverBaseUrl'));
+    		$('#gs-layer-name').val(getMetadataValue(lookup, 'geoserverLayerName'));
+    		$('#gs-center-latitude').val(getMetadataValue(lookup, 'centerLatitude'));
+    		$('#gs-center-longitude').val(getMetadataValue(lookup, 'centerLongitude'));
+    		$('#gs-scale').val(getMetadataValue(lookup, 'scale'));
+    	}
+    }
+    
+    /** Pull data from map form and populate metadata */
+    function buildMapMetadata() {
+    	var metadata = [];
+		var mapType = $("#map-type").val();
+		
+		if (mapType == "mapquest") {
+			addMapMetadataEntry(metadata, 'centerLatitude', $('#mq-center-latitude').val());
+			addMapMetadataEntry(metadata, 'centerLongitude', $('#mq-center-longitude').val());
+			addMapMetadataEntry(metadata, 'scale', $('#mq-scale').val());
+		} else if (mapType == "geoserver") {
+			addMapMetadataEntry(metadata, 'geoserverBaseUrl', $('#gs-base-url').val());
+			addMapMetadataEntry(metadata, 'geoserverLayerName', $('#gs-layer-name').val());
+			addMapMetadataEntry(metadata, 'centerLatitude', $('#gs-center-latitude').val());
+			addMapMetadataEntry(metadata, 'centerLongitude', $('#gs-center-longitude').val());
+			addMapMetadataEntry(metadata, 'scale', $('#gs-scale').val());
+		}
+		return { "metadata": metadata };
+    }
+    
+    /** Add a single entry into the map metadata */
+    function addMapMetadataEntry(metadata, name, value) {
+    	var entry = {"name": name, "value": value};
+    	metadata.push(entry);
+    }
+    
+    /** Gets the value associated with a given field name */
+    function getMetadataValue(lookup, field) {
+    	if (lookup && lookup[field]) {
+    		return lookup[field].value;
+    	}
+    	return "";
     }
     
 	/** Handle error on getting site */
@@ -282,8 +341,7 @@
 		event.stopPropagation();
 	}
 	
-	/** Initial grid data */
-	var gridData = [{name:"phone.number", value:"777-555-1212"}];
+	/** Reference for metadata datasource */
 	var metaDatasource;
 	
 	/** Available map types shown in dropdown */
@@ -291,6 +349,43 @@
 		{ text: "MapQuest World Map", value: "mapquest" },
 		{ text: "GeoServer Layer", value: "geoserver" },
 	];
+	
+	/** Select the given map type and show its associated panel */
+	function selectMapType(type) {
+		var dropdownlist = $("#map-type").data("kendoDropDownList");
+		dropdownlist.value(type);
+		onMapTypeChanged();
+	}
+	
+	/** Called when map type dropdown value changes */
+	function onMapTypeChanged() {
+		var selectedMapType = $("#map-type").val();
+		$("#map-type-forms").children().each(function(i) {
+			if (selectedMapType == $(this).attr("id")) {
+				$(this).removeClass("hide");
+			} else if (!$(this).hasClass("hide")) {
+				$(this).addClass("hide");
+			}
+		});
+	}
+	
+	/** Validate the main form */
+	function validateMainForm() {
+		return $('#general-form').valid();
+	}
+	
+	/** Validate form for the currently selected map type */
+	function validateSelectedMapForm() {
+		var valid = false;
+		var selectedMapType = $("#map-type").val();
+		$("#map-type-forms").children().each(function(i) {
+			var form = $(this);
+			if (selectedMapType == form.attr("id")) {
+				valid = valid || form.valid();
+			}
+		});
+		return valid;
+	}
 	
     $(document).ready(function() {
 		/** Create AJAX datasource for sites list */
@@ -330,7 +425,7 @@
 		
 		/** Local source for metadata entries */
 		metaDatasource = new kendo.data.DataSource({
-	        data: gridData,
+	        data: new Array(),
 	        schema: {
 	        	model: {
 	        		id: "name",
@@ -357,7 +452,7 @@
         });
 
     	// create DropDownList from input HTML element
-    	$("#mapType").kendoDropDownList({
+    	$("#map-type").kendoDropDownList({
     		dataTextField: "text",
     		dataValueField: "value",
     	    dataSource: mapTypes,
@@ -374,6 +469,7 @@
 			$('#site-desc').val("");
 			$('#site-image-url').val("");
 			$('#site-token').val("");
+			metaDatasource.data(new Array());
 		});
         
         /** Validation for main form */
@@ -396,21 +492,27 @@
 		});
 		
         /** Handle dialog submit */
-		$('#site-submit').click(function(event) {
+		$('#dialog-submit').click(function(event) {
 			event.preventDefault();
 			var mainValid = validateMainForm();
 			var mapValid = validateSelectedMapForm();
 			if (mainValid && mapValid) {
 				var siteToken = $('#site-token').val();
+				var mapMetadata = buildMapMetadata();
 				var siteData = {
-					"name": $('#siteName').val(), 
-					"description": $('#siteDesc').val(), 
-					"imageUrl": $('#siteImgUrl').val(), 
+					"name": $('#gen-site-name').val(), 
+					"description": $('#gen-site-desc').val(), 
+					"imageUrl": $('#gen-site-image-url').val(), 
+					"metadata": metaDatasource.data(),
+					"mapType": $('#map-type').val(), 
+					"mapMetadata": mapMetadata,
 				}
-				if ($('#site-token').val() == "") {
-					$.postJSON("${pageContext.request.contextPath}/api/sites", siteData, onSuccess, onCreateFail);
+				if (siteToken == "") {
+					$.postJSON("${pageContext.request.contextPath}/api/sites", 
+							siteData, onSuccess, onCreateFail);
 				} else {
-					$.postJSON("${pageContext.request.contextPath}/api/sites/" + $('#site-token').val(), siteData, onSuccess, onUpdateFail);
+					$.putJSON("${pageContext.request.contextPath}/api/sites/" + siteToken, 
+							siteData, onSuccess, onUpdateFail);
 				}
 			}
 		});
@@ -423,46 +525,16 @@
         
 		/** Handle failed call to create site */
 		function onCreateFail(jqXHR, textStatus, errorThrown) {
-			var respError = jqXHR.getResponseHeader("SiteWhere-Error");
+			var respError = jqXHR.getResponseHeader("X-SiteWhere-Error");
 			$('#submitResult').html(createAlertHtml("alert-error", "Create Failed", 
 				"Site was not created. " + respError));
 		}
         
 		/** Handle failed call to update site */
 		function onUpdateFail(jqXHR, textStatus, errorThrown) {
-			var respError = jqXHR.getResponseHeader("SiteWhere-Error");
+			var respError = jqXHR.getResponseHeader("X-SiteWhere-Error");
 			$('#submitResult').html(createAlertHtml("alert-error", "Update Failed", 
 				"Site was not updated. " + respError));
-		}
-		
-		/** Called when map type dropdown value changes */
-		function onMapTypeChanged() {
-			var selectedMapType = $("#map-type").val();
-			$("#map-type-forms").children().each(function(i) {
-				if (selectedMapType == $(this).attr("id")) {
-					$(this).removeClass("hide");
-				} else if (!$(this).hasClass("hide")) {
-					$(this).addClass("hide");
-				}
-			});
-		}
-		
-		/** Validate the main form */
-		function validateMainForm() {
-			return $('#general-form').valid();
-		}
-		
-		/** Validate form for the currently selected map type */
-		function validateSelectedMapForm() {
-			var valid = false;
-			var selectedMapType = $("#map-type").val();
-			$("#map-type-forms").children().each(function(i) {
-				var form = $(this);
-				if (selectedMapType == form.attr("id")) {
-					valid = valid || form.valid();
-				}
-			});
-			return valid;
 		}
 		
 		/** Handle highlighting errors */

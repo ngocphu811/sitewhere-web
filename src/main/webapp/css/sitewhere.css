@@ -145,6 +145,11 @@ td[role="gridcell"] > input[type="text"] {
 	float: right;
 }
 
+/** Remove underline on tabs */
+li[role="tab"] > a:hover {
+	text-decoration: none;
+}
+
 label.valid {
     width: 24px;
     height: 24px;

@@ -43,7 +43,6 @@ import com.sitewhere.spi.device.IDeviceLocation;
 import com.sitewhere.spi.device.IDeviceMeasurements;
 import com.sitewhere.spi.device.ISite;
 import com.sitewhere.spi.device.IZone;
-import com.sitewhere.spi.device.request.ISiteCreateRequest;
 import com.sitewhere.spi.error.ErrorCode;
 import com.sitewhere.spi.error.ErrorLevel;
 import com.sitewhere.web.rest.model.DeviceAssignmentMarshalHelper;
@@ -77,6 +76,23 @@ public class SitesController extends SiteWhereController {
 	}
 
 	/**
+	 * Get information for a given site based on site token.
+	 * 
+	 * @param siteToken
+	 * @return
+	 * @throws SiteWhereException
+	 */
+	@RequestMapping(value = "/{siteToken}", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(value = "Get a site by unique token")
+	public Site getSiteByToken(
+			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken)
+			throws SiteWhereException {
+		ISite site = SiteWhereServer.getInstance().getDeviceManagement().getSiteByToken(siteToken);
+		return Site.copy(site);
+	}
+
+	/**
 	 * Update information for a site.
 	 * 
 	 * @param input
@@ -88,7 +104,7 @@ public class SitesController extends SiteWhereController {
 	@ApiOperation(value = "Update an existing site")
 	public Site updateSite(
 			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken,
-			@RequestBody ISiteCreateRequest request) throws SiteWhereException {
+			@RequestBody SiteCreateRequest request) throws SiteWhereException {
 		ISite site = SiteWhereServer.getInstance().getDeviceManagement().updateSite(siteToken, request);
 		return Site.copy(site);
 	}
