@@ -19,20 +19,25 @@
 	cursor: pointer;
 }
 
-.sw-site-list-entry img {
-	float: left;
-    border: 1px solid #cccccc;
-    margin-right: 15px;
-}
-
 .sw-site-list-entry h1 {
 	line-height: 0px;
 	font-size: 16pt;
 	padding-bottom: 10px;
 }
 
+.sw-site-list-entry-logowrapper {
+	float: left;
+	margin-right: 15px;	
+	width: 100px;
+	height: 100px;
+	background-color: #f0f0f0;
+	border: 1px solid #dddddd;
+}
+
 .sw-site-list-entry-logo {
-    width: 100px;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
     max-width: 100px;
     max-height: 100px;
 }
@@ -197,8 +202,10 @@
 
 <!-- Asset item template -->
 <script type="text/x-kendo-tmpl" id="siteEntry">
-	<div class="sw-site-list-entry gradient-bg" onclick="onOpenClicked(event, '#:token#')">
-		<img class="sw-site-list-entry-logo" src="#:imageUrl#" width="100"/>
+	<div class="sw-site-list-entry gradient-bg" onclick="onSiteOpenClicked(event, '#:token#')">
+		<div class="sw-site-list-entry-logowrapper">
+			<img class="sw-site-list-entry-logo" src="#:imageUrl#" width="100"/>
+		</div>
 		<div class="sw-site-list-entry-buttons">
 			<div class="btn-group">
 				<a class="btn btn-small btn-primary" title="Edit Site" 
@@ -252,6 +259,7 @@
     
     /** Called on successful site load request */
     function onSiteGetSuccess(data, status, jqXHR) {
+		clearDialog();
 		$('#dialog-header').html("Edit Site");
 		$('#dialog-submit').html("Save");
 		$('#dialog').modal('show');
@@ -318,6 +326,13 @@
     		return lookup[field].value;
     	}
     	return "";
+    }
+    
+    /** Clear all dialog fields */
+    function clearDialog() {
+    	$('#general-form')[0].reset();
+    	$('#mapquest')[0].reset();
+    	$('#geoserver')[0].reset();
     }
     
 	/** Handle error on getting site */
@@ -462,12 +477,10 @@
         
         /** Handle create dialog */
 		$('#btn-add-site').click(function(event) {
+			clearDialog();
 			$('#dialog-header').html("Create Site");
 			$('#dialog-submit').html("Create");
 			$('#dialog').modal('show');
-			$('#site-name').val("");
-			$('#site-desc').val("");
-			$('#site-image-url').val("");
 			$('#site-token').val("");
 			metaDatasource.data(new Array());
 		});
