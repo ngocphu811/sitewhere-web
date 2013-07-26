@@ -10,7 +10,7 @@
 
 .sw-site-list-entry {
 	clear: both;
-	height: 100px;
+	height: 80px;
 	border: 1px solid #dcdcdc;
 	padding: 10px;
 	margin-bottom: 15px;
@@ -20,17 +20,24 @@
 	cursor: pointer;
 }
 
-.sw-site-list-entry h1 {
-	line-height: 0px;
-	font-size: 16pt;
-	padding-bottom: 10px;
+.sw-site-list-entry-heading {
+	font-size: 14pt;
+	font-weight: bold;
+	line-height: 1;
+}
+
+.sw-site-list-entry-label {
+	font-size: 10pt;
+	font-weight: bold;
+	min-width: 70px;
+	display: inline-block;
 }
 
 .sw-site-list-entry-logowrapper {
 	float: left;
 	margin-right: 15px;	
-	width: 100px;
-	height: 100px;
+	width: 80px;
+	height: 80px;
 	background-color: #f0f0f0;
 	border: 1px solid #dddddd;
 }
@@ -39,18 +46,18 @@
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
-    max-width: 100px;
-    max-height: 100px;
+    max-width: 80px;
+    max-height: 80px;
 }
 
-.sw-site-list-entry-buttons {
+.sw-site-list-entry-actions {
 	float: right;
-	width: 150px;
+	width: 250px;
 	height: 100%;
 	padding-left: 10px;
 	margin-left: 10px;
-	border-left: solid 1px #eeeeee;
-	text-align: right;
+	border-left: solid 1px #e0e0e0;
+	position: relative;
 }
 
 .k-grid-content {
@@ -66,24 +73,6 @@
 	margin-bottom: 15px;
 }
 </style>
-
-<!-- Title Bar -->
-<div class="sw-title-bar content">
-	<div class="sw-title-bar-left">
-		<ul class="breadcrumb sw-breadcrumb">
-			<li><a href="../home">Home</a> <span class="divider">/</span>
-			</li>
-			<li><a href="#">Sites</a> <span class="divider">/</span>
-			</li>
-			<li class="active"><c:out value="${sitewhere_title}"/></li>
-		</ul>
-	</div>
-	<h1><c:out value="${sitewhere_title}"/></h1>
-	<div class="sw-title-bar-right">
-		<a id="btn-add-site" class="btn" href="javascript:void(0)">
-			<i class="icon-plus icon-white"></i> Add New Site</a>
-	</div>
-</div>
 
 <!-- Dialog for create/update -->
 <div id="dialog" class="modal hide">
@@ -197,29 +186,43 @@
 	</div>
 </div>
 
+<!-- Title Bar -->
+<div class="sw-title-bar content k-header">
+	<h1><c:out value="${sitewhere_title}"/></h1>
+	<div class="sw-title-bar-right">
+		<a id="btn-filter-results" class="btn" href="javascript:void(0)">
+			<i class="icon-search"></i> Filter Results</a>
+		<a id="btn-add-site" class="btn" href="javascript:void(0)">
+			<i class="icon-plus"></i> Add New Site</a>
+	</div>
+</div>
 <div id="sites" class="sw-site-list"></div>
+<div id="pager" class="k-pager-wrap"></div>
 
-<!-- Asset item template -->
-<script type="text/x-kendo-tmpl" id="siteEntry">
-	<div class="sw-site-list-entry gradient-bg" onclick="onSiteOpenClicked(event, '#:token#')">
+<!-- Template for site row -->
+<script type="text/x-kendo-tmpl" id="site-entry">
+	<div class="sw-site-list-entry gradient-bg" onclick="onSiteOpenClicked(event, '#:token#')"
+		title="View Site">
 		<div class="sw-site-list-entry-logowrapper">
 			<img class="sw-site-list-entry-logo" src="#:imageUrl#" width="100"/>
 		</div>
-		<div class="sw-site-list-entry-buttons">
-			<div class="btn-group">
+		<div class="sw-site-list-entry-actions">
+			<p class="ellipsis"><span class="sw-site-list-entry-label">Created:</span> #= formattedDate(createdDate) #</p>
+			<p class="ellipsis"><span class="sw-site-list-entry-label">Updated:</span> #= formattedDate(updatedDate) #</p>
+			<div class="btn-group btn-group-vertical" style="position: absolute; right: 0px; top: 3px;">
 				<a class="btn btn-small btn-primary" title="Edit Site" 
 					href="javascript:void(0)" onclick="onSiteEditClicked(event, '#:token#');">
 					<i class="icon-pencil icon-white"></i></a>
 				<a class="btn btn-small btn-danger" title="Delete Site" 
 					href="javascript:void(0)" onclick="onSiteDeleteClicked(event, '#:token#')">
 					<i class="icon-remove icon-white"></i></a>
-				<a class="btn btn-small btn-success" title="Site Contents" 
+				<a class="btn btn-small btn-success" title="View Site" 
 					href="javascript:void(0)" onclick="onSiteOpenClicked(event, '#:token#')">
 					<i class="icon-chevron-right icon-white"></i></a>
 			</div>
 		</div>
 		<div>
-			<h1>#:name#</h1>
+			<p class="sw-site-list-entry-heading ellipsis">#:name#</p>
 			<p>#:description#</p>
 		</div>
 	</div>
@@ -416,7 +419,10 @@
 				parse:function (response) {
 				    $.each(response.results, function (index, item) {
 				        if (item.createdDate && typeof item.createdDate === "string") {
-				        	item.createdDate = kendo.parseDate(item.createdDate, "yyyy-MM-ddTHH:mm:ss");
+				        	item.createdDate = kendo.parseDate(item.createdDate);
+				        }
+				        if (item.updatedDate && typeof item.updatedDate === "string") {
+				        	item.updatedDate = kendo.parseDate(item.updatedDate);
 				        }
 				    });
 				    return response;
@@ -429,8 +435,12 @@
 		/** Create the hardware list */
 		$("#sites").kendoListView({
 			dataSource : sitesDS,
-			template : kendo.template($("#siteEntry").html())
+			template : kendo.template($("#site-entry").html())
 		});
+		
+        $("#pager").kendoPager({
+            dataSource: sitesDS
+        });
 		
 		/** Create the tab strip */
 		$("#tabs").kendoTabStrip({

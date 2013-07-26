@@ -401,7 +401,6 @@ body #content_message {
 }
 
 body #header {
-    background-color: #f0f0f0;
     padding: 7px;
     border-bottom: 1px solid #cccccc;
 }
@@ -410,7 +409,12 @@ body #header form#api_selector {
     display: block;
     clear: none;
     float: right;
-    padding-top: 7px;
+    padding-top: 23px;
+}
+
+.sw-top-bar {
+	height: 2px;
+	background-color: #dc0000;
 }
 
 body #header form#api_selector .input {

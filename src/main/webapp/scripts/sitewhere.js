@@ -31,3 +31,12 @@ $.getJSON = function(url, onSuccess, onFail) {
 		'error' : onFail
 	});
 }
+
+// Format date if available, otherwise, show N/A
+function formattedDate(date) {
+	if (date) {
+		return kendo.toString(date, 'g');
+	}
+	return "N/A";
+}
+
