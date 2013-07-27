@@ -94,11 +94,66 @@
 	text-align: center;
 }
 
-#metadataGrid {
+#device-metadata {
 	margin-top: 15px;
 	margin-bottom: 15px;
 }
 </style>
+
+<!-- Dialog for create/update -->
+<div id="dialog" class="modal hide">
+	<div class="modal-header k-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h3 id="dialog-header">Create Device</h3>
+	</div>
+	<div class="modal-body">
+		<div id="tabs">
+			<ul>
+				<li class="k-state-active">Device Details</li>
+				<li>Hardware</li>
+				<li>Metadata</li>
+			</ul>
+			<div>
+				<form id="general-form" class="form-horizontal" style="padding-top: 20px;">
+					<div class="control-group">
+						<label class="control-label" for="device-hardware-id">Hardware Id</label>
+						<div class="controls">
+							<input type="text" id="device-hardware-id" name="hardwareId" class="input-xlarge">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="device-comments">Comments</label>
+						<div class="controls">
+							<textarea id="device-comments" name="comments" class="input-xlarge" style="height: 10em;"></textarea>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div>
+				<form id="hardware-form" class="form-horizontal form-search" style="padding-top: 20px;">
+					<div class="control-group">
+						<label class="control-label" for="hardware-search">Choose Hardware Type</label>
+						<div class="controls">
+							<div class="input-append">
+	    						<input class="input-xlarge" id="hardware-search" type="text">
+								<span class="add-on"><i class="icon-search"></i></span>
+	    					</div>
+	    				</div>
+	    			</div>	
+	    		</form>		
+				<div id="hardware-matches" style="height: 200px; overflow: auto;"></div>
+    		</div>
+			<div>
+				<div id="device-metadata"></div>
+            </div>
+		</div>
+	</div>
+	<input id="dialog-mode" type="hidden" value="create" />
+	<div class="modal-footer">
+		<a href="javascript:void(0)" class="btn" data-dismiss="modal">Cancel</a> 
+		<a id="dialog-submit" href="javascript:void(0)" class="btn btn-primary">Create</a>
+	</div>
+</div>
 
 <!-- Title Bar -->
 <div class="sw-title-bar content k-header">
@@ -161,7 +216,31 @@
 	</div>
 </script>
 
+<%@ include file="../includes/asset-templates.inc"%>
+
 <script>
+	/** Reference for metadata datasource */
+	var metaDatasource;
+	
+	/** Reference for hardware search datasource */
+	var hardwareDS;
+	
+	/** Used for delayed submit on search */
+	var timeout;
+	
+	/** Called when hardware search criteria has changed */
+	function onHardwareSearchCriteriaUpdated() {
+		var criteria = $('#hardware-search').val();
+		var url = "${pageContext.request.contextPath}/api/assets/hardware?criteria=" + criteria;
+		hardwareDS.transport.options.read.url = url;
+		hardwareDS.read();
+	}
+    
+    /** Clear all dialog fields */
+    function clearDialog() {
+    	$('#general-form')[0].reset();
+    }
+	
     $(document).ready(function() {
 		/** Create AJAX datasource for devices list */
 		var devicesDS = new kendo.data.DataSource({
@@ -204,9 +283,77 @@
         $("#pager").kendoPager({
             dataSource: devicesDS
         });
-        
+		
+		/** Create the tab strip */
+		$("#tabs").kendoTabStrip({
+			animation: false
+		});
+		
+		/** Local source for metadata entries */
+		metaDatasource = new kendo.data.DataSource({
+	        data: new Array(),
+	        schema: {
+	        	model: {
+	        		id: "name",
+	        		fields: {
+	        			name: { type: "string" },
+	        			value: { type: "string" }
+	        		}
+	        	}
+	        }
+		});
+		
+		/** Grid for metadata */
+        $("#device-metadata").kendoGrid({
+            dataSource: metaDatasource,
+            sortable: true,
+            toolbar: ["create"],
+			columns: [
+				{ field: "name", title: "Name", width: "125px" },
+				{ field: "value", title: "Value", width: "125px" },
+				{ command: ["edit", "destroy"], title: "&nbsp;", width: "175px", 
+						attributes: { "class" : "command-buttons"} },
+			],
+            editable: "inline"
+        });
+		
+		/** Create AJAX datasource for hardware search */
+		hardwareDS = new kendo.data.DataSource({
+			autoBind: false,
+			transport : {
+				read : {
+					url : "${pageContext.request.contextPath}/api/assets/hardware",
+					dataType : "json",
+				}
+			},
+			schema : {
+				data: "results",
+				total: "numResults",
+			},
+			pageSize: 10
+		});
+		
+		/** Create the hardware match list */
+		$("#hardware-matches").kendoListView({
+			dataSource : hardwareDS,
+			selectable : "single",
+			template : kendo.template($("#hardware-asset-entry").html())
+		});
+		
+		/** Update hardware search datasource based on entered criteria */
+		$("#hardware-search").bind("change paste keyup", function() {
+		    window.clearTimeout(timeout);
+		    timeout = window.setTimeout(onHardwareSearchCriteriaUpdated, 300); 
+		});
+		
         /** Handle create dialog */
 		$('#btn-add-device').click(function(event) {
+			clearDialog();
+			$('#dialog-header').html("Create Device");
+			$('#dialog-submit').html("Create");
+			$('#dialog').modal('show');
+			$('#dialog-mode').val("create");
+			metaDatasource.data(new Array());
 		});
     });
 </script>

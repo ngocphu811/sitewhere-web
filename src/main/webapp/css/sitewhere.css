@@ -145,10 +145,37 @@ td[role="gridcell"] > input[type="text"] {
 	width: inherit;
 }
 
+.modal-header {
+	border-bottom: 1px solid rgb(204, 204, 204);
+	border-top: 3px solid rgb(220, 0, 0);
+}
+
 .k-state-selected, .k-state-selected:link, .k-list > .k-state-selected, .k-list > .k-state-focused, .k-list > .k-state-highlight, .k-panel > .k-state-selected, .k-button:active, .k-ghost-splitbar-vertical, .k-ghost-splitbar-horizontal, .k-draghandle.k-state-selected:hover {
     color: rgb(255, 255, 255);
     background-color: rgb(220, 0, 0);
     border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+.k-button:hover, .k-autocomplete.k-state-hover, .k-picker-wrap.k-state-hover, .k-numeric-wrap.k-state-hover, .k-dropdown-wrap.k-state-hover, .k-textbox:hover, .k-state-hover, .k-state-hover:hover, .k-pager-wrap .k-link:hover, .k-other-month.k-state-hover .k-link, div.k-imagebrowser-dropzone em {
+    background-image: none, linear-gradient(to bottom, rgb(220, 0, 0) 0px, rgb(200, 0, 0) 100%);
+}
+
+.k-state-active, .k-state-active:hover, .k-active-filter {
+    background-color: rgb(255, 255, 255);
+    border-color: #cccccc;
+    color: rgb(51, 51, 51);
+}
+
+.k-listview:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+.k-listview {
+	border: 1px solid #eee;
+	padding: 0;
+	min-width: 0;
 }
 
 /** Remove underline on tabs */

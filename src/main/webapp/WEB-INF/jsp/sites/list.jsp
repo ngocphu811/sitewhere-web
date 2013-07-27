@@ -76,7 +76,7 @@
 
 <!-- Dialog for create/update -->
 <div id="dialog" class="modal hide">
-	<div class="modal-header">
+	<div class="modal-header k-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 		<h3 id="dialog-header">Create Site</h3>
 	</div>
@@ -92,7 +92,7 @@
 					<div class="control-group">
 						<label class="control-label" for="gen-site-name">Site Name</label>
 						<div class="controls">
-							<input type="text" id="gen-site-name" name="siteName" required class="input-xlarge">
+							<input type="text" id="gen-site-name" name="siteName" class="input-xlarge">
 						</div>
 					</div>
 					<div class="control-group">
@@ -144,13 +144,13 @@
 						<div class="control-group">
 							<label class="control-label" for="gs-base-url">GeoServer Base URL</label>
 							<div class="controls">
-								<input type="text" id="gs-base-url" name="baseUrl" required class="input-xlarge">
+								<input type="text" id="gs-base-url" name="baseUrl" class="input-xlarge">
 							</div>
 						</div>
 						<div class="control-group">
 							<label class="control-label" for="gs-layer-name">GeoServer Layer</label>
 							<div class="controls">
-								<input type="text" id="gs-layer-name" name="layerName" required class="input-xlarge">
+								<input type="text" id="gs-layer-name" name="layerName" class="input-xlarge">
 							</div>
 						</div>
 						<div class="control-group">
@@ -431,8 +431,7 @@
 			pageSize: 10
 		});
 		
-
-		/** Create the hardware list */
+		/** Create the site list */
 		$("#sites").kendoListView({
 			dataSource : sitesDS,
 			template : kendo.template($("#site-entry").html())
