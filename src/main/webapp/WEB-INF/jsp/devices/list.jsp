@@ -118,7 +118,7 @@
 					<div class="control-group">
 						<label class="control-label" for="device-hardware-id">Hardware Id</label>
 						<div class="controls">
-							<input type="text" id="device-hardware-id" name="hardwareId" class="input-xlarge">
+							<input type="text" id="device-hardware-id" title="Hardware id" class="input-xlarge">
 						</div>
 					</div>
 					<div class="control-group">
@@ -142,6 +142,7 @@
 	    			</div>	
 	    		</form>		
 				<div id="hardware-matches" style="height: 200px; overflow: auto;"></div>
+				<input type="hidden" id="chosen-asset-id" title="Asset type"/>
     		</div>
 			<div>
 				<div id="device-metadata"></div>
@@ -239,6 +240,21 @@
 		lastSearch = criteria;
 	}
 	
+	/** Validate everything */
+	function validate() {
+		$.validity.setup({ outputMode:"label" });
+		$.validity.start();
+
+        /** Validate main form */
+		$("#device-hardware-id").require();
+
+        /** Verify that an asset was chosen */
+		$("#chosen-asset-id").require();
+      
+		var result = $.validity.end();
+		return result.valid;
+	}
+	
     $(document).ready(function() {
 		/** Create AJAX datasource for devices list */
 		var devicesDS = new kendo.data.DataSource({
@@ -275,7 +291,7 @@
 		/** Create the list of devices */
 		$("#devices").kendoListView({
 			dataSource : devicesDS,
-			template : kendo.template($("#device-entry").html())
+			template : kendo.template($("#device-entry").html()),
 		});
 		
         $("#pager").kendoPager({
@@ -335,8 +351,23 @@
 		$("#hardware-matches").kendoListView({
 			dataSource : hardwareDS,
 			selectable : "single",
-			template : kendo.template($("#hardware-asset-entry").html())
+			template : kendo.template($("#hardware-asset-entry").html()),
+			change: onHardwareAssetChosen
 		});
+		
+		/** Called when a hardware asset is chosen from the list */
+		function onHardwareAssetChosen() {
+			var listView = hardwareDS.view();
+			var selected = $.map(this.select(), function(item) {
+				return listView[$(item).index()];
+			});
+
+			if (selected.length > 0) {
+				$('#chosen-asset-id').val(selected[0].id);
+			} else {
+				$('#chosen-asset-id').val("");
+			}				
+		}
 		
 		/** Update hardware search datasource based on entered criteria */
 		$("#hardware-search").bind("change paste keyup", function() {
@@ -359,7 +390,34 @@
 	    	// Select first tab.
 			createTabs.select(0);
 		});
-    });
+		
+        /** Handle create dialog submit */
+		$('#create-submit').click(function(event) {
+			event.preventDefault();
+			if (!validate()) {
+				return;
+			}
+			var deviceData = {
+				"hardwareId": $('#device-hardware-id').val(), 
+				"comments": $('#device-comments').val(), 
+				"assetId": $('#chosen-asset-id').val(), 
+				"metadata": metaDatasource.data(),
+			}
+			$.postJSON("${pageContext.request.contextPath}/api/devices", 
+					deviceData, onCreateSuccess, onCreateFail);
+		});
+        
+        /** Called on successful create/update */
+        function onCreateSuccess() {
+        	$('#create-dialog').modal('hide');
+        	devicesDS.read();
+        }
+        
+		/** Handle failed call to create device */
+		function onCreateFail(jqXHR, textStatus, errorThrown) {
+			handleError(jqXHR, "Unable to create device.");
+		}
+   });
 </script>
 
 <%@ include file="../includes/bottom.inc"%>
