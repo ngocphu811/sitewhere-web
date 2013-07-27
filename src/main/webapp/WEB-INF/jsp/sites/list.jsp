@@ -272,8 +272,7 @@
 		metaDatasource.data(data.metadata);
 		selectMapType(data.mapType);
 		loadMapFormFromMetadata(data);
-		validateMainForm();
-		validateSelectedMapForm();
+		tabs.select(0);
     }
     
     /** Based on map type, load fields into proper form */
@@ -358,6 +357,9 @@
 		event.stopPropagation();
 	}
 	
+	/** Pointer to tabs instance */
+	var tabs;
+	
 	/** Reference for metadata datasource */
 	var metaDatasource;
 	
@@ -384,24 +386,6 @@
 				$(this).addClass("hide");
 			}
 		});
-	}
-	
-	/** Validate the main form */
-	function validateMainForm() {
-		return $('#general-form').valid();
-	}
-	
-	/** Validate form for the currently selected map type */
-	function validateSelectedMapForm() {
-		var valid = false;
-		var selectedMapType = $("#map-type").val();
-		$("#map-type-forms").children().each(function(i) {
-			var form = $(this);
-			if (selectedMapType == form.attr("id")) {
-				valid = valid || form.valid();
-			}
-		});
-		return valid;
 	}
 	
     $(document).ready(function() {
@@ -442,9 +426,9 @@
         });
 		
 		/** Create the tab strip */
-		$("#tabs").kendoTabStrip({
+		tabs = $("#tabs").kendoTabStrip({
 			animation: false
-		});
+		}).data("kendoTabStrip");
 		
 		/** Local source for metadata entries */
 		metaDatasource = new kendo.data.DataSource({
@@ -491,50 +475,28 @@
 			$('#dialog').modal('show');
 			$('#site-token').val("");
 			metaDatasource.data(new Array());
-		});
-        
-        /** Validation for main form */
-		$('#general-form').validate({
-			rules: {
-				siteName: { required: true },
-			},
-			highlight: doHighlight,
-			success: doSuccess
-		});
-        
-        /** Validation for GeoServer form */
-		$('#geoserver').validate({
-			rules: {
-				baseUrl: { required: true },
-				layerName: { required: true },
-			},
-			highlight: doHighlight,
-			success: doSuccess
+			tabs.select(0);
 		});
 		
         /** Handle dialog submit */
 		$('#dialog-submit').click(function(event) {
 			event.preventDefault();
-			var mainValid = validateMainForm();
-			var mapValid = validateSelectedMapForm();
-			if (mainValid && mapValid) {
-				var siteToken = $('#site-token').val();
-				var mapMetadata = buildMapMetadata();
-				var siteData = {
-					"name": $('#gen-site-name').val(), 
-					"description": $('#gen-site-desc').val(), 
-					"imageUrl": $('#gen-site-image-url').val(), 
-					"metadata": metaDatasource.data(),
-					"mapType": $('#map-type').val(), 
-					"mapMetadata": mapMetadata,
-				}
-				if (siteToken == "") {
-					$.postJSON("${pageContext.request.contextPath}/api/sites", 
-							siteData, onSuccess, onCreateFail);
-				} else {
-					$.putJSON("${pageContext.request.contextPath}/api/sites/" + siteToken, 
-							siteData, onSuccess, onUpdateFail);
-				}
+			var siteToken = $('#site-token').val();
+			var mapMetadata = buildMapMetadata();
+			var siteData = {
+				"name": $('#gen-site-name').val(), 
+				"description": $('#gen-site-desc').val(), 
+				"imageUrl": $('#gen-site-image-url').val(), 
+				"metadata": metaDatasource.data(),
+				"mapType": $('#map-type').val(), 
+				"mapMetadata": mapMetadata,
+			}
+			if (siteToken == "") {
+				$.postJSON("${pageContext.request.contextPath}/api/sites", 
+						siteData, onSuccess, onCreateFail);
+			} else {
+				$.putJSON("${pageContext.request.contextPath}/api/sites/" + siteToken, 
+						siteData, onSuccess, onUpdateFail);
 			}
 		});
         

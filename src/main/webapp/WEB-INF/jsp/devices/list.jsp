@@ -101,13 +101,13 @@
 </style>
 
 <!-- Dialog for create/update -->
-<div id="dialog" class="modal hide">
+<div id="create-dialog" class="modal hide">
 	<div class="modal-header k-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 		<h3 id="dialog-header">Create Device</h3>
 	</div>
 	<div class="modal-body">
-		<div id="tabs">
+		<div id="create-tabs">
 			<ul>
 				<li class="k-state-active">Device Details</li>
 				<li>Hardware</li>
@@ -148,10 +148,9 @@
             </div>
 		</div>
 	</div>
-	<input id="dialog-mode" type="hidden" value="create" />
 	<div class="modal-footer">
 		<a href="javascript:void(0)" class="btn" data-dismiss="modal">Cancel</a> 
-		<a id="dialog-submit" href="javascript:void(0)" class="btn btn-primary">Create</a>
+		<a id="create-submit" href="javascript:void(0)" class="btn btn-primary">Create</a>
 	</div>
 </div>
 
@@ -235,11 +234,6 @@
 		hardwareDS.transport.options.read.url = url;
 		hardwareDS.read();
 	}
-    
-    /** Clear all dialog fields */
-    function clearDialog() {
-    	$('#general-form')[0].reset();
-    }
 	
     $(document).ready(function() {
 		/** Create AJAX datasource for devices list */
@@ -285,9 +279,9 @@
         });
 		
 		/** Create the tab strip */
-		$("#tabs").kendoTabStrip({
+		var createTabs = $("#create-tabs").kendoTabStrip({
 			animation: false
-		});
+		}).data("kendoTabStrip");
 		
 		/** Local source for metadata entries */
 		metaDatasource = new kendo.data.DataSource({
@@ -348,12 +342,18 @@
 		
         /** Handle create dialog */
 		$('#btn-add-device').click(function(event) {
-			clearDialog();
+	    	$('#general-form')[0].reset();
 			$('#dialog-header').html("Create Device");
 			$('#dialog-submit').html("Create");
-			$('#dialog').modal('show');
-			$('#dialog-mode').val("create");
+			$('#create-dialog').modal('show');
 			metaDatasource.data(new Array());
+			
+			// Reset search.
+	    	$('#hardware-search').val("");
+	    	onHardwareSearchCriteriaUpdated();
+	    	
+	    	// Select first tab.
+			createTabs.select(0);
 		});
     });
 </script>
