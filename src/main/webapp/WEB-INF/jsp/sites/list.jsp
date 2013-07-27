@@ -343,7 +343,7 @@
 			"Unable to load site for edit. " + respError));
 	}
 	
-	/** Called when edit button is clicked */
+	/** Called when delete button is clicked */
 	function onSiteDeleteClicked(e, siteToken) {
 		var event = e || window.event;
 		event.stopPropagation();
@@ -357,7 +357,6 @@
     
     /** Called on successful delete */
     function onDeleteSuccess() {
-    	$('#dialog').modal('hide');
     	sitesDS.read();
     }
     

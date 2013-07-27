@@ -292,11 +292,14 @@
 <%@ include file="../includes/asset-templates.inc"%>
 
 <script>
-	/** Reference for metadata datasource */
-	var metaDatasource;
+	/** Reference for device list datasource */
+	var devicesDS;
 	
 	/** Reference for hardware search datasource */
 	var hardwareDS;
+	
+	/** Reference for metadata datasource */
+	var metaDatasource;
 	
 	/** Reference to tabs in create dialog */
 	var createTabs;
@@ -333,6 +336,28 @@
 	/** Handle error on getting site */
 	function onUpdateGetFailed(jqXHR, textStatus, errorThrown) {
 		handleError(jqXHR, "Unable to get device for update.");
+	}
+	
+	/** Called when delete button is clicked */
+	function onDeviceDeleteClicked(e, hardwareId) {
+		var event = e || window.event;
+		event.stopPropagation();
+		bootbox.confirm("Delete device?", function(result) {
+			if (result) {
+				$.deleteJSON("${pageContext.request.contextPath}/api/devices/" + hardwareId + "?force=true", 
+						onDeleteSuccess, onDeleteFail);
+			}
+		});
+	}
+    
+    /** Called on successful delete */
+    function onDeleteSuccess() {
+    	devicesDS.read();
+    }
+    
+	/** Handle failed delete call */
+	function onDeleteFail(jqXHR, textStatus, errorThrown) {
+		handleError(jqXHR, "Unable to delete device.");
 	}
 	
 	/** Called when hardware search criteria has changed */
@@ -376,7 +401,7 @@
 	
     $(document).ready(function() {
 		/** Create AJAX datasource for devices list */
-		var devicesDS = new kendo.data.DataSource({
+		devicesDS = new kendo.data.DataSource({
 			transport : {
 				read : {
 					url : "${pageContext.request.contextPath}/api/devices?includeAssignment=true",
