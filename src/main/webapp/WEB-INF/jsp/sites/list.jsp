@@ -92,7 +92,7 @@
 					<div class="control-group">
 						<label class="control-label" for="gen-site-name">Site Name</label>
 						<div class="controls">
-							<input type="text" id="gen-site-name" name="siteName" class="input-xlarge">
+							<input type="text" id="gen-site-name" class="input-xlarge" title="Site name">
 						</div>
 					</div>
 					<div class="control-group">
@@ -144,13 +144,13 @@
 						<div class="control-group">
 							<label class="control-label" for="gs-base-url">GeoServer Base URL</label>
 							<div class="controls">
-								<input type="text" id="gs-base-url" name="baseUrl" class="input-xlarge">
+								<input type="text" id="gs-base-url" title="GeoServer base url" class="input-xlarge">
 							</div>
 						</div>
 						<div class="control-group">
 							<label class="control-label" for="gs-layer-name">GeoServer Layer</label>
 							<div class="controls">
-								<input type="text" id="gs-layer-name" name="layerName" class="input-xlarge">
+								<input type="text" id="gs-layer-name" title="Layer name" class="input-xlarge">
 							</div>
 						</div>
 						<div class="control-group">
@@ -345,9 +345,25 @@
 	
 	/** Called when edit button is clicked */
 	function onSiteDeleteClicked(e, siteToken) {
-		alert("Delete " + siteToken);
 		var event = e || window.event;
 		event.stopPropagation();
+		bootbox.confirm("Delete site?", function(result) {
+			if (result) {
+				$.deleteJSON("${pageContext.request.contextPath}/api/sites/" + siteToken + "?force=true", 
+						onDeleteSuccess, onDeleteFail);
+			}
+		}); 
+	}
+    
+    /** Called on successful delete */
+    function onDeleteSuccess() {
+    	$('#dialog').modal('hide');
+    	sitesDS.read();
+    }
+    
+	/** Handle failed delete call */
+	function onDeleteFail(jqXHR, textStatus, errorThrown) {
+		handleError(jqXHR, "Unable to delete site.");
 	}
 	
 	/** Called when edit button is clicked */
@@ -359,6 +375,9 @@
 	
 	/** Pointer to tabs instance */
 	var tabs;
+	
+	/** Reference for sites datasource */
+	var sitesDS;
 	
 	/** Reference for metadata datasource */
 	var metaDatasource;
@@ -388,9 +407,29 @@
 		});
 	}
 	
+	/** Validate everything */
+	function validate() {
+		$.validity.setup({ outputMode:"label" });
+		$.validity.start();
+
+        /** Validate main form */
+		$("#gen-site-name").require();
+        
+		var selectedMapType = $("#map-type").val();
+		
+        /** Validate geoserver form */
+		if (selectedMapType == "geoserver") {
+			$("#gs-base-url").require();
+			$("#gs-layer-name").require();
+		}
+      
+		var result = $.validity.end();
+		return result.valid;
+	}
+	
     $(document).ready(function() {
 		/** Create AJAX datasource for sites list */
-		var sitesDS = new kendo.data.DataSource({
+		sitesDS = new kendo.data.DataSource({
 			transport : {
 				read : {
 					url : "${pageContext.request.contextPath}/api/sites",
@@ -481,6 +520,9 @@
         /** Handle dialog submit */
 		$('#dialog-submit').click(function(event) {
 			event.preventDefault();
+			if (!validate()) {
+				return;
+			}
 			var siteToken = $('#site-token').val();
 			var mapMetadata = buildMapMetadata();
 			var siteData = {

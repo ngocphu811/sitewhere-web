@@ -3,12 +3,13 @@
 <head>
 <title>SiteWhere - <c:out value="${sitewhere_title}"/></title>
 <script src="${pageContext.request.contextPath}/scripts/jquery.js"></script>
-<script src="${pageContext.request.contextPath}/scripts/jquery.validate.js"></script>
+<script src="${pageContext.request.contextPath}/scripts/jquery.validity.js"></script>
 <script src="${pageContext.request.contextPath}/scripts/kendo.web.js"></script>
 <script src="${pageContext.request.contextPath}/scripts/sitewhere.js"></script>
 <link href="${pageContext.request.contextPath}/css/kendo.common.min.css" rel="stylesheet" />
 <link href="${pageContext.request.contextPath}/css/kendo.bootstrap.min.css" rel="stylesheet" />
 <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<link href="${pageContext.request.contextPath}/css/jquery.validity.css" rel="stylesheet">
 <link href="${pageContext.request.contextPath}/css/sitewhere.css" rel="stylesheet" />
 </head>
 <body class="sw-body">

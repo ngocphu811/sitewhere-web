@@ -226,13 +226,17 @@
 	
 	/** Used for delayed submit on search */
 	var timeout;
+	var lastSearch;
 	
 	/** Called when hardware search criteria has changed */
 	function onHardwareSearchCriteriaUpdated() {
 		var criteria = $('#hardware-search').val();
-		var url = "${pageContext.request.contextPath}/api/assets/hardware?criteria=" + criteria;
-		hardwareDS.transport.options.read.url = url;
-		hardwareDS.read();
+		if (criteria != lastSearch) {
+			var url = "${pageContext.request.contextPath}/api/assets/hardware?criteria=" + criteria;
+			hardwareDS.transport.options.read.url = url;
+			hardwareDS.read();
+		}
+		lastSearch = criteria;
 	}
 	
     $(document).ready(function() {

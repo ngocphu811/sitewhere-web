@@ -110,6 +110,25 @@ public class SitesController extends SiteWhereController {
 	}
 
 	/**
+	 * Delete information for a given site based on site token.
+	 * 
+	 * @param siteToken
+	 * @param force
+	 * @return
+	 * @throws SiteWhereException
+	 */
+	@RequestMapping(value = "/{siteToken}", method = RequestMethod.DELETE)
+	@ResponseBody
+	@ApiOperation(value = "Delete a site by unique token")
+	public Site deleteSiteByToken(
+			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken,
+			@ApiParam(value = "Delete permanently", required = false) @RequestParam(defaultValue = "false") boolean force)
+			throws SiteWhereException {
+		ISite site = SiteWhereServer.getInstance().getDeviceManagement().deleteSite(siteToken, force);
+		return Site.copy(site);
+	}
+
+	/**
 	 * List all sites and wrap as search results.
 	 * 
 	 * @return

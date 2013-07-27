@@ -32,6 +32,26 @@ $.getJSON = function(url, onSuccess, onFail) {
 	});
 }
 
+$.deleteJSON = function(url, onSuccess, onFail) {
+	return jQuery.ajax({
+		'type' : 'DELETE',
+		'url' : url,
+		'contentType' : 'application/json',
+		'success' : onSuccess,
+		'error' : onFail
+	});
+}
+
+/** Common error handler for AJAX calls */
+function handleError(jqXHR, info) {
+	var respError = jqXHR.getResponseHeader("X-SiteWhere-Error");
+	if (respError) {
+		bootbox.alert(respError);
+	} else {
+		bootbox.alert(info);
+	}
+}
+
 // Format date if available, otherwise, show N/A
 function formattedDate(date) {
 	if (date) {
