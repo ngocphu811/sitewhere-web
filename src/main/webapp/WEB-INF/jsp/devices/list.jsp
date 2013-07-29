@@ -21,7 +21,7 @@
 }
 
 .sw-device-list-entry-heading {
-	font-size: 14pt;
+	font-size: 12pt;
 	font-weight: bold;
 	line-height: 1;
 }
