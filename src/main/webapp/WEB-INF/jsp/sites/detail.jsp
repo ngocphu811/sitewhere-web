@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<c:set var="sitewhere_title" value="View Site: ${site.name}" />
+<c:set var="sitewhere_title" value="View Site - ${site.name}" />
 <c:set var="sitewhere_section" value="sites" />
 <%@ include file="../includes/top.inc"%>
 
@@ -96,7 +96,7 @@
 
 <!-- Title Bar -->
 <div class="sw-title-bar content k-header">
-	<h1><c:out value="${sitewhere_title}"/></h1>
+	<h1 class="ellipsis"><c:out value="${sitewhere_title}"/></h1>
 	<div class="sw-title-bar-right">
 		<a id="btn-edit-site" class="btn" href="javascript:void(0)">
 			<i class="icon-plus"></i> Edit Site</a>

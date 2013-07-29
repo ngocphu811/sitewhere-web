@@ -188,7 +188,7 @@
 
 <!-- Title Bar -->
 <div class="sw-title-bar content k-header">
-	<h1><c:out value="${sitewhere_title}"/></h1>
+	<h1 class="ellipsis"><c:out value="${sitewhere_title}"/></h1>
 	<div class="sw-title-bar-right">
 		<a id="btn-filter-results" class="btn" href="javascript:void(0)">
 			<i class="icon-search"></i> Filter Results</a>

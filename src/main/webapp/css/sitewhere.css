@@ -58,6 +58,7 @@
 	font-size: 22pt;
 	font-weight: normal;
 	text-shadow: 2px 2px #eeeeee;
+	max-width: 700px;
 }
 
 .sw-title-bar-left {
