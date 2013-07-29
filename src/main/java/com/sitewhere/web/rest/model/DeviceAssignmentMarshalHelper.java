@@ -1,13 +1,15 @@
 /*
-* $Id$
-* --------------------------------------------------------------------------------------
-* Copyright (c) Reveal Technologies, LLC. All rights reserved. http://www.reveal-tech.com
-*
-* The software in this package is published under the terms of the CPAL v1.0
-* license, a copy of which has been included with this distribution in the
-* LICENSE.txt file.
-*/
+ * $Id$
+ * --------------------------------------------------------------------------------------
+ * Copyright (c) Reveal Technologies, LLC. All rights reserved. http://www.reveal-tech.com
+ *
+ * The software in this package is published under the terms of the CPAL v1.0
+ * license, a copy of which has been included with this distribution in the
+ * LICENSE.txt file.
+ */
 package com.sitewhere.web.rest.model;
+
+import org.apache.log4j.Logger;
 
 import com.sitewhere.rest.model.asset.HardwareAsset;
 import com.sitewhere.rest.model.asset.PersonAsset;
@@ -31,6 +33,9 @@ import com.sitewhere.spi.device.ISite;
  * @author dadams
  */
 public class DeviceAssignmentMarshalHelper {
+
+	/** Static logger instance */
+	private static Logger LOGGER = Logger.getLogger(DeviceAssignmentMarshalHelper.class);
 
 	/** Indicates whether device asset information is to be included */
 	private boolean includeAsset = true;
@@ -94,7 +99,11 @@ public class DeviceAssignmentMarshalHelper {
 		if (isIncludeDevice()) {
 			IDevice device = SiteWhereServer.getInstance().getDeviceManagement()
 					.getDeviceForAssignment(source);
-			result.setDevice(getDeviceHelper().convert(device, manager));
+			if (device != null) {
+				result.setDevice(getDeviceHelper().convert(device, manager));
+			} else {
+				LOGGER.error("Assignment references invalid hardware id.");
+			}
 		} else {
 			result.setDeviceHardwareId(source.getDeviceHardwareId());
 		}

@@ -199,6 +199,10 @@
 <div id="sites" class="sw-site-list"></div>
 <div id="pager" class="k-pager-wrap"></div>
 
+<form id="view-site-detail" method="get" action="detail">
+	<input id="detail-site-token" name="siteToken" type="hidden" value="${site.token}"/>
+</form>
+
 <!-- Template for site row -->
 <script type="text/x-kendo-tmpl" id="site-entry">
 	<div class="sw-site-list-entry gradient-bg" onclick="onSiteOpenClicked(event, '#:token#')"
@@ -365,11 +369,12 @@
 		handleError(jqXHR, "Unable to delete site.");
 	}
 	
-	/** Called when edit button is clicked */
+	/** Called when open button is clicked */
 	function onSiteOpenClicked(e, siteToken) {
-		alert("Open " + siteToken);
 		var event = e || window.event;
 		event.stopPropagation();
+		$('#detail-site-token').val(siteToken);
+		$('#view-site-detail').submit();
 	}
 	
 	/** Pointer to tabs instance */
