@@ -125,7 +125,10 @@
 </style>
 
 <%@ include file="../includes/deviceCreateDialog.inc"%>
+
 <%@ include file="../includes/deviceUpdateDialog.inc"%>
+
+<%@ include file="../includes/assignmentCreateDialog.inc"%>
 
 <!-- Title Bar -->
 <div class="sw-title-bar content k-header">
@@ -177,7 +180,8 @@
 		<div class="sw-device-list-entry-no-assignment">
     		<div class="alert alert-info">
     			<p>Device is not currently assigned.</p>
-				<a class="btn" title="Assign Device" style="margin-top: -4px;">Assign Device</a>
+				<a class="btn" title="Assign Device" href="javascript:void(0)" 
+					onclick="acOpen(event, '#:hardwareId#')" style="margin-top: -4px;">Assign Device</a>
 			</div>
 		</div>
 # } #
@@ -200,7 +204,7 @@
 	<p class="ellipsis"><span class="sw-device-update-label">Updated:</span> #= formattedDate(kendo.parseDate(updatedDate)) #</p>
 </script>
 
-<%@ include file="../includes/asset-templates.inc"%>
+<%@ include file="../includes/assetTemplates.inc"%>
 
 <script>
 	/** Reference for device list datasource */
@@ -408,7 +412,6 @@
 		
 		/** Create AJAX datasource for hardware search */
 		hardwareDS = new kendo.data.DataSource({
-			autoBind: false,
 			transport : {
 				read : {
 					url : "${pageContext.request.contextPath}/api/assets/hardware",
@@ -419,7 +422,6 @@
 				data: "results",
 				total: "numResults",
 			},
-			pageSize: 10
 		});
 		
 		/** Create the hardware match list */

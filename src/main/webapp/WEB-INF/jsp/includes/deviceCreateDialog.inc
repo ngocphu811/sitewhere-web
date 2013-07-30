@@ -36,11 +36,11 @@
 	    						<input class="input-xlarge" id="dc-hardware-search" type="text">
 								<span class="add-on"><i class="icon-search"></i></span>
 	    					</div>
+							<div id="dc-hardware-matches" class="sw-form-search-results"></div>
+							<input type="hidden" id="dc-chosen-asset-id" title="Asset type"/>
 	    				</div>
-	    			</div>	
+	    			</div>
 	    		</form>		
-				<div id="dc-hardware-matches" style="height: 200px; overflow: auto;"></div>
-				<input type="hidden" id="dc-chosen-asset-id" title="Asset type"/>
     		</div>
 			<div>
 				<div id="dc-metadata"></div>
