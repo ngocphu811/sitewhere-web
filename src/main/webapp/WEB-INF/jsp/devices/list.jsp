@@ -124,98 +124,8 @@
 }
 </style>
 
-<!-- Dialog for create -->
-<div id="create-dialog" class="modal hide">
-	<div class="modal-header k-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3 id="dialog-header">Create Device</h3>
-	</div>
-	<div class="modal-body">
-		<div id="create-tabs">
-			<ul>
-				<li class="k-state-active">Device Details</li>
-				<li>Hardware</li>
-				<li>Metadata</li>
-			</ul>
-			<div>
-				<form id="general-form" class="form-horizontal" style="padding-top: 20px;">
-					<div class="control-group">
-						<label class="control-label" for="device-hardware-id">Hardware Id</label>
-						<div class="controls">
-							<input type="text" id="device-hardware-id" title="Hardware id" class="input-xlarge">
-						</div>
-					</div>
-					<div class="control-group">
-						<label class="control-label" for="device-comments">Comments</label>
-						<div class="controls">
-							<textarea id="device-comments" class="input-xlarge" style="height: 10em;"></textarea>
-						</div>
-					</div>
-				</form>
-			</div>
-			<div>
-				<form id="hardware-form" class="form-horizontal form-search" style="padding-top: 20px;">
-					<div class="control-group">
-						<label class="control-label" for="hardware-search">Choose Hardware Type</label>
-						<div class="controls">
-							<div class="input-append">
-	    						<input class="input-xlarge" id="hardware-search" type="text">
-								<span class="add-on"><i class="icon-search"></i></span>
-	    					</div>
-	    				</div>
-	    			</div>	
-	    		</form>		
-				<div id="hardware-matches" style="height: 200px; overflow: auto;"></div>
-				<input type="hidden" id="chosen-asset-id" title="Asset type"/>
-    		</div>
-			<div>
-				<div id="device-metadata"></div>
-            </div>
-		</div>
-	</div>
-	<div class="modal-footer">
-		<a href="javascript:void(0)" class="btn" data-dismiss="modal">Cancel</a> 
-		<a id="create-submit" href="javascript:void(0)" class="btn btn-primary">Create</a>
-	</div>
-</div>
-
-<!-- Dialog for update -->
-<div id="update-dialog" class="modal hide">
-	<div class="modal-header k-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3 id="dialog-header">Update Device</h3>
-	</div>
-	<div class="modal-body">
-		<div id="update-tabs">
-			<ul>
-				<li class="k-state-active">Device Details</li>
-				<li>Metadata</li>
-			</ul>
-			<div>
-				<div style="padding-top: 20px;">
-					<div id="update-static-header"></div>
-				</div>
-				<form id="update-general-form" class="form-horizontal" style="padding-top: 10px;">
-					<div class="control-group">
-						<label class="control-label" for="update-device-comments">Comments</label>
-						<div class="controls">
-							<textarea id="update-device-comments" class="input-xlarge" style="height: 10em;"></textarea>
-						</div>
-					</div>
-					<input type="hidden" id="update-hardware-id"/>
-					<input type="hidden" id="update-asset-id"/>
-				</form>
-			</div>
-			<div>
-				<div id="update-device-metadata"></div>
-            </div>
-		</div>
-	</div>
-	<div class="modal-footer">
-		<a href="javascript:void(0)" class="btn" data-dismiss="modal">Cancel</a> 
-		<a id="update-submit" href="javascript:void(0)" class="btn btn-primary">Save</a>
-	</div>
-</div>
+<%@ include file="../includes/deviceCreateDialog.inc"%>
+<%@ include file="../includes/deviceUpdateDialog.inc"%>
 
 <!-- Title Bar -->
 <div class="sw-title-bar content k-header">
@@ -266,7 +176,8 @@
 # } else { #
 		<div class="sw-device-list-entry-no-assignment">
     		<div class="alert alert-info">
-    			Device is not currently assigned.
+    			<p>Device is not currently assigned.</p>
+				<a class="btn" title="Assign Device" style="margin-top: -4px;">Assign Device</a>
 			</div>
 		</div>
 # } #
@@ -321,14 +232,14 @@
     
     /** Called on successful device load request */
     function onUpdateGetSuccess(data, status, jqXHR) {
-    	$('#update-general-form')[0].reset();
-		$('#update-dialog').modal('show');
+    	$('#du-general-form')[0].reset();
+		$('#du-dialog').modal('show');
 		
 		var template = kendo.template($("#device-update-static").html());
-		$('#update-static-header').html(template(data));
-		$('#update-hardware-id').val(data.hardwareId);
-		$('#update-device-comments').val(data.comments);
-		$('#update-asset-id').val(data.deviceAsset.id);
+		$('#du-static-header').html(template(data));
+		$('#du-hardware-id').val(data.hardwareId);
+		$('#du-comments').val(data.comments);
+		$('#du-asset-id').val(data.deviceAsset.id);
 		metaDatasource.data(data.metadata);
 		updateTabs.select(0);
     }
@@ -362,7 +273,7 @@
 	
 	/** Called when hardware search criteria has changed */
 	function onHardwareSearchCriteriaUpdated() {
-		var criteria = $('#hardware-search').val();
+		var criteria = $('#dc-hardware-search').val();
 		if (criteria != lastSearch) {
 			var url = "${pageContext.request.contextPath}/api/assets/hardware?criteria=" + criteria;
 			hardwareDS.transport.options.read.url = url;
@@ -377,10 +288,10 @@
 		$.validity.start();
 
         /** Validate main form */
-		$("#device-hardware-id").require();
+		$("#dc-hardware-id").require();
 
         /** Verify that an asset was chosen */
-		$("#chosen-asset-id").require();
+		$("#dc-asset-id").require();
       
 		var result = $.validity.end();
 		return result.valid;
@@ -392,8 +303,8 @@
 		$.validity.start();
 
         /** Validate hidden fields */
-		$("#update-hardware-id").require();
-		$("#update-asset-id").require();
+		$("#du-hardware-id").require();
+		$("#du-asset-id").require();
      
 		var result = $.validity.end();
 		return result.valid;
@@ -444,12 +355,12 @@
         });
 		
 		/** Create tab strip for the create dialog */
-		createTabs = $("#create-tabs").kendoTabStrip({
+		createTabs = $("#dc-tabs").kendoTabStrip({
 			animation: false
 		}).data("kendoTabStrip");
 		
 		/** Create tab strip for the update dialog */
-		updateTabs = $("#update-tabs").kendoTabStrip({
+		updateTabs = $("#du-tabs").kendoTabStrip({
 			animation: false
 		}).data("kendoTabStrip");
 		
@@ -468,7 +379,7 @@
 		});
 		
 		/** Grid for metadata */
-        $("#device-metadata").kendoGrid({
+        $("#dc-metadata").kendoGrid({
             dataSource: metaDatasource,
             sortable: true,
             toolbar: ["create"],
@@ -482,7 +393,7 @@
         });
 		
 		/** Grid for metadata */
-        $("#update-device-metadata").kendoGrid({
+        $("#du-metadata").kendoGrid({
             dataSource: metaDatasource,
             sortable: true,
             toolbar: ["create"],
@@ -512,7 +423,7 @@
 		});
 		
 		/** Create the hardware match list */
-		$("#hardware-matches").kendoListView({
+		$("#dc-hardware-matches").kendoListView({
 			dataSource : hardwareDS,
 			selectable : "single",
 			template : kendo.template($("#hardware-asset-entry").html()),
@@ -527,28 +438,26 @@
 			});
 
 			if (selected.length > 0) {
-				$('#chosen-asset-id').val(selected[0].id);
+				$('#dc-chosen-asset-id').val(selected[0].id);
 			} else {
-				$('#chosen-asset-id').val("");
+				$('#dc-chosen-asset-id').val("");
 			}				
 		}
 		
 		/** Update hardware search datasource based on entered criteria */
-		$("#hardware-search").bind("change paste keyup", function() {
+		$("#dc-hardware-search").bind("change paste keyup", function() {
 		    window.clearTimeout(timeout);
 		    timeout = window.setTimeout(onHardwareSearchCriteriaUpdated, 300); 
 		});
 		
         /** Handle create dialog */
 		$('#btn-add-device').click(function(event) {
-	    	$('#general-form')[0].reset();
-			$('#dialog-header').html("Create Device");
-			$('#dialog-submit').html("Create");
-			$('#create-dialog').modal('show');
+	    	$('#dc-general-form')[0].reset();
+			$('#dc-dialog').modal('show');
 			metaDatasource.data(new Array());
 			
 			// Reset search.
-	    	$('#hardware-search').val("");
+	    	$('#dc-hardware-search').val("");
 	    	onHardwareSearchCriteriaUpdated();
 	    	
 	    	// Select first tab.
@@ -556,15 +465,15 @@
 		});
 		
         /** Handle create dialog submit */
-		$('#create-submit').click(function(event) {
+		$('#dc-dialog-submit').click(function(event) {
 			event.preventDefault();
 			if (!validate()) {
 				return;
 			}
 			var deviceData = {
-				"hardwareId": $('#device-hardware-id').val(), 
-				"comments": $('#device-comments').val(), 
-				"assetId": $('#chosen-asset-id').val(), 
+				"hardwareId": $('#dc-hardware-id').val(), 
+				"comments": $('#dc-comments').val(), 
+				"assetId": $('#dc-chosen-asset-id').val(), 
 				"metadata": metaDatasource.data(),
 			}
 			$.postJSON("${pageContext.request.contextPath}/api/devices", 
@@ -573,7 +482,7 @@
         
         /** Called on successful create */
         function onCreateSuccess() {
-        	$('#create-dialog').modal('hide');
+        	$('#dc-dialog').modal('hide');
         	devicesDS.read();
         }
         
@@ -583,16 +492,16 @@
 		}
 		
         /** Handle update dialog submit */
-		$('#update-submit').click(function(event) {
+		$('#du-dialog-submit').click(function(event) {
 			event.preventDefault();
 			if (!validateForUpdate()) {
 				return;
 			}
-			var hardwareId = $('#update-hardware-id').val();
+			var hardwareId = $('#du-hardware-id').val();
 			var deviceData = {
 				"hardwareId": hardwareId, 
-				"comments": $('#update-device-comments').val(), 
-				"assetId": $('#update-asset-id').val(), 
+				"comments": $('#du-comments').val(), 
+				"assetId": $('#du-asset-id').val(), 
 				"metadata": metaDatasource.data(),
 			}
 			$.putJSON("${pageContext.request.contextPath}/api/devices/" + hardwareId, 
@@ -601,7 +510,7 @@
         
         /** Called on successful update */
         function onUpdateSuccess() {
-        	$('#update-dialog').modal('hide');
+        	$('#du-dialog').modal('hide');
         	devicesDS.read();
         }
         
