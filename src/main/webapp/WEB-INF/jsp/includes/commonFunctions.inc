@@ -8,22 +8,46 @@
 		bootbox.confirm("Delete device?", function(result) {
 			if (result) {
 				$.deleteJSON("${pageContext.request.contextPath}/api/devices/"
-						+ hardwareId + "?force=true", swDeleteSuccess,
-						swDeleteFail);
+						+ hardwareId + "?force=true", swDeviceDeleteSuccess,
+						swDeviceDeleteFail);
 			}
 		});
 	}
 
 	/** Handle successful device delete */
-	function swDeleteSuccess() {
+	function swDeviceDeleteSuccess() {
 		if (swSuccessCallback != null) {
 			swSuccessCallback();
 		}
 	}
 
 	/** Handle failed device delete */
-	function swDeleteFail(jqXHR, textStatus, errorThrown) {
+	function swDeviceDeleteFail(jqXHR, textStatus, errorThrown) {
 		handleError(jqXHR, "Unable to delete device.");
+	}
+
+	/** Delete a device assignment based on its token */
+	function swAssignmentDelete(token, successCallback) {
+		swSuccessCallback = successCallback;
+		bootbox.confirm("Delete device assignment?", function(result) {
+			if (result) {
+				$.deleteJSON("${pageContext.request.contextPath}/api/assignments/"
+						+ token + "?force=true", swAssignmentDeleteSuccess,
+						swAssignmentDeleteFail);
+			}
+		});
+	}
+
+	/** Handle successful device assignment delete */
+	function swAssignmentDeleteSuccess() {
+		if (swSuccessCallback != null) {
+			swSuccessCallback();
+		}
+	}
+
+	/** Handle failed device assignment delete */
+	function swAssignmentDeleteFail(jqXHR, textStatus, errorThrown) {
+		handleError(jqXHR, "Unable to delete device assignment.");
 	}
 
 	/** Release an assignment based on its unique token */

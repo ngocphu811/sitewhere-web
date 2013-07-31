@@ -204,11 +204,12 @@
 			<p class="ellipsis"><span class="sw-min-70 sw-assignment-list-entry-label">Status:</span> #:status#</p>
 # } #
 			<div class="btn-group btn-group-vertical" style="position: absolute; right: 0px; top: -2px;">
-				<a class="btn btn-small btn-primary" title="Edit Device">
+				<a class="btn btn-small btn-primary" title="Edit Assignment">
 					<i class="icon-pencil icon-white"></i></a>
-				<a class="btn btn-small btn-danger" title="Delete Device">
+				<a class="btn btn-small btn-danger" title="Delete Assignment" 
+					href="javascript:void(0)" onclick="onDeleteAssignment(event, '#:token#')">
 					<i class="icon-remove icon-white"></i></a>
-				<a class="btn btn-small btn-success" title="View Device">
+				<a class="btn btn-small btn-success" title="View Assignment">
 					<i class="icon-chevron-right icon-white"></i></a>
 			</div>
 		</div>
@@ -259,6 +260,18 @@
 	
 	/** Reference to tab panel */
 	var tabs;
+	
+	/** Called when 'delete assignment' is clicked */
+	function onDeleteAssignment(e, token) {
+		var event = e || window.event;
+		event.stopPropagation();
+		swAssignmentDelete(token, onDeleteAssignmentComplete);
+	}
+	
+	/** Called after successful delete assignment */
+	function onDeleteAssignmentComplete() {
+		assignmentsDS.read();
+	}
 	
 	/** Called when 'release assignment' is clicked */
 	function onReleaseAssignment(e, token) {
