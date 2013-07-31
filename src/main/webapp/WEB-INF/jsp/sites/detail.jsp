@@ -342,6 +342,10 @@
 	        dataSource: assignmentsDS
 	    });
 		
+	    $("#btn-refresh-assignments").click(function() {
+	    	assignmentsDS.read();
+	    });
+		
 		/** Create the tab strip */
 		tabs = $("#tabs").kendoTabStrip({
 			animation: false
