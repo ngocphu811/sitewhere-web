@@ -85,31 +85,6 @@
 	position: relative;
 }
 
-.sw-device-update-imgwrapper {
-	float: left;
-	margin-left: 60px;
-	margin-right: 20px;
-	width: 100px;
-	height: 100px;
-	position: relative;
-}
-
-.sw-device-update-img {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-    max-width: 100px;
-    max-height: 100px;
-    border: 1px solid rgb(221, 221, 221);
-}
-
-.sw-device-update-label {
-	font-size: 10pt;
-	font-weight: bold;
-	min-width: 100px;
-	display: inline-block;
-}
-
 .k-grid-content {
 	min-height: 200px;
 }
@@ -167,11 +142,19 @@
 		</div>
 # if (data.assignment) { #
 		<div class="sw-device-list-entry-assignment">
+# if (assignment.assetType != 'Unassociated') { #
 			<div class="sw-device-list-entry-logowrapper">
 				<img class="sw-device-list-entry-logo" src="#:assignment.assetImageUrl#"/>
 				<span class="label label-info sw-device-list-entry-logo-tag">Asset</span>
 			</div>
 			<p class="sw-device-list-entry-heading ellipsis">#:assignment.assetName#</p>
+# } else { #
+			<div class="sw-device-list-entry-logowrapper">
+				<img class="sw-device-list-entry-logo" src="#:assetImageUrl#"/>
+				<span class="label label-info sw-device-list-entry-logo-tag">Unassociated</span>
+			</div>
+			<p class="sw-device-list-entry-heading ellipsis">Unassociated Device</p>
+# } #
 			<p class="ellipsis"><span class="sw-device-list-entry-label">Assigned:</span> #= formattedDate(assignment.activeDate) #</p>
 # if (assignment.status == 'Active') { #
 			<span class="sw-device-list-entry-label">Status:</span> 
@@ -220,54 +203,22 @@
 	</div>
 </script>
 
-<!-- Static content in top of update dialog -->
-<script type="text/x-kendo-tmpl" id="device-update-static">
-	<div class="sw-device-update-imgwrapper">
-		<img class="sw-device-update-img" src="#:deviceAsset.imageUrl#"/>
-	</div>
-	<p class="ellipsis"><span class="sw-device-update-label">Hardware Id:</span> #:hardwareId#</p>
-	<p class="ellipsis"><span class="sw-device-update-label">Hardware Type:</span> #:deviceAsset.name#</p>
-	<p class="ellipsis"><span class="sw-device-update-label">Created:</span> #= formattedDate(kendo.parseDate(createdDate)) #</p>
-	<p class="ellipsis"><span class="sw-device-update-label">Updated:</span> #= formattedDate(kendo.parseDate(updatedDate)) #</p>
-</script>
-
 <%@ include file="../includes/assetTemplates.inc"%>
 
 <script>
 	/** Reference for device list datasource */
 	var devicesDS;
 	
-	/** Reference for metadata datasource */
-	var metaDatasource;
-	
-	/** Reference to tabs in update dialog */
-	var updateTabs;
-	
 	/** Called when edit button on the list entry is pressed */
 	function onDeviceEditClicked(e, hardwareId) {
 		var event = e || window.event;
 		event.stopPropagation();
-		$.getJSON("${pageContext.request.contextPath}/api/devices/" + hardwareId, 
-			onUpdateGetSuccess, onUpdateGetFailed);
+		duOpen(hardwareId, onDeviceEditComplete);
 	}
-    
-    /** Called on successful device load request */
-    function onUpdateGetSuccess(data, status, jqXHR) {
-    	$('#du-general-form')[0].reset();
-		$('#du-dialog').modal('show');
-		
-		var template = kendo.template($("#device-update-static").html());
-		$('#du-static-header').html(template(data));
-		$('#du-hardware-id').val(data.hardwareId);
-		$('#du-comments').val(data.comments);
-		$('#du-asset-id').val(data.deviceAsset.id);
-		metaDatasource.data(data.metadata);
-		updateTabs.select(0);
-    }
-    
-	/** Handle error on getting site */
-	function onUpdateGetFailed(jqXHR, textStatus, errorThrown) {
-		handleError(jqXHR, "Unable to get device for update.");
+	
+	/** Called after successful device update */
+	function onDeviceEditComplete() {
+    	devicesDS.read();
 	}
 	
 	/** Called when delete button is clicked */
@@ -342,19 +293,6 @@
     	devicesDS.read();
 	}
 	
-	/** Validate fields for update */
-	function validateForUpdate() {
-		$.validity.setup({ outputMode:"label" });
-		$.validity.start();
-
-        /** Validate hidden fields */
-		$("#du-hardware-id").require();
-		$("#du-asset-id").require();
-     
-		var result = $.validity.end();
-		return result.valid;
-	}
-	
     $(document).ready(function() {
 		/** Create AJAX datasource for devices list */
 		devicesDS = new kendo.data.DataSource({
@@ -399,71 +337,10 @@
             dataSource: devicesDS
         });
 		
-		/** Create tab strip for the update dialog */
-		updateTabs = $("#du-tabs").kendoTabStrip({
-			animation: false
-		}).data("kendoTabStrip");
-		
-		/** Local source for metadata entries */
-		metaDatasource = new kendo.data.DataSource({
-	        data: new Array(),
-	        schema: {
-	        	model: {
-	        		id: "name",
-	        		fields: {
-	        			name: { type: "string" },
-	        			value: { type: "string" }
-	        		}
-	        	}
-	        }
-		});
-		
-		/** Grid for metadata */
-        $("#du-metadata").kendoGrid({
-            dataSource: metaDatasource,
-            sortable: true,
-            toolbar: ["create"],
-			columns: [
-				{ field: "name", title: "Name", width: "125px" },
-				{ field: "value", title: "Value", width: "125px" },
-				{ command: ["edit", "destroy"], title: "&nbsp;", width: "175px", 
-						attributes: { "class" : "command-buttons"} },
-			],
-            editable: "inline"
-        });
-		
         /** Handle create dialog */
 		$('#btn-add-device').click(function(event) {
 			dcOpen(event, onDeviceCreated)
 		});
-		
-        /** Handle update dialog submit */
-		$('#du-dialog-submit').click(function(event) {
-			event.preventDefault();
-			if (!validateForUpdate()) {
-				return;
-			}
-			var hardwareId = $('#du-hardware-id').val();
-			var deviceData = {
-				"hardwareId": hardwareId, 
-				"comments": $('#du-comments').val(), 
-				"assetId": $('#du-asset-id').val(), 
-				"metadata": metaDatasource.data(),
-			}
-			$.putJSON("${pageContext.request.contextPath}/api/devices/" + hardwareId, 
-					deviceData, onUpdateSuccess, onUpdateFail);
-		});
-        
-        /** Called on successful update */
-        function onUpdateSuccess() {
-        	$('#du-dialog').modal('hide');
-        	devicesDS.read();
-        }
-        
-		/** Handle failed call to update device */
-		function onUpdateFail(jqXHR, textStatus, errorThrown) {
-			handleError(jqXHR, "Unable to update device.");
-		}
    });
 </script>
 
