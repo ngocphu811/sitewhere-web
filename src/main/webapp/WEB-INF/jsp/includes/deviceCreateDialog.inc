@@ -37,7 +37,7 @@
 								<span class="add-on"><i class="icon-search"></i></span>
 	    					</div>
 							<div id="dc-hardware-matches" class="sw-form-search-results"></div>
-							<input type="hidden" id="dc-chosen-asset-id" title="Asset type"/>
+							<input type="hidden" id="dc-chosen-asset-id" title="Hardware type"/>
 	    				</div>
 	    			</div>
 	    		</form>		
@@ -52,3 +52,183 @@
 		<a id="dc-dialog-submit" href="javascript:void(0)" class="btn btn-primary">Create</a>
 	</div>
 </div>
+
+
+<!-- Script support for device create dialog -->
+<script>
+	/** Function called when dialog is submitted */
+	var dcSubmitCallback;
+
+	/** Provides external access to tabs */
+	var dcTabs;
+	
+	/** Metadata datasource */
+	var dcMetadataDS;
+	
+	/** Datasource for hardware assets */
+	var dcHardwareDS;
+	
+	/** Hardware matches list */
+	var dcHardwareMatches;
+	
+	/** Used for delayed submit on search */
+	var dcTimeout;
+	var dcLastSearch;
+
+	$(document).ready(function() {
+		
+		/** Create tab strip */
+		dcTabs = $("#dc-tabs").kendoTabStrip({
+			animation: false
+		}).data("kendoTabStrip");
+		
+		/** Local source for metadata entries */
+		dcMetadataDS = new kendo.data.DataSource({
+	        data: new Array(),
+	        schema: {
+	        	model: {
+	        		id: "name",
+	        		fields: {
+	        			name: { type: "string" },
+	        			value: { type: "string" }
+	        		}
+	        	}
+	        }
+		});
+		
+		/** Grid for metadata */
+        $("#dc-metadata").kendoGrid({
+            dataSource: dcMetadataDS,
+            sortable: true,
+            toolbar: ["create"],
+			columns: [
+				{ field: "name", title: "Name", width: "125px" },
+				{ field: "value", title: "Value", width: "125px" },
+				{ command: ["edit", "destroy"], title: "&nbsp;", width: "175px", 
+						attributes: { "class" : "command-buttons"} },
+			],
+            editable: "inline"
+        });
+		
+		/** Create AJAX datasource for hardware search */
+		dcHardwareDS = new kendo.data.DataSource({
+			transport : {
+				read : {
+					url : "${pageContext.request.contextPath}/api/assets/hardware",
+					dataType : "json",
+				}
+			},
+			schema : {
+				data: "results",
+				total: "numResults",
+			},
+		});
+		
+		/** Create the hardware match list */
+		dcHardwareMatches = $("#dc-hardware-matches").kendoListView({
+			dataSource : dcHardwareDS,
+			selectable : "single",
+			template : kendo.template($("#hardware-asset-entry").html()),
+			change: dcHardwareAssetChosen
+		}).data("kendoListView");
+		
+		/** Update hardware search datasource based on entered criteria */
+		$("#dc-hardware-search").bind("change paste keyup", function() {
+		    window.clearTimeout(dcTimeout);
+		    dcTimeout = window.setTimeout(dcHardwareSearchCriteriaUpdated, 300); 
+		});
+		
+        /** Handle create dialog submit */
+		$('#dc-dialog-submit').click(function(event) {
+			event.preventDefault();
+			if (!dcValidate()) {
+				return;
+			}
+			var deviceData = {
+				"hardwareId": $('#dc-hardware-id').val(), 
+				"comments": $('#dc-comments').val(), 
+				"assetId": $('#dc-chosen-asset-id').val(), 
+				"metadata": metaDatasource.data(),
+			}
+			$.postJSON("${pageContext.request.contextPath}/api/devices", 
+					deviceData, onCreateSuccess, onCreateFail);
+		});
+        
+        /** Called on successful create */
+        function onCreateSuccess() {
+        	$('#dc-dialog').modal('hide');
+			if (dcSubmitCallback != null) {
+				dcSubmitCallback();
+			}
+        }
+        
+		/** Handle failed call to create device */
+		function onCreateFail(jqXHR, textStatus, errorThrown) {
+			handleError(jqXHR, "Unable to create device.");
+		}
+    });
+	
+	/** Validate everything */
+	function dcValidate() {
+		$.validity.setup({ outputMode:"label" });
+		$.validity.start();
+
+        /** Validate main form */
+		$("#dc-hardware-id").require();
+
+        /** Verify that an asset was chosen */
+		$("#dc-chosen-asset-id").require();
+      
+		var result = $.validity.end();
+		return result.valid;
+	}
+	
+	/** Called when hardware search criteria has changed */
+	function dcHardwareSearchCriteriaUpdated() {
+		var criteria = $('#dc-hardware-search').val();
+		if (criteria != dcLastSearch) {
+			var url = "${pageContext.request.contextPath}/api/assets/hardware?criteria=" + criteria;
+			dcHardwareDS.transport.options.read.url = url;
+			dcHardwareDS.read();
+		}
+		dcLastSearch = criteria;
+	}
+	
+	/** Called when a hardware asset is chosen from the list */
+	function dcHardwareAssetChosen() {
+		var listView = dcHardwareDS.view();
+		var selected = $.map(this.select(), function(item) {
+			return listView[$(item).index()];
+		});
+
+		if (selected.length > 0) {
+			$('#dc-chosen-asset-id').val(selected[0].id);
+		} else {
+			$('#dc-chosen-asset-id').val("");
+		}				
+	}
+	
+	/** Open the dialog */
+	function dcOpen(e, callback) {
+		var event = e || window.event;
+		event.stopPropagation();
+		
+		// Reset form and metadata.
+    	$('#dc-general-form')[0].reset();
+		dcMetadataDS.data(new Array());
+		
+		// Reset hardware search.
+    	$('#dc-hardware-search').val("");
+    	$('#dc-chosen-asset-id').val("");
+    	dcHardwareSearchCriteriaUpdated();
+    	dcHardwareMatches.clearSelection();
+    	
+    	// Select first tab.
+		dcTabs.select(0);
+		
+		// Function called on submit.
+		dcSubmitCallback = callback;
+		
+		$('#dc-dialog').modal('show');
+	}
+</script>

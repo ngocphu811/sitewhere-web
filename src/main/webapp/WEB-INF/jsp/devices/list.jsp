@@ -145,8 +145,7 @@
 
 <!-- Device list item template -->
 <script type="text/x-kendo-tmpl" id="device-entry">
-	<div class="sw-device-list-entry gradient-bg" onclick="onDeviceOpenClicked(event, '#:hardwareId#')"
-		title="View Device">
+	<div class="sw-device-list-entry gradient-bg">
 		<div class="sw-device-list-entry-logowrapper">
 			<img class="sw-device-list-entry-logo" src="#:assetImageUrl#" width="100"/>
 			<span class="label label-info sw-device-list-entry-logo-tag">Device</span>
@@ -174,14 +173,30 @@
 			</div>
 			<p class="sw-device-list-entry-heading ellipsis">#:assignment.assetName#</p>
 			<p class="ellipsis"><span class="sw-device-list-entry-label">Assigned:</span> #= formattedDate(assignment.activeDate) #</p>
+# if (assignment.status == 'Active') { #
+			<span class="sw-device-list-entry-label">Status:</span> 
+			<div class="btn-group" style="margin-top: -6px;">
+				<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
+					Active
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a tabindex="-1" href="javascript:void(0)" title="Release Assignment"
+						onclick="onReleaseAssignment(event, '#:assignment.token#')">Release Assignment</a></li>
+					<li><a tabindex="-1" href="javascript:void(0)" title="Report Device/Asset Missing"
+						onclick="onMissingAssignment(event, '#:assignment.token#')">Report Missing</a></li>
+				</ul>
+			</div>
+# } else { #
 			<p class="ellipsis"><span class="sw-device-list-entry-label">Status:</span> #:assignment.status#</p>
+# } #
 		</div>
 # } else { #
 		<div class="sw-device-list-entry-no-assignment">
     		<div class="alert alert-info">
     			<p>Device is not currently assigned.</p>
 				<a class="btn" title="Assign Device" href="javascript:void(0)" 
-					onclick="acOpen(event, '#:hardwareId#')" style="margin-top: -4px;">Assign Device</a>
+					onclick="acOpen(event, '#:hardwareId#', onAssignmentAdded)" style="margin-top: -4px;">Assign Device</a>
 			</div>
 		</div>
 # } #
@@ -210,21 +225,11 @@
 	/** Reference for device list datasource */
 	var devicesDS;
 	
-	/** Reference for hardware search datasource */
-	var hardwareDS;
-	
 	/** Reference for metadata datasource */
 	var metaDatasource;
 	
-	/** Reference to tabs in create dialog */
-	var createTabs;
-	
 	/** Reference to tabs in update dialog */
 	var updateTabs;
-	
-	/** Used for delayed submit on search */
-	var timeout;
-	var lastSearch;
 	
 	/** Called when edit button on the list entry is pressed */
 	function onDeviceEditClicked(e, hardwareId) {
@@ -275,30 +280,54 @@
 		handleError(jqXHR, "Unable to delete device.");
 	}
 	
-	/** Called when hardware search criteria has changed */
-	function onHardwareSearchCriteriaUpdated() {
-		var criteria = $('#dc-hardware-search').val();
-		if (criteria != lastSearch) {
-			var url = "${pageContext.request.contextPath}/api/assets/hardware?criteria=" + criteria;
-			hardwareDS.transport.options.read.url = url;
-			hardwareDS.read();
-		}
-		lastSearch = criteria;
+	/** Called to release a device assignment */
+	function onReleaseAssignment(e, token) {
+		bootbox.confirm("Release device assignment?", function(result) {
+			if (result) {
+				$.postJSON("${pageContext.request.contextPath}/api/assignments/" + token + "/end", 
+					null, onDeleteSuccess, onDeleteFail);
+			}
+		});
+	}
+    
+    /** Called on successful release */
+    function onReleaseSuccess() {
+    	devicesDS.read();
+    }
+    
+	/** Handle failed release call */
+	function onReleaseFail(jqXHR, textStatus, errorThrown) {
+		handleError(jqXHR, "Unable to release assignment.");
 	}
 	
-	/** Validate everything */
-	function validate() {
-		$.validity.setup({ outputMode:"label" });
-		$.validity.start();
-
-        /** Validate main form */
-		$("#dc-hardware-id").require();
-
-        /** Verify that an asset was chosen */
-		$("#dc-asset-id").require();
-      
-		var result = $.validity.end();
-		return result.valid;
+	/** Called to report an assignment missing */
+	function onMissingAssignment(e, token) {
+		bootbox.confirm("Report assignment missing?", function(result) {
+			if (result) {
+				$.postJSON("${pageContext.request.contextPath}/api/assignments/" + token + "/missing", 
+					null, onMissingSuccess, onMissingFail);
+			}
+		});
+	}
+    
+    /** Called on successful missing report */
+    function onMissingSuccess() {
+    	devicesDS.read();
+    }
+    
+	/** Handle failed missing report */
+	function onMissingFail(jqXHR, textStatus, errorThrown) {
+		handleError(jqXHR, "Unable to mark assignment as missing.");
+	}
+	
+	/** Called on succesfull device assignment */
+	function onAssignmentAdded() {
+		devicesDS.read();
+	}
+	
+	/** Called when a device has been successfully created */
+	function onDeviceCreated() {
+    	devicesDS.read();
 	}
 	
 	/** Validate fields for update */
@@ -358,11 +387,6 @@
             dataSource: devicesDS
         });
 		
-		/** Create tab strip for the create dialog */
-		createTabs = $("#dc-tabs").kendoTabStrip({
-			animation: false
-		}).data("kendoTabStrip");
-		
 		/** Create tab strip for the update dialog */
 		updateTabs = $("#du-tabs").kendoTabStrip({
 			animation: false
@@ -383,20 +407,6 @@
 		});
 		
 		/** Grid for metadata */
-        $("#dc-metadata").kendoGrid({
-            dataSource: metaDatasource,
-            sortable: true,
-            toolbar: ["create"],
-			columns: [
-				{ field: "name", title: "Name", width: "125px" },
-				{ field: "value", title: "Value", width: "125px" },
-				{ command: ["edit", "destroy"], title: "&nbsp;", width: "175px", 
-						attributes: { "class" : "command-buttons"} },
-			],
-            editable: "inline"
-        });
-		
-		/** Grid for metadata */
         $("#du-metadata").kendoGrid({
             dataSource: metaDatasource,
             sortable: true,
@@ -410,88 +420,10 @@
             editable: "inline"
         });
 		
-		/** Create AJAX datasource for hardware search */
-		hardwareDS = new kendo.data.DataSource({
-			transport : {
-				read : {
-					url : "${pageContext.request.contextPath}/api/assets/hardware",
-					dataType : "json",
-				}
-			},
-			schema : {
-				data: "results",
-				total: "numResults",
-			},
-		});
-		
-		/** Create the hardware match list */
-		$("#dc-hardware-matches").kendoListView({
-			dataSource : hardwareDS,
-			selectable : "single",
-			template : kendo.template($("#hardware-asset-entry").html()),
-			change: onHardwareAssetChosen
-		});
-		
-		/** Called when a hardware asset is chosen from the list */
-		function onHardwareAssetChosen() {
-			var listView = hardwareDS.view();
-			var selected = $.map(this.select(), function(item) {
-				return listView[$(item).index()];
-			});
-
-			if (selected.length > 0) {
-				$('#dc-chosen-asset-id').val(selected[0].id);
-			} else {
-				$('#dc-chosen-asset-id').val("");
-			}				
-		}
-		
-		/** Update hardware search datasource based on entered criteria */
-		$("#dc-hardware-search").bind("change paste keyup", function() {
-		    window.clearTimeout(timeout);
-		    timeout = window.setTimeout(onHardwareSearchCriteriaUpdated, 300); 
-		});
-		
         /** Handle create dialog */
 		$('#btn-add-device').click(function(event) {
-	    	$('#dc-general-form')[0].reset();
-			$('#dc-dialog').modal('show');
-			metaDatasource.data(new Array());
-			
-			// Reset search.
-	    	$('#dc-hardware-search').val("");
-	    	onHardwareSearchCriteriaUpdated();
-	    	
-	    	// Select first tab.
-			createTabs.select(0);
+			dcOpen(event, onDeviceCreated)
 		});
-		
-        /** Handle create dialog submit */
-		$('#dc-dialog-submit').click(function(event) {
-			event.preventDefault();
-			if (!validate()) {
-				return;
-			}
-			var deviceData = {
-				"hardwareId": $('#dc-hardware-id').val(), 
-				"comments": $('#dc-comments').val(), 
-				"assetId": $('#dc-chosen-asset-id').val(), 
-				"metadata": metaDatasource.data(),
-			}
-			$.postJSON("${pageContext.request.contextPath}/api/devices", 
-					deviceData, onCreateSuccess, onCreateFail);
-		});
-        
-        /** Called on successful create */
-        function onCreateSuccess() {
-        	$('#dc-dialog').modal('hide');
-        	devicesDS.read();
-        }
-        
-		/** Handle failed call to create device */
-		function onCreateFail(jqXHR, textStatus, errorThrown) {
-			handleError(jqXHR, "Unable to create device.");
-		}
 		
         /** Handle update dialog submit */
 		$('#du-dialog-submit').click(function(event) {

@@ -11,13 +11,13 @@
 .sw-assignment-list-entry {
 	clear: both;
 	height: 70px;
-	border: 1px solid #dcdcdc;
 	padding: 10px;
 	margin-bottom: 15px;
 	font-size: 10pt;
 	text-align: left;
 	display: block;
 	cursor: pointer;
+	position: relative;
 }
 
 .sw-assignment-list-entry-heading {
@@ -85,6 +85,14 @@
 	position: relative;
 }
 
+.sw-assignment-status-indicator {
+	height: 3px;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px
+}
+
 .sw-button-bar {
 	padding: 5px;
 	border: 1px solid #e0e0e0;
@@ -132,7 +140,16 @@
 
 <!-- Template for assignment row -->
 <script type="text/x-kendo-tmpl" id="assignment-entry">
-	<div class="sw-assignment-list-entry gradient-bg">
+# if (data.status == 'Active') { #
+	<div class="sw-assignment-list-entry sw-assignment-active">
+		<div class="sw-assignment-active-indicator sw-assignment-status-indicator"></div>
+# } else if (data.status == 'Missing') { #
+	<div class="sw-assignment-list-entry sw-assignment-missing">
+		<div class="sw-assignment-missing-indicator sw-assignment-status-indicator"></div>
+# } else { #
+	<div class="sw-assignment-list-entry sw-assignment-released">
+		<div class="sw-assignment-status-indicator"></div>
+# } #
 		<div class="sw-assignment-list-entry-logowrapper">
 			<img class="sw-assignment-list-entry-logo" src="#:assetImageUrl#" width="100"/>
 			<span class="label label-info sw-assignment-list-entry-logo-tag">Asset</span>

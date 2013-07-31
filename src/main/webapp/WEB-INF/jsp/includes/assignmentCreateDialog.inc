@@ -19,20 +19,20 @@
 						</div>
 					</div>
 					<div class="control-group">
-						<label class="control-label" for="ac-site-dropdown">Site</label>
+						<label class="control-label" for="ac-site-token">Site</label>
 						<div class="controls">
-							<div id="ac-site-dropdown"></div>
+							<input id="ac-site-token"/>
 						</div>
 					</div>
 					<div class="control-group">
 						<label class="control-label" for="ac-asset-type-dropdown">Asset Type</label>
 						<div class="controls">
-							<div id="ac-asset-type-dropdown"></div>
+							<input id="ac-asset-type"/>
 						</div>
 					</div>
 					<div id="ac-asset-type-forms">
 						<div class="control-group" id="ac-asset-hardware-panel">
-							<label class="control-label" for="ac-site-dropdown">Choose Hardware</label>
+							<label class="control-label" for="ac-hardware-search">Choose Hardware</label>
 							<div class="controls">
 								<div class="input-append">
 		    						<input class="input-xlarge" id="ac-hardware-search" type="text">
@@ -40,6 +40,7 @@
 		    					</div>
 								<div id="ac-hardware-matches" class="sw-form-search-results"
 									style="height: 120px;"></div>
+								<input type="hidden" id="ac-hardware-asset-id" title="Asset"/>
 							</div>
 						</div>
 						<div class="control-group hide" id="ac-asset-person-panel">
@@ -51,11 +52,11 @@
 		    					</div>
 								<div id="ac-person-matches" class="sw-form-search-results"
 									style="height: 120px;"></div>
+								<input type="hidden" id="ac-person-asset-id" title="Asset"/>
 							</div>
 						</div>
 						<div class="control-group hide" id="ac-asset-unassociated-panel"></div>
 					</div>
-					<input type="hidden" id="ac-chosen-asset-id" title="Asset"/>
 				</form>
 			</div>
 			<div>
@@ -71,6 +72,9 @@
 
 <!-- Script support for assignment create dialog -->
 <script>
+	/** Function called when dialog is submitted */
+	var acSubmitCallback;
+
 	/** Provides external access to tabs */
 	var acTabs;
 	
@@ -82,6 +86,12 @@
 	
 	/** Datasource for person assets */
 	var acPersonDS;
+	
+	/** Hardware matches list */
+	var acHardwareMatches;
+	
+	/** Person matches list */
+	var acPersonMatches;
 	
 	/** Used for delayed submit on search */
 	var acTimeout;
@@ -131,11 +141,15 @@
 			},
 		});
 
-		$("#ac-site-dropdown").kendoDropDownList({
+		$("#ac-site-token").kendoDropDownList({
 			dataTextField: "name",
 			dataValueField: "token",
 			dataSource: acSitesDS,
         });
+		
+		$("#ac-site-token").bind("change paste keyup", function() {
+			alert("Changed to " + $("#ac-site-token").val());
+		});
 		
 		/** Available asset types shown in dropdown */
 	    var assetTypes = [
@@ -145,7 +159,7 @@
 		];
 
     	// create DropDownList from input HTML element
-    	$("#ac-asset-type-dropdown").kendoDropDownList({
+    	$("#ac-asset-type").kendoDropDownList({
     		dataTextField: "text",
     		dataValueField: "value",
     	    dataSource: assetTypes,
@@ -168,12 +182,12 @@
 		});
 		
 		/** Create the hardware match list */
-		$("#ac-hardware-matches").kendoListView({
+		acHardwareMatches = $("#ac-hardware-matches").kendoListView({
 			dataSource : acHardwareDS,
 			selectable : "single",
 			template : kendo.template($("#hardware-asset-entry").html()),
-			change: null
-		});
+			change: acHardwareAssetChosen
+		}).data("kendoListView");
 		
 		/** Update hardware search datasource based on entered criteria */
 		$("#ac-hardware-search").bind("change paste keyup", function() {
@@ -196,12 +210,12 @@
 		});
 		
 		/** Create the person match list */
-		$("#ac-person-matches").kendoListView({
+		acPersonMatches = $("#ac-person-matches").kendoListView({
 			dataSource : acPersonDS,
 			selectable : "single",
 			template : kendo.template($("#person-asset-entry").html()),
-			change: null
-		});
+			change: acPersonAssetChosen
+		}).data("kendoListView");
 		
 		/** Update person search datasource based on entered criteria */
 		$("#ac-person-search").bind("change paste keyup", function() {
@@ -213,7 +227,71 @@
 		acTabs = $("#ac-tabs").kendoTabStrip({
 			animation: false
 		}).data("kendoTabStrip");
+		
+        /** Handle dialog submit */
+		$('#ac-submit').click(function(event) {
+			event.preventDefault();
+			if (!acValidate()) {
+				return;
+			}
+	        
+	        var assetType = $("#ac-asset-type").val();
+	        var assetId;
+	        if (assetType == "Hardware") {
+	        	assetId = $('#ac-hardware-asset-id').val();
+	        } else if (assetType == "Person") {
+	        	assetId = $('#ac-person-asset-id').val();
+	        }
+	        
+			var assignmentData = {
+				"deviceHardwareId": $('#ac-hardware-id').val(), 
+				"siteToken": $('#ac-site-token').val(), 
+				"assetType": $('#ac-asset-type').val(), 
+				"assetId": assetId, 
+				"metadata": acMetadataDS.data(),
+			}
+			$.postJSON("${pageContext.request.contextPath}/api/assignments", 
+					assignmentData, onCreateSuccess, onCreateFail);
+		});
+        
+        /** Called on successful create */
+        function onCreateSuccess() {
+        	$('#ac-dialog').modal('hide');
+			if (acSubmitCallback != null) {
+				acSubmitCallback();
+			}
+        }
+        
+		/** Handle failed call to create device */
+		function onCreateFail(jqXHR, textStatus, errorThrown) {
+			handleError(jqXHR, "Unable to assign device.");
+		}
     });
+	
+	/** Validate the dialog */
+	function acValidate() {
+		$.validity.setup({ outputMode:"label" });
+		$.validity.start();
+
+        /** Validate main form */
+		$("#ac-hardware-id").require();
+
+        /** Verify that a site was chosen */
+		$("#ac-site-token").require();
+
+        /** Verify that a site was chosen */
+		$("#ac-asset-type").require();
+        
+        var assetType = $("#ac-asset-type").val();
+        if (assetType == "Hardware") {
+        	$('#ac-hardware-asset-id').require();
+        } else if (assetType == "Person") {
+        	$('#ac-person-asset-id').require();
+        }
+      
+		var result = $.validity.end();
+		return result.valid;
+	}
 	
 	/** Called when hardware search criteria has changed */
 	function acHardwareSearchCriteriaUpdated() {
@@ -239,7 +317,7 @@
 	
 	/** Called to swap panel when asset type dropdown value changes */
 	function acAssetTypeChanged() {
-		var assetType = $("#ac-asset-type-dropdown").val();
+		var assetType = $("#ac-asset-type").val();
 		var panelName = "ac-asset-" + assetType.toLowerCase() + "-panel";
 		$("#ac-asset-type-forms").children().each(function(i) {
 			if (panelName == $(this).attr("id")) {
@@ -250,16 +328,59 @@
 		});
 	}
 	
+	/** Called when a hardware asset is chosen from the list */
+	function acHardwareAssetChosen() {
+		var listView = acHardwareDS.view();
+		var selected = $.map(this.select(), function(item) {
+			return listView[$(item).index()];
+		});
+
+		if (selected.length > 0) {
+			$('#ac-hardware-asset-id').val(selected[0].id);
+		} else {
+			$('#ac-hardware-asset-id').val("");
+		}	
+	}
+	
+	/** Called when a hardware asset is chosen from the list */
+	function acPersonAssetChosen() {
+		var listView = acPersonDS.view();
+		var selected = $.map(this.select(), function(item) {
+			return listView[$(item).index()];
+		});
+
+		if (selected.length > 0) {
+			$('#ac-person-asset-id').val(selected[0].id);
+		} else {
+			$('#ac-person-asset-id').val("");
+		}		
+	}
+	
 	/** Open the dialog */
-	function acOpen(e, hardwareId) {
+	function acOpen(e, hardwareId, callback) {
 		var event = e || window.event;
 		event.stopPropagation();
+		
 		$('#ac-general-form')[0].reset();
 		$('#ac-hardware-id').val(hardwareId);
-		$('#ac-dialog').modal('show');
 		acMetadataDS.data(new Array());
+		
+		// Reset list selections.
+		$('#ac-hardware-asset-id').val("");
+		acHardwareMatches.clearSelection();
+		$('#ac-person-asset-id').val("");
+		acPersonMatches.clearSelection();
+		$("#ac-asset-type").val("Hardware");
+		acAssetTypeChanged();
    	
 		// Select first tab.
 		acTabs.select(0);
+		
+		// Function called on submit.
+		acSubmitCallback = callback;
+		
+		alert("Initial token " + $("#ac-site-token").val());
+		
+		$('#ac-dialog').modal('show');
 	}
 </script>
