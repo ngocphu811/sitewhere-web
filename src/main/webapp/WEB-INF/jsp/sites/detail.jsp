@@ -29,8 +29,15 @@
 .sw-assignment-list-entry-label {
 	font-size: 10pt;
 	font-weight: bold;
-	min-width: 70px;
 	display: inline-block;
+}
+
+.sw-min-40 {
+	min-width: 40px;
+}
+
+.sw-min-70 {
+	min-width: 70px;
 }
 
 .sw-assignment-list-entry-logowrapper {
@@ -126,8 +133,6 @@
 					<i class="icon-search"></i> Filter Results</a>
 				<a id="btn-refresh-assignments" class="btn" href="javascript:void(0)">
 					<i class="icon-refresh"></i> Refresh</a>
-				<a id="btn-create-assignment" class="btn" href="javascript:void(0)">
-					<i class="icon-plus"></i> Create Assignment</a>
 			</div>
 		</div>
 		<div id="assignments" class="sw-assignment-list"></div>
@@ -150,45 +155,53 @@
 	<div class="sw-assignment-list-entry sw-assignment-released">
 		<div class="sw-assignment-status-indicator"></div>
 # } #
-# if (data.assetType != 'Unassociated') { #
+# if (data.assetType == 'Person') { #
 		<div class="sw-assignment-list-entry-logowrapper">
-			<img class="sw-assignment-list-entry-logo" src="#:assetImageUrl#"/>
+			<img class="sw-assignment-list-entry-logo" src="#:associatedPerson.photoUrl#"/>
 			<span class="label label-info sw-assignment-list-entry-logo-tag">Asset</span>
 		</div>
-# } else if (data.device) { #
+# } else if (data.assetType == 'Hardware') { #
+		<div class="sw-assignment-list-entry-logowrapper">
+			<img class="sw-assignment-list-entry-logo" src="#:associatedHardware.imageUrl#"/>
+			<span class="label label-info sw-assignment-list-entry-logo-tag">Asset</span>
+		</div>
+# } else if ((data.assetType == 'Unassociated') && (data.device)) { #
 		<div class="sw-assignment-list-entry-logowrapper">
 			<img class="sw-assignment-list-entry-logo" src="#:device.assetImageUrl#"/>
 			<span class="label label-info sw-assignment-list-entry-logo-tag">Unassociated</span>
 		</div>
 # } #
 		<div class="sw-assignment-list-entry-actions">
-			<p class="ellipsis"><span class="sw-assignment-list-entry-label">Assigned:</span> #= formattedDate(activeDate) #</p>
-			<p class="ellipsis"><span class="sw-assignment-list-entry-label">Released:</span> #= formattedDate(releasedDate) #</p>
+			<p class="ellipsis"><span class="sw-min-70 sw-assignment-list-entry-label">Assigned:</span> #= formattedDate(activeDate) #</p>
+			<p class="ellipsis"><span class="sw-min-70 sw-assignment-list-entry-label">Released:</span> #= formattedDate(releasedDate) #</p>
 # if (data.status == 'Active') { #
-			<span class="sw-assignment-list-entry-label">Status:</span>			
+			<span class="sw-min-70 sw-assignment-list-entry-label">Status:</span>			
 			<div class="btn-group" style="margin-top: -6px;">
 				<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
 					Active
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu">
-					<li><a tabindex="-1" href="javascript:void(0)">Release Assignment</a></li>
-					<li><a tabindex="-1" href="javascript:void(0)">Report Missing</a></li>
+					<li><a tabindex="-1" href="javascript:void(0)" title="Release Assignment"
+						onclick="onReleaseAssignment(event, '#:token#')">Release Assignment</a></li>
+					<li><a tabindex="-1" href="javascript:void(0)" title="Report Device/Asset Missing"
+						onclick="onMissingAssignment(event, '#:token#')">Report Missing</a></li>
 				</ul>
 			</div>
 # } else if (data.status == 'Missing') { #
-			<span class="sw-assignment-list-entry-label">Status:</span>			
+			<span class="sw-min-70 sw-assignment-list-entry-label">Status:</span>			
 			<div class="btn-group" style="margin-top: -6px;">
 				<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
 					Missing
 					<span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu">
-					<li><a tabindex="-1" href="javascript:void(0)">Release Assignment</a></li>
+					<li><a tabindex="-1" href="javascript:void(0)" title="Release Assignment"
+						onclick="onReleaseAssignment(event, '#:token#')">Release Assignment</a></li>
 				</ul>
 			</div>
 # } else { #
-			<p class="ellipsis"><span class="sw-assignment-list-entry-label">Status:</span> #:status#</p>
+			<p class="ellipsis"><span class="sw-min-70 sw-assignment-list-entry-label">Status:</span> #:status#</p>
 # } #
 			<div class="btn-group btn-group-vertical" style="position: absolute; right: 0px; top: -2px;">
 				<a class="btn btn-small btn-primary" title="Edit Device">
@@ -206,8 +219,8 @@
 				<span class="label label-info sw-assignment-list-entry-logo-tag">Device</span>
 			</div>
 			<p class="sw-assignment-list-entry-heading ellipsis">#:device.assetName#</p>
-			<p class="ellipsis"><b>#:device.hardwareId#</b></p>
-			<p class="ellipsis">#:device.comments#</p>
+			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label">Id:</span> #:device.hardwareId#</p>
+			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label">Info:</span> #:device.comments#</p>
 		</div>
 # } else { #
 		<div class="sw-assignment-list-entry-no-device">
@@ -216,17 +229,27 @@
 			</div>
 		</div>
 # } #
-# if (data.assetType != 'Unassociated') { #
+# if (data.assetType == 'Person') { #
 		<div>
-			<p class="sw-assignment-list-entry-heading ellipsis">#:assetName#</p>
+			<p class="sw-assignment-list-entry-heading ellipsis">#:associatedPerson.name#</p>
+			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label">Email:</span> #:associatedPerson.emailAddress#</p>
+			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label">Roles:</span> #:asCommaDelimited(associatedPerson.roles)#</p>
 		</div>
-# } else { #
+# } else if (data.assetType == 'Hardware') { #
+		<div>
+			<p class="sw-assignment-list-entry-heading ellipsis">#:associatedHardware.name#</p>
+			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label">SKU:</span> #:associatedHardware.sku#</p>
+			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label">Info:</span> #:associatedHardware.description#</p>
+		</div>
+# } else if (data.assetType == 'Unassociated') { #
 		<div>
 			<p class="sw-assignment-list-entry-heading ellipsis">Unassociated Device</p>
 		</div>
 # } #
 	</div>
 </script>
+
+<%@ include file="../includes/commonFunctions.inc"%>
 
 <script>
 	var siteToken = '<c:out value="${site.token}"/>';
@@ -237,13 +260,38 @@
 	/** Reference to tab panel */
 	var tabs;
 	
+	/** Called when 'release assignment' is clicked */
+	function onReleaseAssignment(e, token) {
+		var event = e || window.event;
+		event.stopPropagation();
+		swReleaseAssignment(token, onReleaseAssignmentComplete);
+	}
+	
+	/** Called after successful release assignment */
+	function onReleaseAssignmentComplete() {
+		assignmentsDS.read();
+	}
+	
+	/** Called when 'missing assignment' is clicked */
+	function onMissingAssignment(e, token) {
+		var event = e || window.event;
+		event.stopPropagation();
+		swAssignmentMissing(token, onMissingAssignmentComplete);
+	}
+	
+	/** Called after successful missing assignment */
+	function onMissingAssignmentComplete() {
+		assignmentsDS.read();
+	}
+	
 	$(document).ready(function() {
 		
 		/** Create AJAX datasource for assignments list */
 		assignmentsDS = new kendo.data.DataSource({
 			transport : {
 				read : {
-					url : "${pageContext.request.contextPath}/api/sites/" + siteToken + "/assignments?includeDevice=true",
+					url : "${pageContext.request.contextPath}/api/sites/" + siteToken + 
+						"/assignments?includeDevice=true&includeAsset=true",
 					dataType : "json",
 				}
 			},
@@ -286,6 +334,21 @@
 			animation: false
 		}).data("kendoTabStrip");
 	});
+	
+	/** Gets a string array as a comma-delimited string */
+	function asCommaDelimited(input) {
+		var result = "";
+		if (!input) {
+			return result;
+		}
+		for (var i =0; i<input.length; i++) {
+			if (i != 0) {
+				result += ", ";
+			}
+			result += input[i];
+		}
+		return result;
+	}
 </script>
 
 <%@ include file="../includes/bottom.inc"%>

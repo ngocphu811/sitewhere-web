@@ -205,6 +205,8 @@
 
 <%@ include file="../includes/assetTemplates.inc"%>
 
+<%@ include file="../includes/commonFunctions.inc"%>
+
 <script>
 	/** Reference for device list datasource */
 	var devicesDS;
@@ -221,66 +223,40 @@
     	devicesDS.read();
 	}
 	
-	/** Called when delete button is clicked */
+	/** Called when delete button on the list entry is pressed */
 	function onDeviceDeleteClicked(e, hardwareId) {
 		var event = e || window.event;
 		event.stopPropagation();
-		bootbox.confirm("Delete device?", function(result) {
-			if (result) {
-				$.deleteJSON("${pageContext.request.contextPath}/api/devices/" + hardwareId + "?force=true", 
-						onDeleteSuccess, onDeleteFail);
-			}
-		});
-	}
-    
-    /** Called on successful delete */
-    function onDeleteSuccess() {
-    	devicesDS.read();
-    }
-    
-	/** Handle failed delete call */
-	function onDeleteFail(jqXHR, textStatus, errorThrown) {
-		handleError(jqXHR, "Unable to delete device.");
+		swDeviceDelete(hardwareId, onDeviceDeleteComplete);
 	}
 	
-	/** Called to release a device assignment */
+	/** Called after successful device delete */
+	function onDeviceDeleteComplete() {
+    	devicesDS.read();
+	}
+	
+	/** Called when 'release assignment' is clicked */
 	function onReleaseAssignment(e, token) {
-		bootbox.confirm("Release device assignment?", function(result) {
-			if (result) {
-				$.postJSON("${pageContext.request.contextPath}/api/assignments/" + token + "/end", 
-					null, onDeleteSuccess, onDeleteFail);
-			}
-		});
-	}
-    
-    /** Called on successful release */
-    function onReleaseSuccess() {
-    	devicesDS.read();
-    }
-    
-	/** Handle failed release call */
-	function onReleaseFail(jqXHR, textStatus, errorThrown) {
-		handleError(jqXHR, "Unable to release assignment.");
+		var event = e || window.event;
+		event.stopPropagation();
+		swReleaseAssignment(token, onReleaseAssignmentComplete);
 	}
 	
-	/** Called to report an assignment missing */
-	function onMissingAssignment(e, token) {
-		bootbox.confirm("Report assignment missing?", function(result) {
-			if (result) {
-				$.postJSON("${pageContext.request.contextPath}/api/assignments/" + token + "/missing", 
-					null, onMissingSuccess, onMissingFail);
-			}
-		});
-	}
-    
-    /** Called on successful missing report */
-    function onMissingSuccess() {
+	/** Called after successful release assignment */
+	function onReleaseAssignmentComplete() {
     	devicesDS.read();
-    }
-    
-	/** Handle failed missing report */
-	function onMissingFail(jqXHR, textStatus, errorThrown) {
-		handleError(jqXHR, "Unable to mark assignment as missing.");
+	}
+	
+	/** Called when 'missing assignment' is clicked */
+	function onMissingAssignment(e, token) {
+		var event = e || window.event;
+		event.stopPropagation();
+		swAssignmentMissing(token, onMissingAssignmentComplete);
+	}
+	
+	/** Called after successful missing assignment */
+	function onMissingAssignmentComplete() {
+    	devicesDS.read();
 	}
 	
 	/** Called on succesfull device assignment */

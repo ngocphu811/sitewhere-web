@@ -232,14 +232,16 @@ public class SitesController extends SiteWhereController {
 	public DeviceAssignmentSearchResults findAssignmentsForSite(
 			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken,
 			@ApiParam(value = "Include detailed device information", required = false) @RequestParam(defaultValue = "false") boolean includeDevice,
+			@ApiParam(value = "Include detailed asset information", required = false) @RequestParam(defaultValue = "false") boolean includeAsset,
+			@ApiParam(value = "Include detailed site information", required = false) @RequestParam(defaultValue = "false") boolean includeSite,
 			@ApiParam(value = "Max records to return", required = false) @RequestParam(defaultValue = "100") int count)
 			throws SiteWhereException {
 		List<IDeviceAssignment> matches = SiteWhereServer.getInstance().getDeviceManagement()
 				.getDeviceAssignmentsForSite(siteToken);
 		DeviceAssignmentMarshalHelper helper = new DeviceAssignmentMarshalHelper();
-		helper.setIncludeAsset(false);
+		helper.setIncludeAsset(includeAsset);
 		helper.setIncludeDevice(includeDevice);
-		helper.setIncludeSite(false);
+		helper.setIncludeSite(includeSite);
 		List<DeviceAssignment> converted = new ArrayList<DeviceAssignment>();
 		for (IDeviceAssignment assignment : matches) {
 			converted.add(helper.convert(assignment, SiteWhereServer.getInstance().getAssetModuleManager()));
