@@ -21,13 +21,13 @@
 					<div class="control-group">
 						<label class="control-label" for="ac-site-token">Site</label>
 						<div class="controls">
-							<input id="ac-site-token"/>
+							<select id="ac-site-token"></select>
 						</div>
 					</div>
 					<div class="control-group">
-						<label class="control-label" for="ac-asset-type-dropdown">Asset Type</label>
+						<label class="control-label" for="ac-asset-type">Asset Type</label>
 						<div class="controls">
-							<input id="ac-asset-type"/>
+							<select id="ac-asset-type"/></select>
 						</div>
 					</div>
 					<div id="ac-asset-type-forms">
@@ -93,6 +93,9 @@
 	/** Person matches list */
 	var acPersonMatches;
 	
+	/** Sites dropdown */
+	var acSitesDropdown;
+	
 	/** Used for delayed submit on search */
 	var acTimeout;
 	var acLastSearch;
@@ -126,26 +129,23 @@
 			],
             editable: "inline"
         });
-		
-		/** Datasource for sites dropdown */
-		var acSitesDS = new kendo.data.DataSource({
-			transport : {
-				read : {
-					url : "${pageContext.request.contextPath}/api/sites",
-					dataType : "json",
-				}
-			},
-			schema : {
-				data: "results",
-				total: "numResults",
-			},
-		});
 
-		$("#ac-site-token").kendoDropDownList({
+        acSitesDropdown = $("#ac-site-token").kendoDropDownList({
 			dataTextField: "name",
 			dataValueField: "token",
-			dataSource: acSitesDS,
-        });
+            dataSource: {
+    			transport : {
+    				read : {
+    					url : "${pageContext.request.contextPath}/api/sites",
+    					dataType : "json",
+    				}
+    			},
+    			schema : {
+    				data: "results",
+    				total: "numResults",
+    			},
+            }
+        }).data("kendoDropDownList");
 		
 		$("#ac-site-token").bind("change paste keyup", function() {
 			alert("Changed to " + $("#ac-site-token").val());
@@ -276,7 +276,7 @@
         /** Validate main form */
 		$("#ac-hardware-id").require();
 
-        /** Verify that a site was chosen */
+        /** Validate main form */
 		$("#ac-site-token").require();
 
         /** Verify that a site was chosen */
@@ -379,8 +379,8 @@
 		// Function called on submit.
 		acSubmitCallback = callback;
 		
-		alert("Initial token " + $("#ac-site-token").val());
-		
+		// Clear old validation errors and show dialog.
+		$.validity.clear();
 		$('#ac-dialog').modal('show');
 	}
 </script>

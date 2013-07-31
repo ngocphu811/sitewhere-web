@@ -168,7 +168,7 @@
 # if (data.assignment) { #
 		<div class="sw-device-list-entry-assignment">
 			<div class="sw-device-list-entry-logowrapper">
-				<img class="sw-device-list-entry-logo" src="#:assignment.assetImageUrl#" width="100"/>
+				<img class="sw-device-list-entry-logo" src="#:assignment.assetImageUrl#"/>
 				<span class="label label-info sw-device-list-entry-logo-tag">Asset</span>
 			</div>
 			<p class="sw-device-list-entry-heading ellipsis">#:assignment.assetName#</p>
@@ -185,6 +185,18 @@
 						onclick="onReleaseAssignment(event, '#:assignment.token#')">Release Assignment</a></li>
 					<li><a tabindex="-1" href="javascript:void(0)" title="Report Device/Asset Missing"
 						onclick="onMissingAssignment(event, '#:assignment.token#')">Report Missing</a></li>
+				</ul>
+			</div>
+# } else if (assignment.status == 'Missing') { #
+			<span class="sw-device-list-entry-label">Status:</span> 
+			<div class="btn-group" style="margin-top: -6px;">
+				<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
+					Missing
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a tabindex="-1" href="javascript:void(0)" title="Release Assignment"
+						onclick="onReleaseAssignment(event, '#:assignment.token#')">Release Assignment</a></li>
 				</ul>
 			</div>
 # } else { #

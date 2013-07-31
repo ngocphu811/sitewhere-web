@@ -151,7 +151,7 @@
 		<div class="sw-assignment-status-indicator"></div>
 # } #
 		<div class="sw-assignment-list-entry-logowrapper">
-			<img class="sw-assignment-list-entry-logo" src="#:assetImageUrl#" width="100"/>
+			<img class="sw-assignment-list-entry-logo" src="#:assetImageUrl#"/>
 			<span class="label label-info sw-assignment-list-entry-logo-tag">Asset</span>
 		</div>
 		<div class="sw-assignment-list-entry-actions">
@@ -167,6 +167,17 @@
 				<ul class="dropdown-menu">
 					<li><a tabindex="-1" href="javascript:void(0)">Release Assignment</a></li>
 					<li><a tabindex="-1" href="javascript:void(0)">Report Missing</a></li>
+				</ul>
+			</div>
+# } else if (data.status == 'Missing') { #
+			<span class="sw-assignment-list-entry-label">Status:</span>			
+			<div class="btn-group" style="margin-top: -6px;">
+				<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
+					Missing
+					<span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu">
+					<li><a tabindex="-1" href="javascript:void(0)">Release Assignment</a></li>
 				</ul>
 			</div>
 # } else { #
