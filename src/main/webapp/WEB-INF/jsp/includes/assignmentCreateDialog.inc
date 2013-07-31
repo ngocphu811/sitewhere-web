@@ -147,10 +147,6 @@
             }
         }).data("kendoDropDownList");
 		
-		$("#ac-site-token").bind("change paste keyup", function() {
-			alert("Changed to " + $("#ac-site-token").val());
-		});
-		
 		/** Available asset types shown in dropdown */
 	    var assetTypes = [
 			{ text: "Hardware", value: "Hardware" },
