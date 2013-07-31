@@ -150,10 +150,17 @@
 	<div class="sw-assignment-list-entry sw-assignment-released">
 		<div class="sw-assignment-status-indicator"></div>
 # } #
+# if (data.assetType != 'Unassociated') { #
 		<div class="sw-assignment-list-entry-logowrapper">
 			<img class="sw-assignment-list-entry-logo" src="#:assetImageUrl#"/>
 			<span class="label label-info sw-assignment-list-entry-logo-tag">Asset</span>
 		</div>
+# } else if (data.device) { #
+		<div class="sw-assignment-list-entry-logowrapper">
+			<img class="sw-assignment-list-entry-logo" src="#:device.assetImageUrl#"/>
+			<span class="label label-info sw-assignment-list-entry-logo-tag">Unassociated</span>
+		</div>
+# } #
 		<div class="sw-assignment-list-entry-actions">
 			<p class="ellipsis"><span class="sw-assignment-list-entry-label">Assigned:</span> #= formattedDate(activeDate) #</p>
 			<p class="ellipsis"><span class="sw-assignment-list-entry-label">Released:</span> #= formattedDate(releasedDate) #</p>
@@ -209,9 +216,15 @@
 			</div>
 		</div>
 # } #
+# if (data.assetType != 'Unassociated') { #
 		<div>
 			<p class="sw-assignment-list-entry-heading ellipsis">#:assetName#</p>
 		</div>
+# } else { #
+		<div>
+			<p class="sw-assignment-list-entry-heading ellipsis">Unassociated Device</p>
+		</div>
+# } #
 	</div>
 </script>
 
