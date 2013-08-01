@@ -85,8 +85,8 @@
 		<div style="display: inline-block;" max-width: 280px;>
 			<p class="ellipsis"><span class="sw-assignment-update-label">Type:</span> Unassociated Device</p>
 # } #
-			<p class="ellipsis"><span class="sw-assignment-update-label">Assigned:</span> #= formattedDate(activeDate) #</p>
-			<p class="ellipsis"><span class="sw-assignment-update-label">Released:</span> #= formattedDate(releasedDate) #</p>
+			<p class="ellipsis"><span class="sw-assignment-update-label">Assigned:</span> #= formattedDate(kendo.parseDate(activeDate)) #</p>
+			<p class="ellipsis"><span class="sw-assignment-update-label">Released:</span> #= formattedDate(kendo.parseDate(releasedDate)) #</p>
 			<p class="ellipsis"><span class="sw-assignment-update-label">Status:</span> #:status#</p>
 		</div>
 	</div>

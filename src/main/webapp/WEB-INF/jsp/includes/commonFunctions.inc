@@ -8,8 +8,7 @@
 		bootbox.confirm("Delete device?", function(result) {
 			if (result) {
 				$.deleteJSON("${pageContext.request.contextPath}/api/devices/"
-						+ hardwareId + "?force=true", swDeviceDeleteSuccess,
-						swDeviceDeleteFail);
+					+ hardwareId + "?force=true", swDeviceDeleteSuccess, swDeviceDeleteFail);
 			}
 		});
 	}
@@ -32,8 +31,7 @@
 		bootbox.confirm("Delete device assignment?", function(result) {
 			if (result) {
 				$.deleteJSON("${pageContext.request.contextPath}/api/assignments/"
-						+ token + "?force=true", swAssignmentDeleteSuccess,
-						swAssignmentDeleteFail);
+					+ token + "?force=true", swAssignmentDeleteSuccess, swAssignmentDeleteFail);
 			}
 		});
 	}
@@ -56,7 +54,7 @@
 		bootbox.confirm("Release device assignment?", function(result) {
 			if (result) {
 				$.postJSON("${pageContext.request.contextPath}/api/assignments/"
-					+ token + "/end", null, swDeleteSuccess, swDeleteFail);
+					+ token + "/end", null, swReleaseSuccess, swReleaseFail);
 			}
 		});
 	}
