@@ -65,6 +65,7 @@ public class DeviceAssignmentMarshalHelper {
 		result.setReleasedDate(source.getReleasedDate());
 		result.setStatus(source.getStatus());
 		result.setAssetType(source.getAssetType());
+		result.setAssetId(source.getAssetId());
 		MetadataProviderEntity.copy(source, result);
 		if (source.getLastLocation() != null) {
 			result.setLastLocation(DeviceLocation.copy(source.getLastLocation()));
@@ -79,7 +80,6 @@ public class DeviceAssignmentMarshalHelper {
 					result.setAssociatedPerson((PersonAsset) asset);
 				}
 			} else {
-				result.setAssetId(source.getAssetId());
 				if (asset instanceof HardwareAsset) {
 					result.setAssetName(((HardwareAsset) asset).getName());
 					result.setAssetImageUrl(((HardwareAsset) asset).getImageUrl());

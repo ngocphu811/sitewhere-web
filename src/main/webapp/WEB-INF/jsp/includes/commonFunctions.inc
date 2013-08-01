@@ -95,4 +95,19 @@
 	function swAssignmentMissingFail(jqXHR, textStatus, errorThrown) {
 		handleError(jqXHR, "Unable to mark assignment as missing.");
 	}
+	
+	/** Gets a string array as a comma-delimited string */
+	function swArrayAsCommaDelimited(input) {
+		var result = "";
+		if (!input) {
+			return result;
+		}
+		for (var i =0; i<input.length; i++) {
+			if (i != 0) {
+				result += ", ";
+			}
+			result += input[i];
+		}
+		return result;
+	}
 </script>

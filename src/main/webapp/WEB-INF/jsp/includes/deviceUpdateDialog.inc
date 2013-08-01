@@ -64,7 +64,7 @@
 </div>
 
 <!-- Static content in top of update dialog -->
-<script type="text/x-kendo-tmpl" id="device-update-static">
+<script type="text/x-kendo-tmpl" id="du-static-block">
 	<div class="sw-device-update-imgwrapper">
 		<img class="sw-device-update-img" src="#:deviceAsset.imageUrl#"/>
 	</div>
@@ -176,7 +176,7 @@
     function duUpdateGetSuccess(data, status, jqXHR) {
     	$('#du-general-form')[0].reset();
 		
-		var template = kendo.template($("#device-update-static").html());
+		var template = kendo.template($("#du-static-block").html());
 		$('#du-static-header').html(template(data));
 		$('#du-hardware-id').val(data.hardwareId);
 		$('#du-comments').val(data.comments);

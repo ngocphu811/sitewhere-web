@@ -143,6 +143,8 @@
 	<div></div>
 </div>
 
+<%@ include file="../includes/assignmentUpdateDialog.inc"%>
+
 <!-- Template for assignment row -->
 <script type="text/x-kendo-tmpl" id="assignment-entry">
 # if (data.status == 'Active') { #
@@ -204,7 +206,8 @@
 			<p class="ellipsis"><span class="sw-min-70 sw-assignment-list-entry-label">Status:</span> #:status#</p>
 # } #
 			<div class="btn-group btn-group-vertical" style="position: absolute; right: 0px; top: -2px;">
-				<a class="btn btn-small btn-primary" title="Edit Assignment">
+				<a class="btn btn-small btn-primary" title="Edit Assignment"
+					href="javascript:void(0)" onclick="onEditAssignment(event, '#:token#')">
 					<i class="icon-pencil icon-white"></i></a>
 				<a class="btn btn-small btn-danger" title="Delete Assignment" 
 					href="javascript:void(0)" onclick="onDeleteAssignment(event, '#:token#')">
@@ -234,7 +237,7 @@
 		<div>
 			<p class="sw-assignment-list-entry-heading ellipsis">#:associatedPerson.name#</p>
 			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label">Email:</span> #:associatedPerson.emailAddress#</p>
-			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label">Roles:</span> #:asCommaDelimited(associatedPerson.roles)#</p>
+			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label">Roles:</span> #:swArrayAsCommaDelimited(associatedPerson.roles)#</p>
 		</div>
 # } else if (data.assetType == 'Hardware') { #
 		<div>
@@ -270,6 +273,18 @@
 	
 	/** Called after successful delete assignment */
 	function onDeleteAssignmentComplete() {
+		assignmentsDS.read();
+	}
+	
+	/** Called when 'edit assignment' is clicked */
+	function onEditAssignment(e, token) {
+		var event = e || window.event;
+		event.stopPropagation();
+		auOpen(token, onEditAssignmentComplete);
+	}
+	
+	/** Called after successful edit assignment */
+	function onEditAssignmentComplete() {
 		assignmentsDS.read();
 	}
 	
@@ -351,21 +366,6 @@
 			animation: false
 		}).data("kendoTabStrip");
 	});
-	
-	/** Gets a string array as a comma-delimited string */
-	function asCommaDelimited(input) {
-		var result = "";
-		if (!input) {
-			return result;
-		}
-		for (var i =0; i<input.length; i++) {
-			if (i != 0) {
-				result += ", ";
-			}
-			result += input[i];
-		}
-		return result;
-	}
 </script>
 
 <%@ include file="../includes/bottom.inc"%>

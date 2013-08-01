@@ -85,14 +85,6 @@
 	position: relative;
 }
 
-.k-grid-content {
-	min-height: 200px;
-}
-
-.command-buttons {
-	text-align: center;
-}
-
 #device-metadata {
 	margin-top: 15px;
 	margin-bottom: 15px;
