@@ -105,6 +105,14 @@
 	margin-right: 4px;
 }
 
+.sw-min-40 {
+	min-width: 40px;
+}
+
+.sw-min-70 {
+	min-width: 70px;
+}
+
 .ellipsis {
     white-space: nowrap;
     overflow: hidden;

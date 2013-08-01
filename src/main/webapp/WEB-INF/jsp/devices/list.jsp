@@ -29,7 +29,6 @@
 .sw-device-list-entry-label {
 	font-size: 10pt;
 	font-weight: bold;
-	min-width: 70px;
 	display: inline-block;
 }
 
@@ -118,8 +117,8 @@
 			<span class="label label-info sw-device-list-entry-logo-tag">Device</span>
 		</div>
 		<div class="sw-device-list-entry-actions">
-			<p class="ellipsis"><span class="sw-device-list-entry-label">Created:</span> #= formattedDate(createdDate) #</p>
-			<p class="ellipsis"><span class="sw-device-list-entry-label">Updated:</span> #= formattedDate(updatedDate) #</p>
+			<p class="ellipsis"><span class="sw-device-list-entry-label sw-min-70">Created:</span> #= formattedDate(createdDate) #</p>
+			<p class="ellipsis"><span class="sw-device-list-entry-label sw-min-70">Updated:</span> #= formattedDate(updatedDate) #</p>
 			<div class="btn-group btn-group-vertical" style="position: absolute; right: 0px; top: -2px;">
 				<a class="btn btn-small btn-primary" title="Edit Device" 
 					href="javascript:void(0)" onclick="onDeviceEditClicked(event, '#:hardwareId#');">
@@ -147,9 +146,9 @@
 			</div>
 			<p class="sw-device-list-entry-heading ellipsis">Unassociated Device</p>
 # } #
-			<p class="ellipsis"><span class="sw-device-list-entry-label">Assigned:</span> #= formattedDate(assignment.activeDate) #</p>
+			<p class="ellipsis"><span class="sw-device-list-entry-label sw-min-70">Assigned:</span> #= formattedDate(assignment.activeDate) #</p>
 # if (assignment.status == 'Active') { #
-			<span class="sw-device-list-entry-label">Status:</span> 
+			<span class="sw-device-list-entry-label sw-min-70">Status:</span> 
 			<div class="btn-group" style="margin-top: -6px;">
 				<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
 					Active
@@ -163,7 +162,7 @@
 				</ul>
 			</div>
 # } else if (assignment.status == 'Missing') { #
-			<span class="sw-device-list-entry-label">Status:</span> 
+			<span class="sw-device-list-entry-label sw-min-70">Status:</span> 
 			<div class="btn-group" style="margin-top: -6px;">
 				<a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
 					Missing
@@ -175,7 +174,7 @@
 				</ul>
 			</div>
 # } else { #
-			<p class="ellipsis"><span class="sw-device-list-entry-label">Status:</span> #:assignment.status#</p>
+			<p class="ellipsis"><span class="sw-device-list-entry-label sw-min-70">Status:</span> #:assignment.status#</p>
 # } #
 		</div>
 # } else { #
@@ -189,8 +188,8 @@
 # } #
 		<div>
 			<p class="sw-device-list-entry-heading ellipsis">#:assetName#</p>
-			<p class="ellipsis"><b>#:hardwareId#</b></p>
-			<p class="ellipsis">#:comments#</p>
+			<p class="ellipsis"><span class="sw-device-list-entry-label sw-min-40">Id:</span> #:hardwareId#</p>
+			<p class="ellipsis"><span class="sw-device-list-entry-label sw-min-40">Info:</span> #:comments#</p>
 		</div>
 	</div>
 </script>

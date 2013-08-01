@@ -32,14 +32,6 @@
 	display: inline-block;
 }
 
-.sw-min-40 {
-	min-width: 40px;
-}
-
-.sw-min-70 {
-	min-width: 70px;
-}
-
 .sw-assignment-list-entry-logowrapper {
 	float: left;
 	margin-right: 15px;	
