@@ -229,6 +229,8 @@
 		// Function called on submit.
 		dcSubmitCallback = callback;
 		
+		// Clear old validation errors and show dialog.
+		$.validity.clear();
 		$('#dc-dialog').modal('show');
 	}
 </script>

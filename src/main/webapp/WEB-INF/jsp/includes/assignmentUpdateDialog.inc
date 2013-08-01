@@ -47,9 +47,6 @@
             </div>
 		</div>
 		<input type="hidden" id="au-token"/>
-		<input type="hidden" id="au-site-token"/>
-		<input type="hidden" id="au-asset-type"/>
-		<input type="hidden" id="au-asset-id"/>
 	</div>
 	<div class="modal-footer">
 		<a href="javascript:void(0)" class="btn" data-dismiss="modal">Cancel</a> 
@@ -156,7 +153,7 @@
 				return;
 			}
 	        
-			var token = $('au-token').val();
+			var token = $('#au-token').val();
 			var data = {
 				"metadata": auMetadataDS.data(),
 			}
@@ -185,9 +182,6 @@
 
         /** These should all be in hidden fields */
 		$("#au-token").require();
-		$("#au-site-token").require();
-		$("#au-asset-type").require();
-		$("#au-asset-id").require();
      
 		var result = $.validity.end();
 		return result.valid;
@@ -208,13 +202,12 @@
 		var template = kendo.template($("#au-static-block").html());
 		$('#au-static-header').html(template(data));
 		$('#au-token').val(data.token);
-		$('#au-site-token').val(data.siteToken);
-		$('#au-asset-type').val(data.assetType);
-		$('#au-asset-id').val(data.assetId);
 		auMetadataDS.data(data.metadata);
 		
 		auTabs.select(0);
 		
+		// Clear old validation errors and show dialog.
+		$.validity.clear();
 		$('#au-dialog').modal('show');
     }
     

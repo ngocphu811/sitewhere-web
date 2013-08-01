@@ -185,6 +185,8 @@
 		
 		duTabs.select(0);
 		
+		// Clear old validation errors and show dialog.
+		$.validity.clear();
 		$('#du-dialog').modal('show');
     }
     
