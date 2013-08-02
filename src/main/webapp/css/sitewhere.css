@@ -73,6 +73,19 @@
 	right: 10px;
 }
 
+.sw-button-bar {
+	padding: 5px;
+	border: 1px solid #e0e0e0;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	text-align: right;
+}
+
+.sw-button-bar-title {
+	float: left;
+	font-size: 16pt;
+}
+
 .sw-breadcrumb {
 	margin: 0px 0px 20px;
 	border: 0px;
