@@ -4,6 +4,14 @@
 	font-size: 10pt;
 }
 
+.sw-location-entry .btn-group {
+	display: none;
+}
+
+.sw-location-entry:hover .btn-group {
+	display: inline-block;
+}
+
 .k-grid td {
 	overflow: visible;
 	border-style: none;
