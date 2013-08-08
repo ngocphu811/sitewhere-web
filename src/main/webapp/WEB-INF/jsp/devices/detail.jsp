@@ -13,7 +13,7 @@
 <div class="sw-title-bar content k-header" style="margin-bottom: -1px;">
 	<h1 class="ellipsis"><c:out value="${sitewhere_title}"/></h1>
 	<div class="sw-title-bar-right">
-		<a id="btn-edit-site" class="btn" href="javascript:void(0)">
+		<a id="btn-edit-device" class="btn" href="javascript:void(0)">
 			<i class="icon-pencil"></i> Edit Device</a>
 	</div>
 </div>
@@ -44,6 +44,8 @@
 <form id="view-assignment-detail" method="get" action="../sites/assignment">
 	<input id="detail-assignment-token" name="token" type="hidden"/>
 </form>
+
+<%@ include file="../includes/deviceUpdateDialog.inc"%>	
 
 <%@ include file="../includes/assetTemplates.inc"%>	
 
@@ -167,6 +169,10 @@
 	    	assignmentsDS.read();
 	    });
 		
+	    $("#btn-edit-device").click(function() {
+	    	duOpen(hardwareId, onDeviceEditSuccess);
+	    });
+		
 		/** Create the tab strip */
 		tabs = $("#tabs").kendoTabStrip({
 			animation: false
@@ -192,6 +198,11 @@
 	/** Handle error on getting device data */
 	function loadGetFailed(jqXHR, textStatus, errorThrown) {
 		handleError(jqXHR, "Unable to load device data.");
+	}
+	
+	/** Called after device edit to update banner */
+	function onDeviceEditSuccess() {
+		loadDevice();
 	}
 </script>
 
