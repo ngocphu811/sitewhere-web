@@ -8,7 +8,6 @@
 	font-size: 10pt;
 	text-align: left;
 	display: block;
-	cursor: pointer;
 }
 
 .sw-site-list-entry-heading {
@@ -54,8 +53,7 @@
 
 <!-- Template for site row -->
 <script type="text/x-kendo-tmpl" id="tpl-site-entry">
-	<div class="sw-site-list-entry gradient-bg" onclick="onSiteOpenClicked(event, '#:token#')"
-		title="View Site">
+	<div class="sw-site-list-entry gradient-bg">
 		<div class="sw-site-list-entry-logowrapper">
 			<img class="sw-site-list-entry-logo" src="#:imageUrl#" width="100"/>
 		</div>

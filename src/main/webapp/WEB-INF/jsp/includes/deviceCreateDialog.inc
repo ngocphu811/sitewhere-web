@@ -53,7 +53,6 @@
 	</div>
 </div>
 
-
 <!-- Script support for device create dialog -->
 <script>
 	/** Function called when dialog is submitted */

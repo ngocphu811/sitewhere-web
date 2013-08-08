@@ -151,6 +151,8 @@
 	<input id="detail-assignment-token" name="token" type="hidden"/>
 </form>
 
+<%@ include file="../includes/siteCreateDialog.inc"%>
+
 <%@ include file="../includes/assignmentUpdateDialog.inc"%>
 
 <%@ include file="../includes/templateSiteEntry.inc"%>
@@ -369,6 +371,11 @@
 	    $("#btn-refresh-alerts").click(function() {
 	    	alertsDS.read();
 	    });
+        
+        /** Handle edit dialog */
+		$('#btn-edit-site').click(function(event) {
+			suOpen(siteToken, onSiteEditSuccess);
+		});
 		
 		/** Create the tab strip */
 		tabs = $("#tabs").kendoTabStrip({
@@ -403,6 +410,11 @@
 	/** Handle error on getting site data */
 	function loadGetFailed(jqXHR, textStatus, errorThrown) {
 		handleError(jqXHR, "Unable to load site data.");
+	}
+	
+	/** Refresh site banner after successful edit */
+	function onSiteEditSuccess() {
+		loadSite();
 	}
 </script>
 
