@@ -123,3 +123,12 @@ function parseEventData(item) {
     }
 }
 
+/** Converts fields that need to be parsed in a zone */
+function parseZoneData(item) {
+    if (item.createdDate && typeof item.createdDate === "string") {
+    	item.createdDate = kendo.parseDate(item.createdDate);
+    }
+    if (item.updatedDate && typeof item.updatedDate === "string") {
+    	item.updatedDate = kendo.parseDate(item.updatedDate);
+    }
+}

@@ -11,6 +11,11 @@
 <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet" media="screen">
 <link href="${pageContext.request.contextPath}/css/jquery.validity.css" rel="stylesheet">
 <link href="${pageContext.request.contextPath}/css/sitewhere.css" rel="stylesheet" />
+<c:if test="${use_map_includes == true}">
+<script src="${pageContext.request.contextPath}/scripts/leaflet.js"></script>
+<link href="${pageContext.request.contextPath}/css/leaflet.css" rel="stylesheet" />
+<link href="${pageContext.request.contextPath}/css/leaflet.ie.css" rel="stylesheet" />
+</c:if>
 </head>
 <body class="sw-body">
 	<div class="sw-container">

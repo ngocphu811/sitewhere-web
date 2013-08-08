@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <c:set var="sitewhere_title" value="View Site" />
 <c:set var="sitewhere_section" value="sites" />
+<c:set var="use_map_includes" value="true" />
 <%@ include file="../includes/top.inc"%>
 
 <style>
@@ -32,6 +33,7 @@
 		<li>Locations</li>
 		<li>Measurements</li>
 		<li>Alerts</li>
+		<li>Zones</li>
 	</ul>
 	<div>
 		<div class="k-header sw-button-bar">
@@ -145,6 +147,37 @@
 		</table>
 		<div id="alerts-pager" class="k-pager-wrap event-pager"></div>
 	</div>
+	<div>
+		<div class="k-header sw-button-bar">
+			<div class="sw-button-bar-title">Zones</div>
+			<div>
+				<a id="btn-refresh-zones" class="btn" href="javascript:void(0)">
+					<i class="icon-refresh"></i> Refresh</a>
+				<a id="btn-add-zone" class="btn" href="javascript:void(0)">
+					<i class="icon-plus"></i> Add New Zone</a>
+			</div>
+		</div>
+		<table id="zones">
+			<colgroup>
+				<col style="width: 30%;"/>
+				<col style="width: 20%;"/>
+				<col style="width: 25%;"/>
+				<col style="width: 25%;"/>
+			</colgroup>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Appearance</th>
+					<th>Create Date</th>
+					<th>Updated Date</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr><td colspan="4"></td></tr>
+			</tbody>
+		</table>
+		<div id="zones-pager" class="k-pager-wrap event-pager"></div>
+	</div>
 </div>
 
 <form id="view-assignment-detail" method="get" action="assignment">
@@ -165,6 +198,8 @@
 
 <%@ include file="../includes/templateAlertEntry.inc"%>
 
+<%@ include file="../includes/templateZoneEntry.inc"%>
+
 <%@ include file="../includes/commonFunctions.inc"%>
 
 <script>
@@ -181,6 +216,9 @@
 	
 	/** Datasource for alerts */
 	var alertsDS;
+	
+	/** Datasource for zones */
+	var zonesDS;
 	
 	/** Reference to tab panel */
 	var tabs;
@@ -371,6 +409,40 @@
 	    $("#btn-refresh-alerts").click(function() {
 	    	alertsDS.read();
 	    });
+	    
+		/** Create AJAX datasource for alerts list */
+		zonesDS = new kendo.data.DataSource({
+			transport : {
+				read : {
+					url : "${pageContext.request.contextPath}/api/sites/" + siteToken + "/zones",
+					dataType : "json",
+				}
+			},
+			schema : {
+				data: "results",
+				total: "numResults",
+				parse: parseZoneResults,
+			},
+			pageSize: 10
+		});
+		
+		/** Create the measurements list */
+        $("#zones").kendoGrid({
+			dataSource : zonesDS,
+            rowTemplate: kendo.template($("#tpl-zone-entry").html()),
+            scrollable: false,
+        });
+		
+	    $("#zones-pager").kendoPager({
+	        dataSource: zonesDS
+	    });
+		
+	    $("#btn-refresh-zones").click(function() {
+	    	zonesDS.read();
+	    });
+		
+	    $("#btn-add-zone").click(function() {
+	    });
         
         /** Handle edit dialog */
 		$('#btn-edit-site').click(function(event) {
@@ -389,6 +461,14 @@
 	function parseEventResults(response) {
 	    $.each(response.results, function (index, item) {
 			parseEventData(item);
+	    });
+	    return response;
+	}
+	
+	/** Parses zone response records to format dates */
+	function parseZoneResults(response) {
+	    $.each(response.results, function (index, item) {
+			parseZoneData(item);
 	    });
 	    return response;
 	}
