@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<c:set var="sitewhere_title" value="View Site - ${site.name}" />
+<c:set var="sitewhere_title" value="View Site" />
 <c:set var="sitewhere_section" value="sites" />
 <%@ include file="../includes/top.inc"%>
 
@@ -14,13 +14,16 @@
 </style>
 
 <!-- Title Bar -->
-<div class="sw-title-bar content k-header">
+<div class="sw-title-bar content k-header" style="margin-bottom: -1px;">
 	<h1 class="ellipsis"><c:out value="${sitewhere_title}"/></h1>
 	<div class="sw-title-bar-right">
 		<a id="btn-edit-site" class="btn" href="javascript:void(0)">
 			<i class="icon-pencil"></i> Edit Site</a>
 	</div>
 </div>
+
+<!-- Detail panel for selected site -->
+<div id="site-details" style="line-height: normal;"></div>
 
 <!-- Tab panel -->
 <div id="tabs">
@@ -149,6 +152,8 @@
 </form>
 
 <%@ include file="../includes/assignmentUpdateDialog.inc"%>
+
+<%@ include file="../includes/templateSiteEntry.inc"%>
 
 <%@ include file="../includes/templateAssignmentEntry.inc"%>
 
@@ -369,6 +374,8 @@
 		tabs = $("#tabs").kendoTabStrip({
 			animation: false
 		}).data("kendoTabStrip");
+		
+		loadSite();
 	});
 	
 	/** Parses event response records to format dates */
@@ -377,6 +384,25 @@
 			parseEventData(item);
 	    });
 	    return response;
+	}
+	
+	/** Loads information for the selected site */
+	function loadSite() {
+		$.getJSON("${pageContext.request.contextPath}/api/sites/" + siteToken, 
+			loadGetSuccess, loadGetFailed);
+	}
+    
+    /** Called on successful site load request */
+    function loadGetSuccess(data, status, jqXHR) {
+		var template = kendo.template($("#tpl-site-entry").html());
+		parseDeviceData(data);
+		data.inDetailView = true;
+		$('#site-details').html(template(data));
+    }
+    
+	/** Handle error on getting site data */
+	function loadGetFailed(jqXHR, textStatus, errorThrown) {
+		handleError(jqXHR, "Unable to load site data.");
 	}
 </script>
 

@@ -10,7 +10,7 @@
 </style>
 
 <!-- Title Bar -->
-<div class="sw-title-bar content k-header">
+<div class="sw-title-bar content k-header" style="margin-bottom: -1px;">
 	<h1 class="ellipsis"><c:out value="${sitewhere_title}"/></h1>
 	<div class="sw-title-bar-right">
 		<a id="btn-edit-site" class="btn" href="javascript:void(0)">

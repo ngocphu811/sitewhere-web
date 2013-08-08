@@ -72,6 +72,16 @@ function formattedMetadata(metadata) {
 	return result;
 }
 
+/** Converts fields that need to be parsed in a site */
+function parseSiteData(item) {
+    if (item.createdDate && typeof item.createdDate === "string") {
+    	item.createdDate = kendo.parseDate(item.createdDate);
+    }
+    if (item.updatedDate && typeof item.updatedDate === "string") {
+    	item.updatedDate = kendo.parseDate(item.updatedDate);
+    }
+}
+
 /** Converts fields that need to be parsed in a device */
 function parseDeviceData(item){
 	if (item.createdDate && typeof item.createdDate === "string") {
