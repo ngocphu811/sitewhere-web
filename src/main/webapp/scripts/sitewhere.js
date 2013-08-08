@@ -60,3 +60,56 @@ function formattedDate(date) {
 	return "N/A";
 }
 
+/** Formats metadata array into a comma-delimited string */
+function formattedMetadata(metadata) {
+	var result = "";
+	for (var i = 0; i < metadata.length; i++) {
+		if (i > 0) {
+			result += ", ";
+		}
+		result += metadata[i].name + "=" + metadata[i].value;
+	}
+	return result;
+}
+
+/** Converts fields that need to be parsed in a device */
+function parseDeviceData(item){
+	if (item.createdDate && typeof item.createdDate === "string") {
+		item.createdDate = kendo.parseDate(item.createdDate);
+	}
+	if (item.updatedDate && typeof item.updatedDate === "string") {
+		item.updatedDate = kendo.parseDate(item.updatedDate);
+	}
+	if (item.assignment) {
+	    if (item.assignment.activeDate && typeof item.assignment.activeDate === "string") {
+	    	item.assignment.activeDate = kendo.parseDate(item.assignment.activeDate);
+	    }
+	}
+}
+
+/** Converts fields that need to be parsed in an assignment */
+function parseAssignmentData(item) {
+    if (item.createdDate && typeof item.createdDate === "string") {
+    	item.createdDate = kendo.parseDate(item.createdDate);
+    }
+    if (item.updatedDate && typeof item.updatedDate === "string") {
+    	item.updatedDate = kendo.parseDate(item.updatedDate);
+    }
+    if (item.activeDate && typeof item.activeDate === "string") {
+    	item.activeDate = kendo.parseDate(item.activeDate);
+    }
+    if (item.releasedDate && typeof item.releasedDate === "string") {
+    	item.releasedDate = kendo.parseDate(item.releasedDate);
+    }
+}
+
+/** Converts fields that need to be parsed in an event */
+function parseEventData(item) {
+    if (item.eventDate && typeof item.eventDate === "string") {
+    	item.eventDate = kendo.parseDate(item.eventDate);
+    }
+    if (item.receivedDate && typeof item.receivedDate === "string") {
+    	item.receivedDate = kendo.parseDate(item.receivedDate);
+    }
+}
+

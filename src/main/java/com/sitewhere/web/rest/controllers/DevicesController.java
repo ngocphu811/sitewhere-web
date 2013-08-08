@@ -90,12 +90,14 @@ public class DevicesController extends SiteWhereController {
 	@ResponseBody
 	@ApiOperation(value = "Get a device by unique hardware id")
 	public Device getDeviceByHardwareId(
-			@ApiParam(value = "Hardware id", required = true) @PathVariable String hardwareId)
+			@ApiParam(value = "Hardware id", required = true) @PathVariable String hardwareId,
+			@ApiParam(value = "Include assignment if associated", required = false) @RequestParam(defaultValue = "true") boolean includeAssignment,
+			@ApiParam(value = "Include detailed asset information", required = false) @RequestParam(defaultValue = "true") boolean includeAsset)
 			throws SiteWhereException {
 		IDevice result = assertDeviceByHardwareId(hardwareId);
 		DeviceMarshalHelper helper = new DeviceMarshalHelper();
-		helper.setIncludeAsset(true);
-		helper.setIncludeAssignment(true);
+		helper.setIncludeAsset(includeAsset);
+		helper.setIncludeAssignment(includeAssignment);
 		return helper.convert(result, SiteWhereServer.getInstance().getAssetModuleManager());
 	}
 

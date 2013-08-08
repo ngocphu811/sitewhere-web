@@ -211,6 +211,10 @@ td[role="gridcell"] > input[type="text"] {
 	text-align: center;
 }
 
+.k-grid-content {
+	min-height: 200px;
+}
+
 .k-grid-add {
 	float: right;
 }

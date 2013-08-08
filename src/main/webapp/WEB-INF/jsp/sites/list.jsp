@@ -60,10 +60,6 @@
 	position: relative;
 }
 
-.k-grid-content {
-	min-height: 200px;
-}
-
 .command-buttons {
 	text-align: center;
 }

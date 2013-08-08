@@ -18,6 +18,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.spi.SiteWhereException;
+import com.sitewhere.spi.device.IDevice;
+import com.sitewhere.spi.device.IDeviceAssignment;
 import com.sitewhere.spi.device.IDeviceManagement;
 import com.sitewhere.spi.device.ISite;
 
@@ -69,6 +71,32 @@ public class SiteWhereController {
 	}
 
 	/**
+	 * Display the "assignment detail" page.
+	 * 
+	 * @param token
+	 * @return
+	 */
+	@RequestMapping("/sites/assignment")
+	public ModelAndView assignmentDetail(@RequestParam("token") String token) {
+		if (token != null) {
+			IDeviceManagement management = SiteWhereServer.getInstance().getDeviceManagement();
+			try {
+				IDeviceAssignment assignment = management.getDeviceAssignmentByToken(token);
+				if (assignment != null) {
+					Map<String, Object> data = new HashMap<String, Object>();
+					data.put("assignment", assignment);
+					return new ModelAndView("sites/assignment", data);
+				}
+				return showError("Assignment for token '" + token + "' not found.");
+			} catch (SiteWhereException e) {
+				LOGGER.error(e);
+				return showError(e.getMessage());
+			}
+		}
+		return showError("No assignment token passed.");
+	}
+
+	/**
 	 * Display the "list devices" page.
 	 * 
 	 * @return
@@ -76,6 +104,32 @@ public class SiteWhereController {
 	@RequestMapping("/devices/list")
 	public ModelAndView listDevices() {
 		return new ModelAndView("devices/list");
+	}
+
+	/**
+	 * Display the "device detail" page.
+	 * 
+	 * @param hardwareId
+	 * @return
+	 */
+	@RequestMapping("/devices/detail")
+	public ModelAndView deviceDetail(@RequestParam("hardwareId") String hardwareId) {
+		if (hardwareId != null) {
+			IDeviceManagement management = SiteWhereServer.getInstance().getDeviceManagement();
+			try {
+				IDevice device = management.getDeviceByHardwareId(hardwareId);
+				if (device != null) {
+					Map<String, Object> data = new HashMap<String, Object>();
+					data.put("device", device);
+					return new ModelAndView("devices/detail", data);
+				}
+				return showError("Device for hardware id '" + hardwareId + "' not found.");
+			} catch (SiteWhereException e) {
+				LOGGER.error(e);
+				return showError(e.getMessage());
+			}
+		}
+		return showError("No hardware id token passed.");
 	}
 
 	/**

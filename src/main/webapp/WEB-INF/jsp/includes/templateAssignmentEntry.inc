@@ -8,7 +8,6 @@
 	font-size: 10pt;
 	text-align: left;
 	display: block;
-	cursor: pointer;
 	position: relative;
 }
 
@@ -49,29 +48,29 @@
 
 .sw-assignment-list-entry-device {
 	float: right;
-	width: 300px;
+	width: 33%;
 	height: 100%;
-	padding-left: 10px;
-	margin-left: 10px;
+	padding-left: 15px;
+	margin-left: 15px;
 	border-left: solid 1px #e0e0e0;
 }
 
 .sw-assignment-list-entry-no-device {
 	float: right;
-	width: 300px;
+	width: 33%;
 	height: 100%;
-	padding-left: 10px;
-	margin-left: 10px;
+	padding-left: 15px;
+	margin-left: 15px;
 	border-left: solid 1px #e0e0e0;
 	text-align: center;
 }
 
 .sw-assignment-list-entry-actions {
 	float: right;
-	width: 260px;
+	width: 30%;
 	height: 100%;
-	padding-left: 10px;
-	margin-left: 10px;
+	padding-left: 15px;
+	margin-left: 15px;
 	border-left: solid 1px #e0e0e0;
 	position: relative;
 }
@@ -145,6 +144,7 @@
 # } else { #
 			<p class="ellipsis"><span class="sw-min-70 sw-assignment-list-entry-label">Status:</span> #:status#</p>
 # } #
+# if (data.inDetailView == null) { #
 			<div class="btn-group btn-group-vertical" style="position: absolute; right: 0px; top: -2px;">
 				<a class="btn btn-small btn-primary" title="Edit Assignment"
 					href="javascript:void(0)" onclick="onEditAssignment(event, '#:token#')">
@@ -152,9 +152,11 @@
 				<a class="btn btn-small btn-danger" title="Delete Assignment" 
 					href="javascript:void(0)" onclick="onDeleteAssignment(event, '#:token#')">
 					<i class="icon-remove icon-white"></i></a>
-				<a class="btn btn-small btn-success" title="View Assignment">
+				<a class="btn btn-small btn-success" title="View Assignment" 
+					href="javascript:void(0)" onclick="onViewAssignment(event, '#:token#')">
 					<i class="icon-chevron-right icon-white"></i></a>
 			</div>
+# } #
 		</div>
 # if (data.device) { #
 		<div class="sw-assignment-list-entry-device">
@@ -162,9 +164,9 @@
 				<img class="sw-assignment-list-entry-logo" src="#:device.assetImageUrl#" width="100"/>
 				<span class="label label-info sw-assignment-list-entry-logo-tag">Device</span>
 			</div>
-			<p class="sw-assignment-list-entry-heading ellipsis">#:device.assetName#</p>
-			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label">Id:</span> #:device.hardwareId#</p>
-			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label">Info:</span> #:device.comments#</p>
+			<p class="sw-assignment-list-entry-heading ellipsis" title="#:device.assetName#">#:device.assetName#</p>
+			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label" title="#:device.hardwareId#">Id:</span> #:device.hardwareId#</p>
+			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label" title="#:device.comments#">Info:</span> #:device.comments#</p>
 		</div>
 # } else { #
 		<div class="sw-assignment-list-entry-no-device">
@@ -175,15 +177,15 @@
 # } #
 # if (data.assetType == 'Person') { #
 		<div>
-			<p class="sw-assignment-list-entry-heading ellipsis">#:associatedPerson.name#</p>
-			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label">Email:</span> #:associatedPerson.emailAddress#</p>
-			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label">Roles:</span> #:swArrayAsCommaDelimited(associatedPerson.roles)#</p>
+			<p class="sw-assignment-list-entry-heading ellipsis" title="#:associatedPerson.name#">#:associatedPerson.name#</p>
+			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label" title="#:associatedPerson.emailAddress#">Email:</span> #:associatedPerson.emailAddress#</p>
+			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label" title="#:swArrayAsCommaDelimited(associatedPerson.roles)#">Roles:</span> #:swArrayAsCommaDelimited(associatedPerson.roles)#</p>
 		</div>
 # } else if (data.assetType == 'Hardware') { #
 		<div>
-			<p class="sw-assignment-list-entry-heading ellipsis">#:associatedHardware.name#</p>
-			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label">SKU:</span> #:associatedHardware.sku#</p>
-			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label">Info:</span> #:associatedHardware.description#</p>
+			<p class="sw-assignment-list-entry-heading ellipsis" title="#:associatedHardware.name#">#:associatedHardware.name#</p>
+			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label" title="#:associatedHardware.sku#">SKU:</span> #:associatedHardware.sku#</p>
+			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label" title="#:associatedHardware.description#">Info:</span> #:associatedHardware.description#</p>
 		</div>
 # } else if (data.assetType == 'Unassociated') { #
 		<div>

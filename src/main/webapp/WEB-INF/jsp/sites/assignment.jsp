@@ -1,13 +1,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<c:set var="sitewhere_title" value="View Site - ${site.name}" />
+<c:set var="sitewhere_title" value="View Assignment" />
 <c:set var="sitewhere_section" value="sites" />
 <%@ include file="../includes/top.inc"%>
 
 <style>
-.sw-assignment-list {
-	border: 0px;
-}
-
 .event-pager {
 	margin-top: 10px;
 }
@@ -18,31 +14,20 @@
 	<h1 class="ellipsis"><c:out value="${sitewhere_title}"/></h1>
 	<div class="sw-title-bar-right">
 		<a id="btn-edit-site" class="btn" href="javascript:void(0)">
-			<i class="icon-pencil"></i> Edit Site</a>
+			<i class="icon-pencil"></i> Edit Assignment</a>
 	</div>
 </div>
+
+<!-- Detail panel for selected assignment -->
+<div id="assignment-details" style="line-height: normal;"></div>
 
 <!-- Tab panel -->
 <div id="tabs">
 	<ul>
-		<li class="k-state-active">Assignments</li>
-		<li>Locations</li>
+		<li class="k-state-active">Locations</li>
 		<li>Measurements</li>
 		<li>Alerts</li>
 	</ul>
-	<div>
-		<div class="k-header sw-button-bar">
-			<div class="sw-button-bar-title">Device Assignments</div>
-			<div>
-				<a id="btn-filter-assignments" class="btn" href="javascript:void(0)">
-					<i class="icon-search"></i> Filter Results</a>
-				<a id="btn-refresh-assignments" class="btn" href="javascript:void(0)">
-					<i class="icon-refresh"></i> Refresh</a>
-			</div>
-		</div>
-		<div id="assignments" class="sw-assignment-list"></div>
-		<div id="assignments-pager" class="k-pager-wrap"></div>
-	</div>
 	<div>
 		<div class="k-header sw-button-bar">
 			<div class="sw-button-bar-title">Device Locations</div>
@@ -144,10 +129,6 @@
 	</div>
 </div>
 
-<form id="view-assignment-detail" method="get" action="assignment">
-	<input id="detail-assignment-token" name="token" type="hidden"/>
-</form>
-
 <%@ include file="../includes/assignmentUpdateDialog.inc"%>
 
 <%@ include file="../includes/templateAssignmentEntry.inc"%>
@@ -161,10 +142,7 @@
 <%@ include file="../includes/commonFunctions.inc"%>
 
 <script>
-	var siteToken = '<c:out value="${site.token}"/>';
-
-	/** Datasource for assignments */
-	var assignmentsDS;
+	var token = '<c:out value="${assignment.token}"/>';
 	
 	/** Datasource for locations */
 	var locationsDS;
@@ -178,18 +156,6 @@
 	/** Reference to tab panel */
 	var tabs;
 	
-	/** Called when 'delete assignment' is clicked */
-	function onDeleteAssignment(e, token) {
-		var event = e || window.event;
-		event.stopPropagation();
-		swAssignmentDelete(token, onDeleteAssignmentComplete);
-	}
-	
-	/** Called after successful delete assignment */
-	function onDeleteAssignmentComplete() {
-		assignmentsDS.read();
-	}
-	
 	/** Called when 'edit assignment' is clicked */
 	function onEditAssignment(e, token) {
 		var event = e || window.event;
@@ -199,15 +165,7 @@
 	
 	/** Called after successful edit assignment */
 	function onEditAssignmentComplete() {
-		assignmentsDS.read();
-	}
-	
-	/** Called when 'view assignment' is clicked */
-	function onViewAssignment(e, token) {
-		var event = e || window.event;
-		event.stopPropagation();
-		$('#detail-assignment-token').val(token);
-		$('#view-assignment-detail').submit();
+		// Handle reload.
 	}
 	
 	/** Called when 'release assignment' is clicked */
@@ -219,7 +177,7 @@
 	
 	/** Called after successful release assignment */
 	function onReleaseAssignmentComplete() {
-		assignmentsDS.read();
+		loadAssignment();
 	}
 	
 	/** Called when 'missing assignment' is clicked */
@@ -231,52 +189,16 @@
 	
 	/** Called after successful missing assignment */
 	function onMissingAssignmentComplete() {
-		assignmentsDS.read();
+		loadAssignment();
 	}
 	
 	$(document).ready(function() {
 		
-		/** Create AJAX datasource for assignments list */
-		assignmentsDS = new kendo.data.DataSource({
-			transport : {
-				read : {
-					url : "${pageContext.request.contextPath}/api/sites/" + siteToken + 
-						"/assignments?includeDevice=true&includeAsset=true",
-					dataType : "json",
-				}
-			},
-			schema : {
-				data: "results",
-				total: "numResults",
-				parse:function (response) {
-				    $.each(response.results, function (index, item) {
-				    	parseAssignmentData(item);
-				    });
-				    return response;
-				}
-			},
-			pageSize: 10
-		});
-		
-		/** Create the assignments list */
-		$("#assignments").kendoListView({
-			dataSource : assignmentsDS,
-			template : kendo.template($("#tpl-assignment-entry").html())
-		});
-		
-	    $("#assignments-pager").kendoPager({
-	        dataSource: assignmentsDS
-	    });
-		
-	    $("#btn-refresh-assignments").click(function() {
-	    	assignmentsDS.read();
-	    });
-	    
 		/** Create AJAX datasource for locations list */
 		locationsDS = new kendo.data.DataSource({
 			transport : {
 				read : {
-					url : "${pageContext.request.contextPath}/api/sites/" + siteToken + "/locations",
+					url : "${pageContext.request.contextPath}/api/assignments/" + token + "/locations",
 					dataType : "json",
 				}
 			},
@@ -307,7 +229,7 @@
 		measurementsDS = new kendo.data.DataSource({
 			transport : {
 				read : {
-					url : "${pageContext.request.contextPath}/api/sites/" + siteToken + "/measurements",
+					url : "${pageContext.request.contextPath}/api/assignments/" + token + "/measurements",
 					dataType : "json",
 				}
 			},
@@ -338,7 +260,7 @@
 		alertsDS = new kendo.data.DataSource({
 			transport : {
 				read : {
-					url : "${pageContext.request.contextPath}/api/sites/" + siteToken + "/alerts",
+					url : "${pageContext.request.contextPath}/api/assignments/" + token + "/alerts",
 					dataType : "json",
 				}
 			},
@@ -369,7 +291,28 @@
 		tabs = $("#tabs").kendoTabStrip({
 			animation: false
 		}).data("kendoTabStrip");
+		
+		loadAssignment();
 	});
+	
+	/** Loads information for the selected assignment */
+	function loadAssignment() {
+		$.getJSON("${pageContext.request.contextPath}/api/assignments/" + token, 
+			loadGetSuccess, loadGetFailed);
+	}
+    
+    /** Called on successful assignment load request */
+    function loadGetSuccess(data, status, jqXHR) {
+		var template = kendo.template($("#tpl-assignment-entry").html());
+		parseAssignmentData(data);
+		data.inDetailView = true;
+		$('#assignment-details').html(template(data));
+    }
+    
+	/** Handle error on getting assignment data */
+	function loadGetFailed(jqXHR, textStatus, errorThrown) {
+		handleError(jqXHR, "Unable to load assignment data.");
+	}
 	
 	/** Parses event response records to format dates */
 	function parseEventResults(response) {
