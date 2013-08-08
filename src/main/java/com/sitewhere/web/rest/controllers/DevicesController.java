@@ -183,14 +183,17 @@ public class DevicesController extends SiteWhereController {
 	@ResponseBody
 	@ApiOperation(value = "Get assignment history for a device")
 	public DeviceAssignmentSearchResults listDeviceAssignmentHistory(
-			@ApiParam(value = "Hardware id", required = true) @PathVariable String hardwareId)
+			@ApiParam(value = "Hardware id", required = true) @PathVariable String hardwareId,
+			@ApiParam(value = "Include detailed asset information", required = false) @RequestParam(defaultValue = "false") boolean includeAsset,
+			@ApiParam(value = "Include detailed device information", required = false) @RequestParam(defaultValue = "false") boolean includeDevice,
+			@ApiParam(value = "Include detailed site information", required = false) @RequestParam(defaultValue = "false") boolean includeSite)
 			throws SiteWhereException {
 		List<IDeviceAssignment> history = SiteWhereServer.getInstance().getDeviceManagement()
 				.getDeviceAssignmentHistory(hardwareId);
 		DeviceAssignmentMarshalHelper helper = new DeviceAssignmentMarshalHelper();
-		helper.setIncludeAsset(false);
-		helper.setIncludeDevice(false);
-		helper.setIncludeSite(true);
+		helper.setIncludeAsset(includeAsset);
+		helper.setIncludeDevice(includeDevice);
+		helper.setIncludeSite(includeSite);
 		List<DeviceAssignment> converted = new ArrayList<DeviceAssignment>();
 		for (IDeviceAssignment assignment : history) {
 			converted.add(helper.convert(assignment, SiteWhereServer.getInstance().getAssetModuleManager()));

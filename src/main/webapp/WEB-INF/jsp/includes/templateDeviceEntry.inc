@@ -86,6 +86,7 @@
 		<div class="sw-device-list-entry-actions">
 			<p class="ellipsis"><span class="sw-device-list-entry-label sw-min-70">Created:</span> #= formattedDate(createdDate) #</p>
 			<p class="ellipsis"><span class="sw-device-list-entry-label sw-min-70">Updated:</span> #= formattedDate(updatedDate) #</p>
+# if (data.inDetailView == null) { #
 			<div class="btn-group btn-group-vertical" style="position: absolute; right: 0px; top: -2px;">
 				<a class="btn btn-small btn-primary" title="Edit Device" 
 					href="javascript:void(0)" onclick="onDeviceEditClicked(event, '#:hardwareId#');">
@@ -97,6 +98,7 @@
 					href="javascript:void(0)" onclick="onDeviceOpenClicked(event, '#:hardwareId#')">
 					<i class="icon-chevron-right icon-white"></i></a>
 			</div>
+# } #
 		</div>
 # if (data.assignment) { #
 		<div class="sw-device-list-entry-assignment">

@@ -41,6 +41,14 @@
 	</div>
 </div>
 
+<form id="view-assignment-detail" method="get" action="../sites/assignment">
+	<input id="detail-assignment-token" name="token" type="hidden"/>
+</form>
+
+<%@ include file="../includes/assetTemplates.inc"%>	
+
+<%@ include file="../includes/assignmentCreateDialog.inc"%>	
+
 <%@ include file="../includes/assignmentUpdateDialog.inc"%>
 
 <%@ include file="../includes/templateDeviceEntry.inc"%>
@@ -97,6 +105,7 @@
 	
 	/** Called after successful release assignment */
 	function onReleaseAssignmentComplete() {
+		loadDevice();
 		assignmentsDS.read();
 	}
 	
@@ -109,6 +118,13 @@
 	
 	/** Called after successful missing assignment */
 	function onMissingAssignmentComplete() {
+		loadDevice();
+		assignmentsDS.read();
+	}
+	
+	/** Called on succesfull device assignment */
+	function onAssignmentAdded() {
+		loadDevice();
 		assignmentsDS.read();
 	}
 	
@@ -119,7 +135,8 @@
 		assignmentsDS = new kendo.data.DataSource({
 			transport : {
 				read : {
-					url : "${pageContext.request.contextPath}/api/devices/" + hardwareId + "/assignments",
+					url : "${pageContext.request.contextPath}/api/devices/" + hardwareId + 
+								"/assignments?includeAsset=true&includeDevice=true",
 					dataType : "json",
 				}
 			},
