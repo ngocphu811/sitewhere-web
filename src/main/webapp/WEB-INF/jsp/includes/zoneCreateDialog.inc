@@ -2,6 +2,7 @@
 .sw-map {
 	height: 270px;
 	width: 500px;
+	border: 1px solid #dddddd;
 }
 
 .sw-name-label {
@@ -44,10 +45,11 @@
 	</div>
 </div>
 
-<input type="hidden" id="zc-site-token"/>
-
 <!-- Script support for zone create dialog -->
 <script>
+	/** Site that provides map metadata */
+	var zcSite;
+	
 	/** Function called when dialog is submitted */
 	var zcSubmitCallback;
 
@@ -117,7 +119,6 @@
 			if (!zcValidate()) {
 				return;
 			}
-			var siteToken = $('#zc-site-token').val();
 			var zoneData = {
 				"borderColor": "#000000", 
 				"fillColor": "#ff0000", 
@@ -130,7 +131,7 @@
 				],
 				"metadata": dcMetadataDS.data(),
 			}
-			$.postJSON("${pageContext.request.contextPath}/api/sites/" + siteToken + "/zones", 
+			$.postJSON("${pageContext.request.contextPath}/api/sites/" + zcSite.token + "/zones", 
 					zoneData, onCreateSuccess, onCreateFail);
 		});
         
@@ -146,15 +147,6 @@
 		function onCreateFail(jqXHR, textStatus, errorThrown) {
 			handleError(jqXHR, "Unable to create zone.");
 		}
-		
-		// create a map in the "map" div, set the view to a given place and zoom
-		zcMap = L.map('zc-map').setView([51.505, -0.09], 13);
-		
-		var mapquestUrl = 'http://{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png';
-		var subDomains = ['otile1','otile2','otile3','otile4'];
-		var mapquestAttrib = 'MapQuest data';
-		var mapquest = new L.TileLayer(mapquestUrl, {maxZoom: 18, attribution: mapquestAttrib, subdomains: subDomains});		
-		mapquest.addTo(zcMap);
     });
 	
 	/** Validate everything */
@@ -167,9 +159,16 @@
 	}
 	
 	/** Open the dialog */
-	function zcOpen(siteToken, callback) {
-		// Store site token.
-		$('#zc-site-token').val(siteToken);
+	function zcOpen(site, callback) {
+		// Store site info.
+		zcSite = site;
+		
+		// Creates map if not already created, then inits from site settings.
+		if (zcMap) {
+			zcMap.remove();
+		}
+		zcMap = L.map('zc-map');
+		swInitMapForSite(zcMap, zcSite);
 		
 		// Reset form and metadata.
 		zcMetadataDS.data(new Array());

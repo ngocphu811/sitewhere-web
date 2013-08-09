@@ -198,6 +198,9 @@
 
 <script>
 	var siteToken = '<c:out value="${site.token}"/>';
+	
+	/** Current site */
+	var site;
 
 	/** Datasource for assignments */
 	var assignmentsDS;
@@ -436,7 +439,11 @@
 	    });
 		
 	    $("#btn-add-zone").click(function() {
-	    	zcOpen(siteToken, onZoneCreateSuccess);
+	    	if (site) {
+	    		zcOpen(site, onZoneCreateSuccess);
+	    	} else {
+	    		bootbox.alert("Site has not been loaded.");
+	    	}
 	    });
         
         /** Handle edit dialog */
@@ -476,6 +483,7 @@
     
     /** Called on successful site load request */
     function loadGetSuccess(data, status, jqXHR) {
+    	site = data;
 		var template = kendo.template($("#tpl-site-entry").html());
 		parseDeviceData(data);
 		data.inDetailView = true;

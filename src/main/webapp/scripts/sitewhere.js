@@ -1,3 +1,9 @@
+/** Value that indicates a MapQuest map type */
+var MAP_TYPE_MAPQUEST = "mapquest";
+
+/** Value that indicates a GeoServer map type */
+var MAP_TYPE_GEOSERVER = "geoserver";
+
 $.postJSON = function(url, data, onSuccess, onFail) {
 	return jQuery.ajax({
 		'type' : 'POST',
@@ -131,4 +137,38 @@ function parseZoneData(item) {
     if (item.updatedDate && typeof item.updatedDate === "string") {
     	item.updatedDate = kendo.parseDate(item.updatedDate);
     }
+}
+
+/** Converts sitewhere metadata format into a lookup */
+function swMetadataAsLookup(metadata) {
+	var lookup = {};
+	for (var i = 0, len = metadata.length; i < len; i++) {
+	    lookup[metadata[i].name] = metadata[i].value;
+	}
+	return lookup;
+}
+
+/** Initializes a map based on site map metadata */
+function swInitMapForSite(map, site) {
+	var lookup = swMetadataAsLookup(site.mapMetadata.metadata);
+	var latitude = (lookup.centerLatitude ? lookup.centerLatitude : 39.9853);
+	var longitude = (lookup.centerLongitude ? lookup.centerLongitude : -104.6688);
+	var zoomLevel = (lookup.zoomLevel ? lookup.zoomLevel : 10);
+	var map = map.setView([latitude, longitude], zoomLevel);
+	if (site.mapType === MAP_TYPE_MAPQUEST) {
+		var mapquestUrl = 'http://{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png';
+		var subDomains = ['otile1','otile2','otile3','otile4'];
+		var mapquestAttrib = 'MapQuest data';
+		var mapquest = new L.TileLayer(mapquestUrl, {maxZoom: 18, attribution: mapquestAttrib, subdomains: subDomains});		
+		mapquest.addTo(map);
+	} else if (site.mapType == MAP_TYPE_GEOSERVER) {
+		var gsBaseUrl = (lookup.geoserverBaseUrl ? lookup.geoserverBaseUrl : "http://localhost:8080/geoserver/");
+		var gsRelativeUrl = "geoserver/gwc/service/gmaps?layers=";
+		var gsLayerName = (lookup.geoserverLayerName ? lookup.geoserverLayerName : "tiger:tiger_roads");
+		var gsParams = "&zoom={z}&x={x}&y={y}&format=image/png";
+		var gsUrl = gsBaseUrl + gsRelativeUrl + gsLayerName + gsParams;
+		var geoserver = new L.TileLayer(gsUrl, {maxZoom: 18});		
+		geoserver.addTo(map);
+	}
+	return map;
 }

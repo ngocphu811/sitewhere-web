@@ -59,9 +59,9 @@
 							</div>
 						</div>
 						<div class="control-group">
-							<label class="control-label" for="mq-scale">Scale</label>
+							<label class="control-label" for="mq-zoom-level">Zoom Level</label>
 							<div class="controls">
-								<input type="text" id="mq-scale" class="input-large">
+								<input type="text" id="mq-zoom-level" class="input-large">
 							</div>
 						</div>
 					</form>
@@ -91,9 +91,9 @@
 							</div>
 						</div>
 						<div class="control-group">
-							<label class="control-label" for="gs-scale">Scale</label>
+							<label class="control-label" for="gs-zoom-level">Zoom Level</label>
 							<div class="controls">
-								<input type="text" id="gs-scale" class="input-large">
+								<input type="text" id="gs-zoom-level" class="input-large">
 							</div>
 						</div>
 					</form>
@@ -299,13 +299,13 @@
     	if (data.mapType == "mapquest") {
     		$('#mq-center-latitude').val(scGetMetadataValue(lookup, 'centerLatitude'));
     		$('#mq-center-longitude').val(scGetMetadataValue(lookup, 'centerLongitude'));
-    		$('#mq-scale').val(scGetMetadataValue(lookup, 'scale'));
+    		$('#mq-zoom-level').val(scGetMetadataValue(lookup, 'zoomLevel'));
     	} else if (data.mapType == "geoserver") {
     		$('#gs-base-url').val(scGetMetadataValue(lookup, 'geoserverBaseUrl'));
     		$('#gs-layer-name').val(scGetMetadataValue(lookup, 'geoserverLayerName'));
     		$('#gs-center-latitude').val(scGetMetadataValue(lookup, 'centerLatitude'));
     		$('#gs-center-longitude').val(scGetMetadataValue(lookup, 'centerLongitude'));
-    		$('#gs-scale').val(scGetMetadataValue(lookup, 'scale'));
+    		$('#gs-zoom-level').val(scGetMetadataValue(lookup, 'zoomLevel'));
     	}
     }
     
@@ -317,13 +317,13 @@
 		if (mapType == "mapquest") {
 			scAddMapMetadataEntry(metadata, 'centerLatitude', $('#mq-center-latitude').val());
 			scAddMapMetadataEntry(metadata, 'centerLongitude', $('#mq-center-longitude').val());
-			scAddMapMetadataEntry(metadata, 'scale', $('#mq-scale').val());
+			scAddMapMetadataEntry(metadata, 'zoomLevel', $('#mq-zoom-level').val());
 		} else if (mapType == "geoserver") {
 			scAddMapMetadataEntry(metadata, 'geoserverBaseUrl', $('#gs-base-url').val());
 			scAddMapMetadataEntry(metadata, 'geoserverLayerName', $('#gs-layer-name').val());
 			scAddMapMetadataEntry(metadata, 'centerLatitude', $('#gs-center-latitude').val());
 			scAddMapMetadataEntry(metadata, 'centerLongitude', $('#gs-center-longitude').val());
-			scAddMapMetadataEntry(metadata, 'scale', $('#gs-scale').val());
+			scAddMapMetadataEntry(metadata, 'zoomLevel', $('#gs-zoom-level').val());
 		}
 		return { "metadata": metadata };
     }
