@@ -191,6 +191,22 @@
    border: 1px solid #dcdcdc;
 }
 
+div.sp-replacer {
+	padding: 3px;
+	background: none repeat scroll 0% 0% #dddddd;
+	border: 1px solid #aaaaaa;
+}
+
+div.sp-preview {
+	width: 15px;
+	height: 15px;
+}
+
+div.sp-container {
+	background-color: #dddddd;
+	border: 1px solid #aaaaaa;
+}
+
 .controls {
 	position: relative;
 }

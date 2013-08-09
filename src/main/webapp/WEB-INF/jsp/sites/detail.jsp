@@ -2,6 +2,7 @@
 <c:set var="sitewhere_title" value="View Site" />
 <c:set var="sitewhere_section" value="sites" />
 <c:set var="use_map_includes" value="true" />
+<c:set var="use_color_picker_includes" value="true" />
 <%@ include file="../includes/top.inc"%>
 
 <style>
@@ -185,21 +186,14 @@
 </form>
 
 <%@ include file="../includes/siteCreateDialog.inc"%>
-
+<%@ include file="../includes/zoneCreateDialog.inc"%>
 <%@ include file="../includes/assignmentUpdateDialog.inc"%>
-
 <%@ include file="../includes/templateSiteEntry.inc"%>
-
 <%@ include file="../includes/templateAssignmentEntry.inc"%>
-
 <%@ include file="../includes/templateLocationEntry.inc"%>
-
 <%@ include file="../includes/templateMeasurementsEntry.inc"%>
-
 <%@ include file="../includes/templateAlertEntry.inc"%>
-
 <%@ include file="../includes/templateZoneEntry.inc"%>
-
 <%@ include file="../includes/commonFunctions.inc"%>
 
 <script>
@@ -442,6 +436,7 @@
 	    });
 		
 	    $("#btn-add-zone").click(function() {
+	    	zcOpen(siteToken, onZoneCreateSuccess);
 	    });
         
         /** Handle edit dialog */
@@ -495,6 +490,11 @@
 	/** Refresh site banner after successful edit */
 	function onSiteEditSuccess() {
 		loadSite();
+	}
+	
+	/** Called after a zone has been successfully created */
+	function onZoneCreateSuccess() {
+		
 	}
 </script>
 
