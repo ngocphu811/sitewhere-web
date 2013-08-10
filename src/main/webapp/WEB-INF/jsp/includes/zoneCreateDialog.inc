@@ -25,12 +25,12 @@
 			</ul>
 			<div>
 				<div id="zc-map" class="sw-map"></div>
-				<div style="padding-top: 3px;">
+				<div style="padding-top: 3px; width: 500px;">
 					<label for="gen-site-name" class="sw-name-label">Zone Name:</label>
-					<input id="zc-zone-name" type="text" style="padding: 0px 5px; margin: 0"/>
-					<label for="zc-border-picker" class="sw-name-label" style="margin-left: 15px;">Border:</label>
+					<input id="zc-zone-name" type="text" style="padding: 0px 5px; margin: 0; width: 227px;"/>
+					<label for="zc-border-picker" class="sw-name-label" style="margin-left: 10px;">Border:</label>
 					<input type="text" id="zc-border-picker"/>
-					<label for="zc-border-picker" class="sw-name-label" style="margin-left: 15px;">Fill:</label>
+					<label for="zc-border-picker" class="sw-name-label" style="margin-left: 10px;">Fill:</label>
 					<input type="text" id="zc-fill-picker"/>
 				</div>
 			</div>
@@ -167,8 +167,9 @@
 		if (zcMap) {
 			zcMap.remove();
 		}
-		zcMap = L.map('zc-map');
-		swInitMapForSite(zcMap, zcSite);
+		zcMap = L.map('zc-map', {drawControl: true});
+		swInitMapForSite(zcMap, zcSite, true);
+		swEnableMapDrawing(zcMap);
 		
 		// Reset form and metadata.
 		zcMetadataDS.data(new Array());

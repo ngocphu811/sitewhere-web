@@ -13,8 +13,9 @@
 <link href="${pageContext.request.contextPath}/css/sitewhere.css" rel="stylesheet" />
 <c:if test="${use_map_includes == true}">
 <script src="${pageContext.request.contextPath}/scripts/leaflet.js"></script>
+<script src="${pageContext.request.contextPath}/scripts/leaflet.draw.js"></script>
 <link href="${pageContext.request.contextPath}/css/leaflet.css" rel="stylesheet" />
-<link href="${pageContext.request.contextPath}/css/leaflet.ie.css" rel="stylesheet" />
+<link href="${pageContext.request.contextPath}/css/leaflet.draw.css" rel="stylesheet" />
 </c:if>
 <c:if test="${use_color_picker_includes == true}">
 <script src="${pageContext.request.contextPath}/scripts/spectrum.js"></script>

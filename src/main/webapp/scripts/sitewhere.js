@@ -172,3 +172,25 @@ function swInitMapForSite(map, site) {
 	}
 	return map;
 }
+
+/** Enables drawing features on map */
+function swEnableMapDrawing(map) {
+	var drawnItems = new L.FeatureGroup();
+	map.addLayer(drawnItems);
+
+	var drawControl = new L.Control.Draw({
+	    draw: {
+	        polyline: false,
+	        rectangle: false,
+	        circle: false,
+	        marker: false,
+	        polygon: {
+	        	shapeOptions: {
+	        		color: '#ff0000'
+	        	}
+            }
+	    },
+	    edit: { featureGroup: drawnItems }
+	});
+	map.addControl(drawControl);		
+}
