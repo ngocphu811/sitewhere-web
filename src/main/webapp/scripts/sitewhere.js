@@ -174,23 +174,32 @@ function swInitMapForSite(map, site) {
 }
 
 /** Enables drawing features on map */
-function swEnableMapDrawing(map) {
-	var drawnItems = new L.FeatureGroup();
-	map.addLayer(drawnItems);
+function swEnableMapDrawing(map, borderColor, fillColor, fillAlpha) {
+	var options = {
+			position: 'topright',
+			draw: {
+		        polyline: false,
+		        circle: false,
+		        marker: false,
+		        polygon: {
+        	        shapeOptions: {
+        	        	color: borderColor,
+        	            fillColor: fillColor,
+        	            fillOpacity: fillAlpha
+        	        }
+		        },
+		        rectangle: {
+        	        shapeOptions: {
+        	        	color: borderColor,
+        	            fillColor: fillColor,
+        	            fillOpacity: fillAlpha
+        	        }
+		        }
+		    },
+		    edit: false
+	};
 
-	var drawControl = new L.Control.Draw({
-	    draw: {
-	        polyline: false,
-	        rectangle: false,
-	        circle: false,
-	        marker: false,
-	        polygon: {
-	        	shapeOptions: {
-	        		color: '#ff0000'
-	        	}
-            }
-	    },
-	    edit: { featureGroup: drawnItems }
-	});
-	map.addControl(drawControl);		
+	var drawControl = new L.Control.Draw(options);
+	map.addControl(drawControl);
+	return drawControl;
 }

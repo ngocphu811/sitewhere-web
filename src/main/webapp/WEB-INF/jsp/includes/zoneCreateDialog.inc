@@ -62,11 +62,14 @@
 	/** Map reference */
 	var zcMap;
 	
-	/** Border color picker */
-	var borderCP;
+	/** Leaflet.draw control */
+	var zcDrawControl;
 	
-	/** Fill color picker */
-	var fillCP;
+	/** Layer for existing zones */
+	var zcZonesLayer;
+	
+	/** Layer for new zone */
+	var zcNewZoneLayer;
 
 	$(document).ready(function() {
 		
@@ -104,13 +107,19 @@
         });
 		
         $("#zc-border-picker").spectrum({
-            color: "#f00",
+            color: "#000",
             showButtons: false,
+            change: function(color) {
+            	zcUpdateDrawControls();
+            }
         });
         $("#zc-fill-picker").spectrum({
             color: "#f00",
             showAlpha: true,
             showButtons: false,
+            change: function(color) {
+            	zcUpdateDrawControls();
+            }
         });
 		
         /** Handle create dialog submit */
@@ -158,6 +167,18 @@
 		return result.valid;
 	}
 	
+	/** Updates draw colors from color pickers */
+	function zcUpdateDrawControls() {
+		if (zcDrawControl) {
+			zcDrawControl.removeFrom(zcMap);
+		}
+		zcDrawControl = null;
+		var borderColor = $("#zc-border-picker").spectrum("get").toHexString();
+		var fillColor = $("#zc-fill-picker").spectrum("get").toHexString();
+		var fillAlpha = $("#zc-fill-picker").spectrum("get").alpha;
+		zcDrawControl = swEnableMapDrawing(zcMap, borderColor, fillColor, fillAlpha);
+	}
+	
 	/** Open the dialog */
 	function zcOpen(site, callback) {
 		// Store site info.
@@ -167,9 +188,9 @@
 		if (zcMap) {
 			zcMap.remove();
 		}
-		zcMap = L.map('zc-map', {drawControl: true});
-		swInitMapForSite(zcMap, zcSite, true);
-		swEnableMapDrawing(zcMap);
+		zcMap = L.map('zc-map');
+		swInitMapForSite(zcMap, zcSite);
+		zcUpdateDrawControls();
 		
 		// Reset form and metadata.
 		zcMetadataDS.data(new Array());
