@@ -26,11 +26,11 @@
 			<div>
 				<div id="zc-map" class="sw-map"></div>
 				<div style="padding-top: 3px; width: 500px;">
-					<label for="gen-site-name" class="sw-name-label">Zone Name:</label>
+					<label for="zc-zone-name" class="sw-name-label">Zone Name:</label>
 					<input id="zc-zone-name" type="text" style="padding: 0px 5px; margin: 0; width: 227px;"/>
 					<label for="zc-border-picker" class="sw-name-label" style="margin-left: 10px;">Border:</label>
 					<input type="text" id="zc-border-picker"/>
-					<label for="zc-border-picker" class="sw-name-label" style="margin-left: 10px;">Fill:</label>
+					<label for="zc-fill-picker" class="sw-name-label" style="margin-left: 10px;">Fill:</label>
 					<input type="text" id="zc-fill-picker"/>
 				</div>
 			</div>
@@ -125,20 +125,27 @@
         /** Handle create dialog submit */
 		$('#zc-dialog-submit').click(function(event) {
 			event.preventDefault();
-			if (!zcValidate()) {
+			var name = $("#zc-zone-name").val();
+			if (!(name && name.length > 0)) {
+				bootbox.alert("Zone name must be specified.");
 				return;
 			}
+			if (!zcNewZoneLayer) {
+				bootbox.alert("No zone has been defined. Use the map tools to choose the zone coordinates.");
+				return;
+			}
+			var latLongs = zcNewZoneLayer.getLatLngs();
+			var coords = [];
+			for (var index = 0; index < latLongs.length; index++) {
+				coords.push({"latitude": latLongs[index].lat, "longitude": latLongs[index].lng, "elevation": 0})
+			}
 			var zoneData = {
-				"borderColor": "#000000", 
-				"fillColor": "#ff0000", 
-				"opacity": 0.7,
-				"name": "test",
-				"coordinates": [
-					{ "latitude": 123.45, "longitude": 60.0, "elevation": 0 },
-					{ "latitude": 125.45, "longitude": 60.0, "elevation": 0 },
-					{ "latitude": 123.45, "longitude": 70.0, "elevation": 0 },
-				],
-				"metadata": dcMetadataDS.data(),
+				"borderColor": $("#zc-border-picker").spectrum("get").toHexString(), 
+				"fillColor": $("#zc-fill-picker").spectrum("get").toHexString(), 
+				"opacity": $("#zc-fill-picker").spectrum("get").alpha,
+				"name": $("#zc-zone-name").val(),
+				"coordinates": coords,
+				"metadata": zcMetadataDS.data(),
 			}
 			$.postJSON("${pageContext.request.contextPath}/api/sites/" + zcSite.token + "/zones", 
 					zoneData, onCreateSuccess, onCreateFail);
