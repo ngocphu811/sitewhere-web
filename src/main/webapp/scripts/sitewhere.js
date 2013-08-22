@@ -184,6 +184,7 @@ function swEnableMapDrawing(map, borderColor, fillColor, fillAlpha) {
 		        polygon: {
         	        shapeOptions: {
         	        	color: borderColor,
+        	        	opacity: 1,
         	            fillColor: fillColor,
         	            fillOpacity: fillAlpha
         	        }
@@ -191,6 +192,7 @@ function swEnableMapDrawing(map, borderColor, fillColor, fillAlpha) {
 		        rectangle: {
         	        shapeOptions: {
         	        	color: borderColor,
+        	        	opacity: 1,
         	            fillColor: fillColor,
         	            fillOpacity: fillAlpha
         	        }

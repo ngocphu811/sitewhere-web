@@ -177,6 +177,10 @@
 		var fillColor = $("#zc-fill-picker").spectrum("get").toHexString();
 		var fillAlpha = $("#zc-fill-picker").spectrum("get").alpha;
 		zcDrawControl = swEnableMapDrawing(zcMap, borderColor, fillColor, fillAlpha);
+		
+		if (zcNewZoneLayer) {
+			zcNewZoneLayer.setStyle({color: borderColor, opacity: 1, fillColor: fillColor, fillOpacity: fillAlpha});
+		}
 	}
 	
 	/** Open the dialog */
@@ -189,8 +193,17 @@
 			zcMap.remove();
 		}
 		zcMap = L.map('zc-map');
-		swInitMapForSite(zcMap, zcSite);
 		zcUpdateDrawControls();
+		zcMap.on('draw:drawstart', function (e) {
+			if (zcNewZoneLayer) {
+				zcMap.removeLayer(zcNewZoneLayer);
+			}
+		});		
+		zcMap.on('draw:created', function (e) {
+			zcNewZoneLayer = e.layer;
+			zcMap.addLayer(zcNewZoneLayer);
+		});		
+		swInitMapForSite(zcMap, zcSite);
 		
 		// Reset form and metadata.
 		zcMetadataDS.data(new Array());
