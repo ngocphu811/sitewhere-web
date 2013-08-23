@@ -160,14 +160,16 @@
 		</div>
 		<table id="zones">
 			<colgroup>
-				<col style="width: 30%;"/>
-				<col style="width: 20%;"/>
-				<col style="width: 25%;"/>
-				<col style="width: 25%;"/>
+				<col style="width: 30%; max-width: 200px;"/>
+				<col style="width: 35%;"/>
+				<col style="width: 5%;"/>
+				<col style="width: 15%;"/>
+				<col style="width: 15%;"/>
 			</colgroup>
 			<thead>
 				<tr>
 					<th>Name</th>
+					<th>Token</th>
 					<th>Appearance</th>
 					<th>Create Date</th>
 					<th>Updated Date</th>
@@ -502,7 +504,7 @@
 	
 	/** Called after a zone has been successfully created */
 	function onZoneCreateSuccess() {
-		
+    	zonesDS.read();
 	}
 </script>
 

@@ -194,6 +194,8 @@
 	function zcOpen(site, callback) {
 		// Store site info.
 		zcSite = site;
+		zcNewZoneLayer = null;
+		zcDrawControl = null;
 		
 		// Creates map if not already created, then inits from site settings.
 		if (zcMap) {
