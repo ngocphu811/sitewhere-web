@@ -9,6 +9,7 @@
 <link href="${pageContext.request.contextPath}/css/kendo.common.min.css" rel="stylesheet" />
 <link href="${pageContext.request.contextPath}/css/kendo.bootstrap.min.css" rel="stylesheet" />
 <link href="${pageContext.request.contextPath}/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<link href="${pageContext.request.contextPath}/css/font-awesome.min.css" rel="stylesheet" media="screen">
 <link href="${pageContext.request.contextPath}/css/jquery.validity.css" rel="stylesheet">
 <link href="${pageContext.request.contextPath}/css/sitewhere.css" rel="stylesheet" />
 <c:if test="${use_map_includes == true}">

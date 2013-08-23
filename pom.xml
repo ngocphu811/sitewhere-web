@@ -92,6 +92,7 @@
 						WEB-INF/*.xml,
 						index.*,
 						css/**,
+						font/**,
 						img/**,
 						lib/**,
 						scripts/**

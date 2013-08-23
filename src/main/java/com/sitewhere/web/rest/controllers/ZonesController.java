@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sitewhere.rest.model.device.Zone;
@@ -52,9 +53,10 @@ public class ZonesController extends SiteWhereController {
 	@ResponseBody
 	@ApiOperation(value = "Delete zone based on unique token")
 	public Zone deleteZone(
-			@ApiParam(value = "Unique token that identifies zone", required = true) @PathVariable String zoneToken)
+			@ApiParam(value = "Unique token that identifies zone", required = true) @PathVariable String zoneToken,
+			@ApiParam(value = "Delete permanently", required = false) @RequestParam(defaultValue = "false") boolean force)
 			throws SiteWhereException {
-		IZone deleted = SiteWhereServer.getInstance().getDeviceManagement().deleteZone(zoneToken);
+		IZone deleted = SiteWhereServer.getInstance().getDeviceManagement().deleteZone(zoneToken, force);
 		return Zone.copy(deleted);
 	}
 }

@@ -161,10 +161,11 @@
 		<table id="zones">
 			<colgroup>
 				<col style="width: 3%;"/>
-				<col style="width: 32%; max-width: 220px;"/>
-				<col style="width: 35%;"/>
+				<col style="width: 30%; max-width: 220px;"/>
+				<col style="width: 30%;"/>
 				<col style="width: 15%;"/>
 				<col style="width: 15%;"/>
+				<col style="width: 40px;"/>
 			</colgroup>
 			<thead>
 				<tr>
@@ -173,10 +174,11 @@
 					<th>Token</th>
 					<th>Created Date</th>
 					<th>Updated Date</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr><td colspan="5"></td></tr>
+				<tr><td colspan="6"></td></tr>
 			</tbody>
 		</table>
 		<div id="zones-pager" class="k-pager-wrap event-pager"></div>
