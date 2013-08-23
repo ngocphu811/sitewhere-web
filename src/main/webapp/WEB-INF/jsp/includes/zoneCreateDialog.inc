@@ -215,6 +215,7 @@
 		swInitMapForSite(zcMap, zcSite);
 		
 		// Reset form and metadata.
+		$('#zc-zone-name').val("");
 		zcMetadataDS.data(new Array());
     	
     	// Select first tab.

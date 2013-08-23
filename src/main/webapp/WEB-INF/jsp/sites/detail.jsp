@@ -160,23 +160,23 @@
 		</div>
 		<table id="zones">
 			<colgroup>
-				<col style="width: 30%; max-width: 200px;"/>
+				<col style="width: 3%;"/>
+				<col style="width: 32%; max-width: 220px;"/>
 				<col style="width: 35%;"/>
-				<col style="width: 5%;"/>
 				<col style="width: 15%;"/>
 				<col style="width: 15%;"/>
 			</colgroup>
 			<thead>
 				<tr>
+					<th></th>
 					<th>Name</th>
 					<th>Token</th>
-					<th>Appearance</th>
-					<th>Create Date</th>
+					<th>Created Date</th>
 					<th>Updated Date</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr><td colspan="4"></td></tr>
+				<tr><td colspan="5"></td></tr>
 			</tbody>
 		</table>
 		<div id="zones-pager" class="k-pager-wrap event-pager"></div>

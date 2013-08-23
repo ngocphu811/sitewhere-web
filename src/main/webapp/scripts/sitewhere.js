@@ -170,7 +170,39 @@ function swInitMapForSite(map, site) {
 		var geoserver = new L.TileLayer(gsUrl, {maxZoom: 18});		
 		geoserver.addTo(map);
 	}
+	// Asyncronously load zones and add layer to map.
+	$.getJSON("/sitewhere/api/sites/" + siteToken + "/zones", 
+			function(zones) { swAddZonesToMap(map, zones) }, 
+			function(jqXHR, textStatus, errorThrown) { handleError(jqXHR, "Unable to load zone data."); }
+	);
 	return map;
+}
+
+/** Adds layer of existing zones to a map */
+function swAddZonesToMap(map, zones) {
+	var layers = new L.LayerGroup();
+	var zone, results = zones.results;
+	var polygon;
+	for (var zoneIndex = 0; zoneIndex < results.length; zoneIndex++) {
+		zone = results[zoneIndex];
+		polygon = swCreatePolygonForZone(zone);
+		layers.addLayer(polygon);
+	}
+	map.addLayer(layers);
+}
+
+/** Create a Leaflet L.Polygon based on a zone */
+function swCreatePolygonForZone(zone) {
+	var coords = zone.coordinates;
+	var latLngs = [];
+	for (var coordIndex = 0; coordIndex < coords.length; coordIndex++) {
+		coordinate = coords[coordIndex];
+		latLngs.push(new L.LatLng(coordinate.latitude, coordinate.longitude));
+	}
+	var polygon = new L.Polygon(latLngs, {
+		"color": zone.borderColor, "opacity": 1, 
+		"fillColor": zone.fillColor, "fillOpacity": zone.opacity});
+	return polygon;
 }
 
 /** Enables drawing features on map */
