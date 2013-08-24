@@ -73,6 +73,9 @@
 	
 	/** Layer for new zone */
 	var zcNewZoneLayer;
+	
+	/** Feature group that holds edited layer */
+	var zcEditFeatureGroup;
 
 	$(document).ready(function() {
 		
@@ -186,7 +189,11 @@
 		var borderColor = $("#zc-border-picker").spectrum("get").toHexString();
 		var fillColor = $("#zc-fill-picker").spectrum("get").toHexString();
 		var fillAlpha = $("#zc-fill-picker").spectrum("get").alpha;
-		zcDrawControl = swEnableMapDrawing(zcMap, borderColor, fillColor, fillAlpha);
+		if (zcZone) {
+			zcDrawControl = swEnableMapEditing(zcMap, zcEditFeatureGroup);
+		} else {
+			zcDrawControl = swEnableMapDrawing(zcMap, borderColor, fillColor, fillAlpha);
+		}
 		
 		if (zcNewZoneLayer) {
 			zcNewZoneLayer.setStyle({color: borderColor, opacity: 1, fillColor: fillColor, fillOpacity: fillAlpha});
@@ -272,7 +279,19 @@
 	function zuOpenGetSuccess(zone) {
 		zcZone = zone;
 		
+		zcEditFeatureGroup = new L.FeatureGroup();
+		zcNewZoneLayer = swCreatePolygonForZone(zone);
+		zcEditFeatureGroup.addLayer(zcNewZoneLayer);		
+		zcMap.addLayer(zcEditFeatureGroup);
+		zcEditFeatureGroup.bringToFront();
+		
+		zcDrawControl = swEnableMapEditing(zcMap, zcEditFeatureGroup);
+		
 		$('#zc-zone-name').val(zone.name);
+		$("#zc-border-picker").spectrum("set", tinycolor(zone.borderColor));
+		var fillColor = tinycolor(zone.fillColor).toHsv();
+		fillColor.a = zone.opacity;
+		$("#zc-fill-picker").spectrum("set", fillColor);
 		zcMetadataDS.data(zone.metadata);
 		
 		$('#zc-dialog').modal('show');

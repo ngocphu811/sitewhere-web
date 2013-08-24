@@ -171,16 +171,17 @@ function swInitMapForSite(map, site, tokenToSkip) {
 		geoserver.addTo(map);
 	}
 	// Asyncronously load zones and add layer to map.
+	var featureGroup = new L.FeatureGroup();
+	map.addLayer(featureGroup);
 	$.getJSON("/sitewhere/api/sites/" + siteToken + "/zones", 
-			function(zones) { swAddZonesToMap(map, zones, tokenToSkip) }, 
+			function(zones) { swAddZonesToFeatureGroup(featureGroup, zones, tokenToSkip) }, 
 			function(jqXHR, textStatus, errorThrown) { handleError(jqXHR, "Unable to load zone data."); }
 	);
 	return map;
 }
 
-/** Adds layer of existing zones to a map */
-function swAddZonesToMap(map, zones, tokenToSkip) {
-	var layers = new L.LayerGroup();
+/** Adds zones as polygon layers for feature group */
+function swAddZonesToFeatureGroup(layers, zones, tokenToSkip) {
 	var zone, results = zones.results;
 	var polygon;
 	
@@ -194,7 +195,6 @@ function swAddZonesToMap(map, zones, tokenToSkip) {
 			layers.addLayer(polygon);
 		}
 	}
-	map.addLayer(layers);
 }
 
 /** Create a Leaflet L.Polygon based on a zone */
@@ -237,6 +237,22 @@ function swEnableMapDrawing(map, borderColor, fillColor, fillAlpha) {
 		        }
 		    },
 		    edit: false
+	};
+
+	var drawControl = new L.Control.Draw(options);
+	map.addControl(drawControl);
+	return drawControl;
+}
+
+/** Enables drawing features on map */
+function swEnableMapEditing(map, editableLayers) {
+	var options = {
+			position: 'topright',
+			draw: false,
+		    edit: {
+		        featureGroup: editableLayers,
+		        remove: false
+		    }
 	};
 
 	var drawControl = new L.Control.Draw(options);
