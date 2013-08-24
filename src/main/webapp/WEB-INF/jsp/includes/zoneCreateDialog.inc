@@ -296,5 +296,8 @@
 		
 		$('#zc-dialog').modal('show');
 		zcMap.invalidateSize();
+		
+		var bounds = zcNewZoneLayer.getBounds();
+		zcMap.fitBounds(bounds, {padding: [5, 5]});
 	}
 </script>
