@@ -153,11 +153,16 @@
 				"coordinates": coords,
 				"metadata": zcMetadataDS.data(),
 			}
-			$.postJSON("${pageContext.request.contextPath}/api/sites/" + zcSite.token + "/zones", 
+			if (zcZone) {
+				$.putJSON("${pageContext.request.contextPath}/api/zones/" + zcZone.token,
 					zoneData, onCreateSuccess, onCreateFail);
+			} else {
+				$.postJSON("${pageContext.request.contextPath}/api/sites/" + zcSite.token + "/zones", 
+					zoneData, onCreateSuccess, onCreateFail);
+			}
 		});
         
-        /** Called on successful create */
+        /** Called on successful create/update */
         function onCreateSuccess() {
         	$('#zc-dialog').modal('hide');
 			if (zcSubmitCallback != null) {
@@ -165,9 +170,14 @@
 			}
         }
         
-		/** Handle failed call to create device */
+		/** Handle failed call to create zone */
 		function onCreateFail(jqXHR, textStatus, errorThrown) {
 			handleError(jqXHR, "Unable to create zone.");
+		}
+        
+		/** Handle failed call to update zone */
+		function onUpdateFail(jqXHR, textStatus, errorThrown) {
+			handleError(jqXHR, "Unable to update zone.");
 		}
     });
 	
@@ -224,6 +234,7 @@
 		
 		// Set dialog title
 		$('#zc-dialog-title').html("Create Zone");
+		$('#zc-dialog-submit').html("Create");
 		
 		// Creates map if not already created, then inits from site settings.
 		if (zcMap) {
@@ -258,6 +269,7 @@
 		
 		// Set dialog title
 		$('#zc-dialog-title').html("Edit Zone");
+		$('#zc-dialog-submit').html("Save");
 		
 		// Creates map if not already created, then inits from site settings.
 		if (zcMap) {
