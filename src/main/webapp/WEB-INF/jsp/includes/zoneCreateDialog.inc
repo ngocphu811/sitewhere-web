@@ -1,6 +1,6 @@
 <style>
 .sw-map {
-	height: 270px;
+	height: 290px;
 	width: 500px;
 	border: 1px solid #dddddd;
 }
@@ -298,6 +298,6 @@
 		zcMap.invalidateSize();
 		
 		var bounds = zcNewZoneLayer.getBounds();
-		zcMap.fitBounds(bounds, {padding: [5, 5]});
+		zcMap.fitBounds(bounds, {padding: [0, 0]});
 	}
 </script>
