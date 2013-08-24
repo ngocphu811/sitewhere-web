@@ -93,6 +93,29 @@
 	function swAssignmentMissingFail(jqXHR, textStatus, errorThrown) {
 		handleError(jqXHR, "Unable to mark assignment as missing.");
 	}
+
+	/** Delete a zone based on its unique token */
+	function swZoneDelete(zoneToken, successCallback) {
+		swSuccessCallback = successCallback;
+		bootbox.confirm("Delete zone?", function(result) {
+			if (result) {
+				$.deleteJSON("${pageContext.request.contextPath}/api/zones/"
+					+ zoneToken + "?force=true", swZoneDeleteSuccess, swZoneDeleteFail);
+			}
+		});
+	}
+
+	/** Handle successful zone delete */
+	function swZoneDeleteSuccess() {
+		if (swSuccessCallback != null) {
+			swSuccessCallback();
+		}
+	}
+
+	/** Handle failed zone delete */
+	function swZoneDeleteFail(jqXHR, textStatus, errorThrown) {
+		handleError(jqXHR, "Unable to delete zone.");
+	}
 	
 	/** Gets a string array as a comma-delimited string */
 	function swArrayAsCommaDelimited(input) {

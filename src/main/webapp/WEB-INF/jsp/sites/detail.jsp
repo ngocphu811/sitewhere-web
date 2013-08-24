@@ -280,6 +280,34 @@
 		assignmentsDS.read();
 	}
 	
+	/** Called when 'delete zone' is clicked */
+	function onDeleteZone(e, token) {
+		var event = e || window.event;
+		event.stopPropagation();
+		swZoneDelete(token, onDeleteZoneComplete);
+	}
+	
+	/** Called after successful delete zone */
+	function onDeleteZoneComplete() {
+		zonesDS.read();
+	}
+	
+	/** Called when 'edit zone' is clicked */
+	function onEditZone(e, token) {
+		var event = e || window.event;
+		event.stopPropagation();
+    	if (site) {
+    		zuOpen(site, token, onZoneUpdateSuccess);
+    	} else {
+    		bootbox.alert("Site has not been loaded.");
+    	}
+	}
+	
+	/** Called after successful edit zone */
+	function onZoneUpdateSuccess() {
+		zonesDS.read();
+	}
+	
 	$(document).ready(function() {
 		
 		/** Create AJAX datasource for assignments list */

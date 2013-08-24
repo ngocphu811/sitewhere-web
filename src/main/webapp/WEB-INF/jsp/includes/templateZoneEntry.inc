@@ -42,8 +42,10 @@
 		<td>#= formattedDate(createdDate) #</td>
 		<td>#= formattedDate(updatedDate) #</td>
 		<td>
-			<i class="icon-pencil sw-action-glyph sw-edit-glyph" title="Edit Zone"></i>
-			<i class="icon-remove sw-action-glyph sw-delete-glyph" title="Delete Zone"></i>
+			<i class="icon-pencil sw-action-glyph sw-edit-glyph" title="Edit Zone"
+				onclick="onEditZone(event, '#:token#')"></i>
+			<i class="icon-remove sw-action-glyph sw-delete-glyph" title="Delete Zone"
+				onclick="onDeleteZone(event, '#:token#')"></i>
 		</td>
 	</tr>
 </script>

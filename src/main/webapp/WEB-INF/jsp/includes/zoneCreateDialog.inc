@@ -15,7 +15,7 @@
 <div id="zc-dialog" class="modal hide">
 	<div class="modal-header k-header">
 		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3>Create Zone</h3>
+		<h3 id="zc-dialog-title">Create Zone</h3>
 	</div>
 	<div class="modal-body">
 		<div id="zc-tabs" style="clear: both;">
@@ -49,6 +49,9 @@
 <script>
 	/** Site that provides map metadata */
 	var zcSite;
+	
+	/** Zone being edited if in update mode */
+	var zcZone;
 	
 	/** Function called when dialog is submitted */
 	var zcSubmitCallback;
@@ -190,12 +193,30 @@
 		}
 	}
 	
-	/** Open the dialog */
-	function zcOpen(site, callback) {
-		// Store site info.
-		zcSite = site;
+	/** Reset dialog state */
+	function zcReset() {
 		zcNewZoneLayer = null;
 		zcDrawControl = null;
+		zcZone = null;
+		
+		// Reset form and metadata.
+		$('#zc-zone-name').val("");
+		zcMetadataDS.data(new Array());
+    	
+    	// Select first tab.
+		zcTabs.select(0);
+		$.validity.clear();
+	}
+	
+	/** Open the create dialog */
+	function zcOpen(site, callback) {
+		zcReset();
+		
+		// Store site info.
+		zcSite = site;
+		
+		// Set dialog title
+		$('#zc-dialog-title').html("Create Zone");
 		
 		// Creates map if not already created, then inits from site settings.
 		if (zcMap) {
@@ -214,18 +235,46 @@
 		});		
 		swInitMapForSite(zcMap, zcSite);
 		
-		// Reset form and metadata.
-		$('#zc-zone-name').val("");
-		zcMetadataDS.data(new Array());
-    	
-    	// Select first tab.
-		zcTabs.select(0);
+		// Function called on submit.
+		zcSubmitCallback = callback;
+		
+		$('#zc-dialog').modal('show');
+		zcMap.invalidateSize();
+	}
+	
+	/** Open zone update dialog */
+	function zuOpen(site, zoneToken, callback) {
+		zcReset();
+		
+		// Store site info.
+		zcSite = site;
+		
+		// Set dialog title
+		$('#zc-dialog-title').html("Edit Zone");
+		
+		// Creates map if not already created, then inits from site settings.
+		if (zcMap) {
+			zcMap.remove();
+		}
+		zcMap = L.map('zc-map');
+		swInitMapForSite(zcMap, zcSite, zoneToken);
 		
 		// Function called on submit.
 		zcSubmitCallback = callback;
 		
-		// Clear old validation errors and show dialog.
-		$.validity.clear();
+		// Asyncronously load zones and add layer to map.
+		$.getJSON("/sitewhere/api/zones/" + zoneToken, zuOpenGetSuccess, 
+				function(jqXHR, textStatus, errorThrown) { handleError(jqXHR, "Unable to get zone for update."); }
+		);
+	}
+	
+	/** Called after zone has been loaded for update */
+	function zuOpenGetSuccess(zone) {
+		zcZone = zone;
+		
+		$('#zc-zone-name').val(zone.name);
+		zcMetadataDS.data(zone.metadata);
+		
 		$('#zc-dialog').modal('show');
 		zcMap.invalidateSize();
 	}

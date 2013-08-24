@@ -149,7 +149,7 @@ function swMetadataAsLookup(metadata) {
 }
 
 /** Initializes a map based on site map metadata */
-function swInitMapForSite(map, site) {
+function swInitMapForSite(map, site, tokenToSkip) {
 	var lookup = swMetadataAsLookup(site.mapMetadata.metadata);
 	var latitude = (lookup.centerLatitude ? lookup.centerLatitude : 39.9853);
 	var longitude = (lookup.centerLongitude ? lookup.centerLongitude : -104.6688);
@@ -172,21 +172,27 @@ function swInitMapForSite(map, site) {
 	}
 	// Asyncronously load zones and add layer to map.
 	$.getJSON("/sitewhere/api/sites/" + siteToken + "/zones", 
-			function(zones) { swAddZonesToMap(map, zones) }, 
+			function(zones) { swAddZonesToMap(map, zones, tokenToSkip) }, 
 			function(jqXHR, textStatus, errorThrown) { handleError(jqXHR, "Unable to load zone data."); }
 	);
 	return map;
 }
 
 /** Adds layer of existing zones to a map */
-function swAddZonesToMap(map, zones) {
+function swAddZonesToMap(map, zones, tokenToSkip) {
 	var layers = new L.LayerGroup();
 	var zone, results = zones.results;
 	var polygon;
+	
+	// Add newest last.
+	results.reverse();
+	
 	for (var zoneIndex = 0; zoneIndex < results.length; zoneIndex++) {
 		zone = results[zoneIndex];
-		polygon = swCreatePolygonForZone(zone);
-		layers.addLayer(polygon);
+		if (zone.token != tokenToSkip) {
+			polygon = swCreatePolygonForZone(zone);
+			layers.addLayer(polygon);
+		}
 	}
 	map.addLayer(layers);
 }
