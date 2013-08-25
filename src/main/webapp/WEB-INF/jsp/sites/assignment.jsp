@@ -13,8 +13,10 @@
 <div class="sw-title-bar content k-header" style="margin-bottom: -1px;">
 	<h1 class="ellipsis"><c:out value="${sitewhere_title}"/></h1>
 	<div class="sw-title-bar-right">
+		<a id="btn-emulator" class="btn" href="javascript:void(0)">
+			<i class="icon-bolt sw-button-icon"></i> Emulate Assignment</a>
 		<a id="btn-edit-assignment" class="btn" href="javascript:void(0)">
-			<i class="icon-pencil"></i> Edit Assignment</a>
+			<i class="icon-edit sw-button-icon"></i> Edit Assignment</a>
 	</div>
 </div>
 
@@ -33,9 +35,9 @@
 			<div class="sw-button-bar-title">Device Locations</div>
 			<div>
 				<a id="btn-filter-locations" class="btn" href="javascript:void(0)">
-					<i class="icon-search"></i> Filter Results</a>
+					<i class="icon-search sw-button-icon"></i> Filter Results</a>
 				<a id="btn-refresh-locations" class="btn" href="javascript:void(0)">
-					<i class="icon-refresh"></i> Refresh</a>
+					<i class="icon-refresh sw-button-icon"></i> Refresh</a>
 			</div>
 		</div>
 		<table id="locations">
@@ -64,9 +66,9 @@
 			<div class="sw-button-bar-title">Device Measurements</div>
 			<div>
 				<a id="btn-filter-measurements" class="btn" href="javascript:void(0)">
-					<i class="icon-search"></i> Filter Results</a>
+					<i class="icon-search sw-button-icon"></i> Filter Results</a>
 				<a id="btn-refresh-measurements" class="btn" href="javascript:void(0)">
-					<i class="icon-refresh"></i> Refresh</a>
+					<i class="icon-refresh sw-button-icon"></i> Refresh</a>
 			</div>
 		</div>
 		<table id="measurements">
@@ -95,9 +97,9 @@
 			<div class="sw-button-bar-title">Device Alerts</div>
 			<div>
 				<a id="btn-filter-alerts" class="btn" href="javascript:void(0)">
-					<i class="icon-search"></i> Filter Results</a>
+					<i class="icon-search sw-button-icon"></i> Filter Results</a>
 				<a id="btn-refresh-alerts" class="btn" href="javascript:void(0)">
-					<i class="icon-refresh"></i> Refresh</a>
+					<i class="icon-refresh sw-button-icon"></i> Refresh</a>
 			</div>
 		</div>
 		<table id="alerts">

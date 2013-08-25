@@ -64,7 +64,7 @@
 			<div class="btn-group btn-group-vertical" style="position: absolute; right: 0px; top: 3px;">
 				<a class="btn btn-small btn-primary" title="Edit Site" 
 					href="javascript:void(0)" onclick="onSiteEditClicked(event, '#:token#');">
-					<i class="icon-pencil icon-white"></i></a>
+					<i class="icon-edit icon-white"></i></a>
 				<a class="btn btn-small btn-danger" title="Delete Site" 
 					href="javascript:void(0)" onclick="onSiteDeleteClicked(event, '#:token#')">
 					<i class="icon-remove icon-white"></i></a>

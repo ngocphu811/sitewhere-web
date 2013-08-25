@@ -20,9 +20,9 @@
 	<h1 class="ellipsis"><c:out value="${sitewhere_title}"/></h1>
 	<div class="sw-title-bar-right">
 		<a id="btn-filter-results" class="btn" href="javascript:void(0)">
-			<i class="icon-search"></i> Filter Results</a>
+			<i class="icon-search sw-button-icon"></i> Filter Results</a>
 		<a id="btn-add-device" class="btn" href="javascript:void(0)">
-			<i class="icon-plus"></i> Add New Device</a>
+			<i class="icon-plus sw-button-icon"></i> Add New Device</a>
 	</div>
 </div>
 <div id="devices" class="sw-device-list"></div>

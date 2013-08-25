@@ -20,7 +20,7 @@
 	<h1 class="ellipsis"><c:out value="${sitewhere_title}"/></h1>
 	<div class="sw-title-bar-right">
 		<a id="btn-edit-site" class="btn" href="javascript:void(0)">
-			<i class="icon-pencil"></i> Edit Site</a>
+			<i class="icon-edit sw-button-icon"></i> Edit Site</a>
 	</div>
 </div>
 
@@ -41,9 +41,9 @@
 			<div class="sw-button-bar-title">Device Assignments</div>
 			<div>
 				<a id="btn-filter-assignments" class="btn" href="javascript:void(0)">
-					<i class="icon-search"></i> Filter Results</a>
+					<i class="icon-search sw-button-icon"></i> Filter Results</a>
 				<a id="btn-refresh-assignments" class="btn" href="javascript:void(0)">
-					<i class="icon-refresh"></i> Refresh</a>
+					<i class="icon-refresh sw-button-icon"></i> Refresh</a>
 			</div>
 		</div>
 		<div id="assignments" class="sw-assignment-list"></div>
@@ -54,9 +54,9 @@
 			<div class="sw-button-bar-title">Device Locations</div>
 			<div>
 				<a id="btn-filter-locations" class="btn" href="javascript:void(0)">
-					<i class="icon-search"></i> Filter Results</a>
+					<i class="icon-search sw-button-icon"></i> Filter Results</a>
 				<a id="btn-refresh-locations" class="btn" href="javascript:void(0)">
-					<i class="icon-refresh"></i> Refresh</a>
+					<i class="icon-refresh sw-button-icon"></i> Refresh</a>
 			</div>
 		</div>
 		<table id="locations">
@@ -85,9 +85,9 @@
 			<div class="sw-button-bar-title">Device Measurements</div>
 			<div>
 				<a id="btn-filter-measurements" class="btn" href="javascript:void(0)">
-					<i class="icon-search"></i> Filter Results</a>
+					<i class="icon-search sw-button-icon"></i> Filter Results</a>
 				<a id="btn-refresh-measurements" class="btn" href="javascript:void(0)">
-					<i class="icon-refresh"></i> Refresh</a>
+					<i class="icon-refresh sw-button-icon"></i> Refresh</a>
 			</div>
 		</div>
 		<table id="measurements">
@@ -116,9 +116,9 @@
 			<div class="sw-button-bar-title">Device Alerts</div>
 			<div>
 				<a id="btn-filter-alerts" class="btn" href="javascript:void(0)">
-					<i class="icon-search"></i> Filter Results</a>
+					<i class="icon-search sw-button-icon"></i> Filter Results</a>
 				<a id="btn-refresh-alerts" class="btn" href="javascript:void(0)">
-					<i class="icon-refresh"></i> Refresh</a>
+					<i class="icon-refresh sw-button-icon"></i> Refresh</a>
 			</div>
 		</div>
 		<table id="alerts">
@@ -153,9 +153,9 @@
 			<div class="sw-button-bar-title">Zones</div>
 			<div>
 				<a id="btn-refresh-zones" class="btn" href="javascript:void(0)">
-					<i class="icon-refresh"></i> Refresh</a>
+					<i class="icon-refresh sw-button-icon"></i> Refresh</a>
 				<a id="btn-add-zone" class="btn" href="javascript:void(0)">
-					<i class="icon-plus"></i> Add New Zone</a>
+					<i class="icon-plus sw-button-icon"></i> Add New Zone</a>
 			</div>
 		</div>
 		<table id="zones">

@@ -12,7 +12,7 @@
 		<td>#= formattedDate(updatedDate) #</td>
 		<td>
 			<div style="width: 100%; text-align: center">
-				<i class="icon-pencil sw-action-glyph sw-edit-glyph" title="Edit Zone"
+				<i class="icon-edit sw-action-glyph sw-edit-glyph" title="Edit Zone"
 					onclick="onEditZone(event, '#:token#')"></i>
 				<i class="icon-remove sw-action-glyph sw-delete-glyph" title="Delete Zone"
 					onclick="onDeleteZone(event, '#:token#')"></i>

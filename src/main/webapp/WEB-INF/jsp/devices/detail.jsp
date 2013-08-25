@@ -14,7 +14,7 @@
 	<h1 class="ellipsis"><c:out value="${sitewhere_title}"/></h1>
 	<div class="sw-title-bar-right">
 		<a id="btn-edit-device" class="btn" href="javascript:void(0)">
-			<i class="icon-pencil"></i> Edit Device</a>
+			<i class="icon-pencil sw-button-icon"></i> Edit Device</a>
 	</div>
 </div>
 

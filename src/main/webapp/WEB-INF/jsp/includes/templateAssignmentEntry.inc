@@ -148,7 +148,7 @@
 			<div class="btn-group btn-group-vertical" style="position: absolute; right: 0px; top: -2px;">
 				<a class="btn btn-small btn-primary" title="Edit Assignment"
 					href="javascript:void(0)" onclick="onEditAssignment(event, '#:token#')">
-					<i class="icon-pencil icon-white"></i></a>
+					<i class="icon-edit icon-white"></i></a>
 				<a class="btn btn-small btn-danger" title="Delete Assignment" 
 					href="javascript:void(0)" onclick="onDeleteAssignment(event, '#:token#')">
 					<i class="icon-remove icon-white"></i></a>
