@@ -76,7 +76,7 @@ public class SiteWhereController {
 	 * @param token
 	 * @return
 	 */
-	@RequestMapping("/sites/assignment")
+	@RequestMapping("/assignments/detail")
 	public ModelAndView assignmentDetail(@RequestParam("token") String token) {
 		if (token != null) {
 			IDeviceManagement management = SiteWhereServer.getInstance().getDeviceManagement();
@@ -85,7 +85,7 @@ public class SiteWhereController {
 				if (assignment != null) {
 					Map<String, Object> data = new HashMap<String, Object>();
 					data.put("assignment", assignment);
-					return new ModelAndView("sites/assignment", data);
+					return new ModelAndView("assignments/detail", data);
 				}
 				return showError("Assignment for token '" + token + "' not found.");
 			} catch (SiteWhereException e) {

@@ -33,7 +33,7 @@
 <div id="sites" class="sw-site-list"></div>
 <div id="pager" class="k-pager-wrap"></div>
 
-<form id="view-site-detail" method="get" action="detail">
+<form id="view-site-detail" method="get" action="detail.html">
 	<input id="detail-site-token" name="siteToken" type="hidden" value="${site.token}"/>
 </form>
 

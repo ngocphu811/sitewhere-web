@@ -31,9 +31,9 @@
 			<div class="sw-button-bar-title">Device Assignment History</div>
 			<div>
 				<a id="btn-filter-assignments" class="btn" href="javascript:void(0)">
-					<i class="icon-search"></i> Filter Results</a>
+					<i class="icon-search sw-button-icon"></i> Filter Results</a>
 				<a id="btn-refresh-assignments" class="btn" href="javascript:void(0)">
-					<i class="icon-refresh"></i> Refresh</a>
+					<i class="icon-refresh sw-button-icon"></i> Refresh</a>
 			</div>
 		</div>
 		<div id="assignments" class="sw-assignment-list"></div>
@@ -41,7 +41,7 @@
 	</div>
 </div>
 
-<form id="view-assignment-detail" method="get" action="../sites/assignment">
+<form id="view-assignment-detail" method="get" action="../assignments/detail.html">
 	<input id="detail-assignment-token" name="token" type="hidden"/>
 </form>
 

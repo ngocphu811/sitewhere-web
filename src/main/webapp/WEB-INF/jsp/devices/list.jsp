@@ -28,7 +28,7 @@
 <div id="devices" class="sw-device-list"></div>
 <div id="pager" class="k-pager-wrap"></div>
 
-<form id="view-device-detail" method="get" action="detail">
+<form id="view-device-detail" method="get" action="detail.html">
 	<input id="detail-hardware-id" name="hardwareId" type="hidden"/>
 </form>
 

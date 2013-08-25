@@ -185,7 +185,7 @@
 	</div>
 </div>
 
-<form id="view-assignment-detail" method="get" action="assignment">
+<form id="view-assignment-detail" method="get" action="../assignments/detail.html">
 	<input id="detail-assignment-token" name="token" type="hidden"/>
 </form>
 

@@ -90,7 +90,7 @@
 			<div class="btn-group btn-group-vertical" style="position: absolute; right: 0px; top: -2px;">
 				<a class="btn btn-small btn-primary" title="Edit Device" 
 					href="javascript:void(0)" onclick="onDeviceEditClicked(event, '#:hardwareId#');">
-					<i class="icon-pencil icon-white"></i></a>
+					<i class="icon-edit icon-white"></i></a>
 				<a class="btn btn-small btn-danger" title="Delete Device" 
 					href="javascript:void(0)" onclick="onDeviceDeleteClicked(event, '#:hardwareId#')">
 					<i class="icon-remove icon-white"></i></a>
