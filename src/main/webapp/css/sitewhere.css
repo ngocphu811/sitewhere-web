@@ -191,6 +191,35 @@
    border: 1px solid #dcdcdc;
 }
 
+.sw-list-entry {
+	font-size: 10pt;
+}
+
+.sw-action-glyph {
+	opacity: 0.2;
+	min-width: 16px;
+	text-align: center;
+	font-size: 14px;
+	display: inline-block;
+	cursor: pointer;
+}
+
+.sw-list-entry:hover .sw-action-glyph {
+	opacity: 0.5;
+}
+
+.sw-action-glyph:hover.sw-delete-glyph {
+	color: #c00;
+	font-size: 16px;
+	opacity: 1;
+}
+
+.sw-action-glyph:hover.sw-edit-glyph {
+	color: #00f;
+	font-size: 16px;
+	opacity: 1;
+}
+
 div.sp-replacer {
 	padding: 3px;
 	background: none repeat scroll 0% 0% #dddddd;

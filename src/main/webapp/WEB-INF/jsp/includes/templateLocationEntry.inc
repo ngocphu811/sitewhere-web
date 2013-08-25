@@ -1,13 +1,6 @@
-<style>
-.sw-location-entry {
-	font-size: 10pt;
-	cursor: pointer;
-}
-</style>
-
 <!-- Template for location row -->
 <script type="text/x-kendo-tmpl" id="tpl-location-entry">
-	<tr class="sw-location-entry gradient-bg">
+	<tr class="sw-list-entry gradient-bg">
 		<td>
 			<div>#:assetName#</div>
 		</td>

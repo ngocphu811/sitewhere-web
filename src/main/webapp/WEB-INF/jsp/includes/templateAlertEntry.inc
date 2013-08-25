@@ -1,13 +1,6 @@
-<style>
-.sw-alert-entry {
-	font-size: 10pt;
-	cursor: pointer;
-}
-</style>
-
 <!-- Template for location row -->
 <script type="text/x-kendo-tmpl" id="tpl-alert-entry">
-	<tr class="sw-alert-entry gradient-bg">
+	<tr class="sw-list-entry gradient-bg">
 		<td class="ellipsis" style="max-width: 90px;" title="#:assetName#">#:assetName#</td>
 		<td class="ellipsis" style="max-width: 90px;" title="#:type#">#:type#</td>
 		<td class="ellipsis" style="max-width: 250px;" title="#:message#">#:message#</td>
