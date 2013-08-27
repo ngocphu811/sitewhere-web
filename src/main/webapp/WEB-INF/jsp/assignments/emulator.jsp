@@ -75,13 +75,13 @@
 						<div class="control-group">
 							<label class="control-label" for="mqtt-username">Username</label>
 							<div class="controls">
-								<input type="text" id="mqtt-username" class="input-large">
+								<input type="text" id="mqtt-username" class="input-large" value="admin">
 							</div>
 						</div>
 						<div class="control-group">
 							<label class="control-label" for="mqtt-password">Password</label>
 							<div class="controls">
-								<input type="text" id="mqtt-password" class="input-large">
+								<input type="password" id="mqtt-password" class="input-large" value="password">
 							</div>
 						</div>
 						<div class="control-group">
@@ -134,10 +134,12 @@
 		var host = $('#mqtt-host-name').val();
 		var port = $('#mqtt-port').val();
 		var clientId = $('#mqtt-client-id').val();
+		var username = $('#mqtt-username').val();
+		var password = $('#mqtt-password').val();
 		client = new Messaging.Client(host, Number(port), clientId);
 		client.onConnectionLost = onConnectionLost;
 		client.onMessageArrived = onMessageArrived;
-		client.connect({onSuccess:onConnect, onFailure:onConnectFailed});
+		client.connect({userName:username, password:password, onSuccess:onConnect, onFailure:onConnectFailed});
 	}
 	
 	/** Called on successful connection */
