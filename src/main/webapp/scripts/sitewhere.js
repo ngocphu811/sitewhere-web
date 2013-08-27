@@ -206,8 +206,9 @@ function swCreatePolygonForZone(zone) {
 		latLngs.push(new L.LatLng(coordinate.latitude, coordinate.longitude));
 	}
 	var polygon = new L.Polygon(latLngs, {
-		"color": zone.borderColor, "opacity": 1, 
-		"fillColor": zone.fillColor, "fillOpacity": zone.opacity});
+		"color": zone.borderColor, "opacity": 1, weight: 3,
+		"fillColor": zone.fillColor, "fillOpacity": zone.opacity,
+		"clickable": false});
 	return polygon;
 }
 

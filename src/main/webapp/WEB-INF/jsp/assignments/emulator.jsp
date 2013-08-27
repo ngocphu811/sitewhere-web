@@ -122,6 +122,9 @@
 	/** Indicates if we are testing the connection */
 	var testingConnection = false;
 	
+	/** Shows text instructions for adding location */
+	var tooltip;
+	
 	/** Attempt to connect */
 	function doConnect() {
 		if (client && client.connected) {
@@ -183,11 +186,13 @@
     /** Called on successful site load request */
     function siteGetSuccess(site, status, jqXHR) {
 		swInitMapForSite(map, site);
+		hideTooltip();
     }
     
 	/** Handle error on getting site data */
 	function siteGetFailed(jqXHR, textStatus, errorThrown) {
 		handleError(jqXHR, "Unable to load site data.");
+		hideTooltip();
 	}
 	
 	/** Show the connect button */
@@ -203,6 +208,36 @@
 	function showConnectedButton() {
 		$('#mqtt-btn-connect').removeClass('btn-primary').addClass('btn-sw-success').html('<i class="icon-check sw-button-icon"></i> Connected');
 		$('#mqtt-btn-connect').unbind('click');
+	}
+	
+	/** Initialize the map */
+	function initMap() {
+		tooltip = new L.Tooltip(map);
+		tooltip.updateContent({text: "Click map to add a new location"});
+		map.on('mousemove', onMouseMove);
+		map.on('mouseout', onMouseOut);
+		map.on('click', onMouseClick);
+	}
+	
+	/** Called when mouse moves over map */
+	function onMouseMove(e) {
+		tooltip.updatePosition(e.latlng);
+	}
+	
+	/** Called when mouse moves out of map area */
+	function onMouseOut(e) {
+		hideTooltip();
+	}
+	
+	/** Hide tooltip by moving it to southeast corner */
+	function hideTooltip() {
+		var se = map.getBounds().getSouthEast();
+		tooltip.updatePosition(se);
+	}
+	
+	/** Called when mouse is clicked over map */
+	function onMouseClick(e) {
+		alert("Mouse clicked " + e.latlng.lat + "," + e.latlng.lng);
 	}
 	
 	$(document).ready(function() {
@@ -228,6 +263,7 @@
        
         /** Create emulator map */
 		map = L.map('emulator-map');
+        initMap();
        
         reloadSite();
 	});
