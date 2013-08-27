@@ -1,10 +1,14 @@
 /*
-* Kendo UI Beta v2013.2.716 (http://kendoui.com)
+* Kendo UI Web v2013.2.716 (http://kendoui.com)
 * Copyright 2013 Telerik AD. All rights reserved.
 *
-* Kendo UI Beta license terms available at
-* http://www.kendoui.com/purchase/license-agreement/kendo-ui-beta.aspx
+* Kendo UI Web commercial licenses may be obtained at
+* https://www.kendoui.com/purchase/license-agreement/kendo-ui-web-commercial.aspx
+* If you do not own a commercial license, this file shall be governed by the
+* GNU General Public License (GPL) version 3.
+* For GPL requirements, please review: http://www.gnu.org/copyleft/gpl.html
 */
+
 
 (function($, evil, undefined) {
     var kendo = window.kendo = window.kendo || {},

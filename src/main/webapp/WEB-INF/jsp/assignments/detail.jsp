@@ -13,7 +13,7 @@
 <div class="sw-title-bar content k-header" style="margin-bottom: -1px;">
 	<h1 class="ellipsis"><c:out value="${sitewhere_title}"/></h1>
 	<div class="sw-title-bar-right">
-		<a id="btn-emulator" class="btn" href="javascript:void(0)">
+		<a id="btn-emulator" class="btn" href="emulator.html?token=<c:out value="${assignment.token}"/>">
 			<i class="icon-bolt sw-button-icon"></i> Emulate Assignment</a>
 		<a id="btn-edit-assignment" class="btn" href="javascript:void(0)">
 			<i class="icon-edit sw-button-icon"></i> Edit Assignment</a>

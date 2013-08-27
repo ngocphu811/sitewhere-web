@@ -91,6 +91,7 @@
 						WEB-INF/classes/**,
 						WEB-INF/*.xml,
 						index.*,
+						*.html,
 						css/**,
 						font/**,
 						img/**,

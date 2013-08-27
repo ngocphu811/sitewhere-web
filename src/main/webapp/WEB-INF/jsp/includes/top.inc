@@ -22,6 +22,9 @@
 <script src="${pageContext.request.contextPath}/scripts/spectrum.js"></script>
 <link href="${pageContext.request.contextPath}/css/spectrum.css" rel="stylesheet" />
 </c:if>
+<c:if test="${use_mqtt == true}">
+<script src="${pageContext.request.contextPath}/scripts/mqttws31.js"></script>
+</c:if>
 </head>
 <body class="sw-body">
 	<div class="sw-container">

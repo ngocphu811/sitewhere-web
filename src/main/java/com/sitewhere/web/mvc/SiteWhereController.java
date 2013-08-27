@@ -97,6 +97,32 @@ public class SiteWhereController {
 	}
 
 	/**
+	 * Display the "assignment emulator" page.
+	 * 
+	 * @param token
+	 * @return
+	 */
+	@RequestMapping("/assignments/emulator")
+	public ModelAndView assignmentEmulator(@RequestParam("token") String token) {
+		if (token != null) {
+			IDeviceManagement management = SiteWhereServer.getInstance().getDeviceManagement();
+			try {
+				IDeviceAssignment assignment = management.getDeviceAssignmentByToken(token);
+				if (assignment != null) {
+					Map<String, Object> data = new HashMap<String, Object>();
+					data.put("assignment", assignment);
+					return new ModelAndView("assignments/emulator", data);
+				}
+				return showError("Assignment for token '" + token + "' not found.");
+			} catch (SiteWhereException e) {
+				LOGGER.error(e);
+				return showError(e.getMessage());
+			}
+		}
+		return showError("No assignment token passed.");
+	}
+
+	/**
 	 * Display the "list devices" page.
 	 * 
 	 * @return
