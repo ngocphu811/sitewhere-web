@@ -66,6 +66,12 @@ function formattedDate(date) {
 	return "N/A";
 }
 
+/** Format date as ISO 8601 */
+function asISO8601(date) {
+	var utc = date.getTime() + (date.getTimezoneOffset() * 60000);
+	return kendo.toString(new Date(utc), "yyyy'-'MM'-'ddTHH':'mm':'ss'.'fff'Z'");
+}
+
 /** Formats metadata array into a comma-delimited string */
 function formattedMetadata(metadata) {
 	var result = "";
@@ -149,7 +155,7 @@ function swMetadataAsLookup(metadata) {
 }
 
 /** Initializes a map based on site map metadata */
-function swInitMapForSite(map, site, tokenToSkip) {
+function swInitMapForSite(map, site, tokenToSkip, onLoaded) {
 	var lookup = swMetadataAsLookup(site.mapMetadata.metadata);
 	var latitude = (lookup.centerLatitude ? lookup.centerLatitude : 39.9853);
 	var longitude = (lookup.centerLongitude ? lookup.centerLongitude : -104.6688);
@@ -174,14 +180,14 @@ function swInitMapForSite(map, site, tokenToSkip) {
 	var featureGroup = new L.FeatureGroup();
 	map.addLayer(featureGroup);
 	$.getJSON("/sitewhere/api/sites/" + siteToken + "/zones", 
-			function(zones) { swAddZonesToFeatureGroup(featureGroup, zones, tokenToSkip) }, 
+			function(zones) { swAddZonesToFeatureGroup(featureGroup, zones, tokenToSkip, onLoaded) }, 
 			function(jqXHR, textStatus, errorThrown) { handleError(jqXHR, "Unable to load zone data."); }
 	);
 	return map;
 }
 
 /** Adds zones as polygon layers for feature group */
-function swAddZonesToFeatureGroup(layers, zones, tokenToSkip) {
+function swAddZonesToFeatureGroup(layers, zones, tokenToSkip, onLoaded) {
 	var zone, results = zones.results;
 	var polygon;
 	
@@ -194,6 +200,9 @@ function swAddZonesToFeatureGroup(layers, zones, tokenToSkip) {
 			polygon = swCreatePolygonForZone(zone);
 			layers.addLayer(polygon);
 		}
+	}
+	if (onLoaded != null) {
+		onLoaded();
 	}
 }
 
