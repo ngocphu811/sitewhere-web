@@ -54,7 +54,7 @@
 			<div id="mqtt-tabs">
 				<ul>
 					<li class="k-state-active">Settings</li>
-					<li>Messages</li>
+					<li>Last Message</li>
 				</ul>
 				<div>
 					<form class="form-horizontal" style="padding-top: 20px; display: inline-block; vertical-align: top">
@@ -102,7 +102,11 @@
 					</form>
 				</div>
 				<div>
-					Messages go here.
+					<div id="mqtt-last-message">
+						<div style="padding: 25px; font-size: 16pt; text-align: center;">
+							JSON content of the MQTT payload is shown here when data is sent via the client.
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -223,7 +227,7 @@
 	/** Called on successful connection */
 	function onConnect() {
 		if (testingConnection) {
-			bootbox.alert("MQTT client connected successfully");
+			swAlert("Connected", "MQTT client connected successfully");
 		}
 		showConnectedButton();
 		testingConnection = false;
@@ -232,7 +236,7 @@
 	
 	/** Called if connection fails */
 	function onConnectFailed() {
-		bootbox.alert("MQTT client connection failed. Verify that MQTT settings are correct " +
+		swAlert("Connect Failed", "MQTT client connection failed. Verify that MQTT settings are correct " +
 				"and the MQTT broker is running.");
 		showConnectButton();
 		testingConnection = false;
@@ -247,17 +251,17 @@
 	
 	/** Send a message to the given destination */
 	function sendMessage(payload, destinationOverride) {
-		if (!connected) {
-			bootbox.alert("MQTT client is not connected. Verify that MQTT settings are correct " +
-			"and click the 'Connect' button.");
+		if (checkConnected()) {
+			var message = new Messaging.Message(payload);
+			var destination = $('#mqtt-topic').val();
+			if (destinationOverride) {
+				destination = destinationOverride;
+			}
+			message.destinationName = destination;
+			client.send(message);
+			$('#mqtt-last-message').html("<pre><code>" + payload + "</code></pre>");
+			hljs.highlightBlock(document.getElementById('mqtt-last-message').childNodes[0]);
 		}
-		var message = new Messaging.Message(payload);
-		var destination = $('#mqtt-topic').val();
-		if (destinationOverride) {
-			destination = destinationOverride;
-		}
-		message.destinationName = destination;
-		client.send(message); 
 	}
 	
 	/** Called when a message is received */
@@ -396,15 +400,15 @@
 		var batch = {"hardwareId": hardwareId};
 		batch.locations = [{"latitude": lat, "longitude": lng, "elevation": elevation, 
 			"eventDate": eventDateStr, "metadata": lcMetadataDS.data()}];
-		sendMessage(JSON.stringify(batch));
+		sendMessage(JSON.stringify(batch, null, "\t"));
     	$('#lc-dialog').modal('hide');
 	}
 	
 	/** Make sure client is connected and warn if not */
 	function checkConnected() {
 		if (!connected) {
-			bootbox.alert("MQTT client is not currently connected. Verify MQTT settings and click " +
-				"the connect button to continue.");
+			swAlert("Not Connected", "MQTT client is not currently connected. Verify MQTT settings and click " +
+				"the 'Connect' button to continue.");
 		}
 		return connected;
 	}

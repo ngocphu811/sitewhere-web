@@ -133,11 +133,12 @@
 			event.preventDefault();
 			var name = $("#zc-zone-name").val();
 			if (!(name && name.length > 0)) {
-				bootbox.alert("Zone name must be specified.");
+				swAlert("Enter Name", "Zone name must be specified.");
 				return;
 			}
 			if (!zcNewZoneLayer) {
-				bootbox.alert("No zone has been defined. Use the map tools to choose the zone coordinates.");
+				swAlert("Create Zone", "No zone has been defined. Use the map tools to choose " +
+						"the zone coordinates.");
 				return;
 			}
 			var latLongs = zcNewZoneLayer.getLatLngs();

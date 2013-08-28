@@ -58,6 +58,13 @@ function handleError(jqXHR, info) {
 	}
 }
 
+/** Show an alert dialog */
+function swAlert(title, message) {
+	$("#alert-dialog-title").html(title);
+	$("#alert-dialog-body").html(message);
+	$('#alert-dialog').modal('show');
+}
+
 // Format date if available, otherwise, show N/A
 function formattedDate(date) {
 	if (date) {

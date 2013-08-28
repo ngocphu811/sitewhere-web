@@ -299,7 +299,7 @@
     	if (site) {
     		zuOpen(site, token, onZoneUpdateSuccess);
     	} else {
-    		bootbox.alert("Site has not been loaded.");
+    		swAlert("Error", "Site has not been loaded.");
     	}
 	}
 	
@@ -474,7 +474,7 @@
 	    	if (site) {
 	    		zcOpen(site, onZoneCreateSuccess);
 	    	} else {
-	    		bootbox.alert("Site has not been loaded.");
+	    		swAlert("Error", "Site has not been loaded.");
 	    	}
 	    });
         
