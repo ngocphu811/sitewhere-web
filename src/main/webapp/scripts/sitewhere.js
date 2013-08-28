@@ -152,6 +152,22 @@ function parseZoneData(item) {
     }
 }
 
+/** Creates datasource for SiteWhere metadata */
+function swMetadataDatasource() {
+	return new kendo.data.DataSource({
+        data: new Array(),
+        schema: {
+        	model: {
+        		id: "name",
+        		fields: {
+        			name: { type: "string" },
+        			value: { type: "string" }
+        		}
+        	}
+        }
+	});
+}
+
 /** Converts sitewhere metadata format into a lookup */
 function swMetadataAsLookup(metadata) {
 	var lookup = {};

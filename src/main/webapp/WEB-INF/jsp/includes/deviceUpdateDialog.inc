@@ -91,18 +91,7 @@
 		}).data("kendoTabStrip");
 		
 		/** Local source for metadata entries */
-		duMetadataDS = new kendo.data.DataSource({
-	        data: new Array(),
-	        schema: {
-	        	model: {
-	        		id: "name",
-	        		fields: {
-	        			name: { type: "string" },
-	        			value: { type: "string" }
-	        		}
-	        	}
-	        }
-		});
+		duMetadataDS = swMetadataDatasource();
 		
 		/** Grid for metadata */
         $("#du-metadata").kendoGrid({

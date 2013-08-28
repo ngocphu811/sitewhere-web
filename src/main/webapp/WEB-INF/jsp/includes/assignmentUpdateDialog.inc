@@ -114,18 +114,7 @@
 	$(document).ready(function() {
 		
 		/** Datasource for metadata entries */
-		auMetadataDS = new kendo.data.DataSource({
-	        data: new Array(),
-	        schema: {
-	        	model: {
-	        		id: "name",
-	        		fields: {
-	        			name: { type: "string" },
-	        			value: { type: "string" }
-	        		}
-	        	}
-	        }
-		});
+		auMetadataDS = swMetadataDatasource();
 		
 		/** Grid for metadata */
         $("#au-metadata").kendoGrid({

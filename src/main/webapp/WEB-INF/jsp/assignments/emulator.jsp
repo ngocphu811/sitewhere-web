@@ -408,7 +408,7 @@
 	function checkConnected() {
 		if (!connected) {
 			swAlert("Not Connected", "MQTT client is not currently connected. Verify MQTT settings and click " +
-				"the 'Connect' button to continue.");
+				"the <b>Connect</b> button to continue.");
 		}
 		return connected;
 	}
@@ -434,18 +434,7 @@
         }).data("kendoDateTimePicker");;
 		
 		/** Local source for metadata entries */
-		lcMetadataDS = new kendo.data.DataSource({
-	        data: new Array(),
-	        schema: {
-	        	model: {
-	        		id: "name",
-	        		fields: {
-	        			name: { type: "string" },
-	        			value: { type: "string" }
-	        		}
-	        	}
-	        }
-		});
+		lcMetadataDS = swMetadataDatasource();
 		
 		/** Grid for metadata */
         $("#lc-metadata").kendoGrid({

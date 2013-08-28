@@ -85,18 +85,7 @@
 		}).data("kendoTabStrip");
 		
 		/** Local source for metadata entries */
-		zcMetadataDS = new kendo.data.DataSource({
-	        data: new Array(),
-	        schema: {
-	        	model: {
-	        		id: "name",
-	        		fields: {
-	        			name: { type: "string" },
-	        			value: { type: "string" }
-	        		}
-	        	}
-	        }
-		});
+		zcMetadataDS = swMetadataDatasource();
 		
 		/** Grid for metadata */
         $("#zc-metadata").kendoGrid({
