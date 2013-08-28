@@ -7,7 +7,7 @@
 
 <style>
 	.emulator-map {
-		height: 320px; 
+		height: 400px; 
 		margin-top: 10px; 
 		border: 1px solid #cccccc;
 		cursor: crosshair;
@@ -36,6 +36,17 @@
 			<div>
 				<a id="btn-refresh-locations" class="btn" href="javascript:void(0)">
 					<i class="icon-refresh sw-button-icon"></i> Refresh Locations</a>
+				<div class="btn-group">
+					<a class="btn" href="javascript:void(0)">
+						<i class="icon-plus sw-button-icon"></i> Create</a>
+					<button class="btn dropdown-toggle" data-toggle="dropdown">
+					<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" style="text-align: left;">
+						<li><a tabindex="-1" href="javascript:void(0)" onclick="mcOpen()">Measurements</a></li>
+						<li><a tabindex="-1" href="#">Alert</a></li>
+					</ul>
+				</div>			
 				<a id="mqtt-btn-connect" class="btn btn-primary" href="javascript:void(0)">
 					<i class="icon-bolt sw-button-icon"></i> Connect</a>
 			</div>
@@ -103,7 +114,7 @@
 				</div>
 				<div>
 					<div id="mqtt-last-message">
-						<div style="padding: 25px; font-size: 16pt; text-align: center;">
+						<div style="padding: 25px; font-size: 14pt; text-align: center;">
 							JSON content of the MQTT payload is shown here when data is sent via the client.
 						</div>
 					</div>
@@ -164,6 +175,40 @@
 	</div>
 </div>
 
+<!-- Dialog for creating a new measurement -->
+<div id="mc-dialog" class="modal hide">
+	<div class="modal-header k-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h3>Create Measurements</h3>
+	</div>
+	<div class="modal-body">
+		<div id="mc-tabs" style="clear: both;">
+			<ul>
+				<li class="k-state-active">Measurements</li>
+				<li>Metadata</li>
+			</ul>
+			<div>
+				<div id="mc-measurements"></div>
+				<form class="form-horizontal" style="padding-top: 20px">
+					<div class="control-group">
+						<label class="control-label" for="lc-event-date">Event Date</label>
+						<div class="controls">
+							<input id="mc-event-date" class="input-large">
+						</div>
+					</div>
+				</form>
+            </div>
+			<div>
+				<div id="mc-metadata"></div>
+            </div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<a href="javascript:void(0)" class="btn" data-dismiss="modal">Cancel</a> 
+		<a id="mc-dialog-submit" href="javascript:void(0)" class="btn btn-primary">Create</a>
+	</div>
+</div>
+
 <script>
 	/** Assignment token */
 	var token = '<c:out value="${assignment.token}"/>';
@@ -188,6 +233,18 @@
 	
 	/** Picker for event date */
 	var lcDatePicker;
+
+	/** Provides external access to tabs */
+	var mcTabs;
+	
+	/** Measurements datasource */
+	var mcMeasurementsDS;
+	
+	/** Metadata datasource */
+	var mcMetadataDS;
+	
+	/** Picker for event date */
+	var mcDatePicker;
 
 	/** MQTT client */
 	var client;
@@ -385,6 +442,7 @@
 			$("#lc-lng").val(lng);
 			$("#lc-elevation").val("0");
 			lcDatePicker.value(new Date());
+			lcMetadataDS.data(new Array());
 			
 			$('#lc-dialog').modal('show');
 		}
@@ -404,6 +462,28 @@
     	$('#lc-dialog').modal('hide');
 	}
 	
+	/** Open the measurements dialog */
+	function mcOpen() {
+		mcTabs.select(0);
+		if (checkConnected()) {
+			mcMeasurementsDS.data(new Array());
+			mcMetadataDS.data(new Array());
+			
+			$('#mc-dialog').modal('show');
+		}
+	}
+	
+	/** Submit measurements data via MQTT */
+	function mcSubmit() {
+		var eventDate = mcDatePicker.value();
+		var eventDateStr = asISO8601(eventDate);
+		var batch = {"hardwareId": hardwareId};
+		batch.measurements = [{"eventDate": eventDateStr, "measurements": mcMeasurementsDS.data(), 
+			"metadata": mcMetadataDS.data()}];
+		sendMessage(JSON.stringify(batch, null, "\t"));
+    	$('#mc-dialog').modal('hide');
+	}
+	
 	/** Make sure client is connected and warn if not */
 	function checkConnected() {
 		if (!connected) {
@@ -420,7 +500,7 @@
 		}).data("kendoTabStrip");
 		
 		/** Create the MQTT tab strip */
-		tabs = $("#mqtt-tabs").kendoTabStrip({
+		mqttTabs = $("#mqtt-tabs").kendoTabStrip({
 			animation: false
 		}).data("kendoTabStrip");
 		
@@ -431,28 +511,43 @@
 		
         lcDatePicker = $("#lc-event-date").kendoDateTimePicker({
             value:new Date()
-        }).data("kendoDateTimePicker");;
+        }).data("kendoDateTimePicker");
 		
 		/** Local source for metadata entries */
 		lcMetadataDS = swMetadataDatasource();
 		
 		/** Grid for metadata */
-        $("#lc-metadata").kendoGrid({
-            dataSource: lcMetadataDS,
-            sortable: true,
-            toolbar: ["create"],
-			columns: [
-				{ field: "name", title: "Name", width: "125px" },
-				{ field: "value", title: "Value", width: "125px" },
-				{ command: ["edit", "destroy"], title: "&nbsp;", width: "175px", 
-						attributes: { "class" : "command-buttons"} },
-			],
-            editable: "inline"
-        });
+        $("#lc-metadata").kendoGrid(swMetadataGridOptions(lcMetadataDS));
 		
         /** Handle location create dialog submit */
 		$('#lc-dialog-submit').click(function(event) {
 			lcSubmit();
+		});
+		
+		/** Create tab strip */
+		mcTabs = $("#mc-tabs").kendoTabStrip({
+			animation: false
+		}).data("kendoTabStrip");
+		
+		/** Local source for metadata entries */
+		mcMeasurementsDS = swMetadataDatasource();
+		
+		/** Grid for metadata */
+        $("#mc-measurements").kendoGrid(swMetadataGridOptions(mcMeasurementsDS, "Add Measurement"));
+		
+		/** Local source for metadata entries */
+		mcMetadataDS = swMetadataDatasource();
+		
+		/** Grid for metadata */
+        $("#mc-metadata").kendoGrid(swMetadataGridOptions(mcMetadataDS));
+		
+        mcDatePicker = $("#mc-event-date").kendoDateTimePicker({
+            value:new Date()
+        }).data("kendoDateTimePicker");
+		
+        /** Handle location create dialog submit */
+		$('#mc-dialog-submit').click(function(event) {
+			mcSubmit();
 		});
 		
         /** Handle dialog submit */

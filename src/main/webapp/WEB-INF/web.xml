@@ -70,6 +70,11 @@
 		<filter-class>com.sitewhere.web.rest.ResponseTimerFilter</filter-class>
 	</filter>
 
+	<filter>
+		<filter-name>noCacheFilter</filter-name>
+		<filter-class>com.sitewhere.web.rest.NoCacheFilter</filter-class>
+	</filter>
+
 	<filter-mapping>
 		<filter-name>hiddenHttpMethodFilter</filter-name>
 		<url-pattern>/api/*</url-pattern>
@@ -77,6 +82,11 @@
 
 	<filter-mapping>
 		<filter-name>responseTimerFilter</filter-name>
+		<url-pattern>/api/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>noCacheFilter</filter-name>
 		<url-pattern>/api/*</url-pattern>
 	</filter-mapping>
 </web-app>

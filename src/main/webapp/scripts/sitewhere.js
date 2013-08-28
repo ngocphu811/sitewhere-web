@@ -169,7 +169,10 @@ function swMetadataDatasource() {
 }
 
 /** Options for metadata grid display */
-function swMetadataGridOptions(datasource, title = "Add Metadata Entry") {
+function swMetadataGridOptions(datasource, title) {
+	if (!title) {
+		title = "Add Metadata Entry";
+	}
 	return {
         dataSource: datasource,
         sortable: true,
