@@ -168,6 +168,31 @@ function swMetadataDatasource() {
 	});
 }
 
+/** Options for metadata grid display */
+function swMetadataGridOptions(datasource, title = "Add Metadata Entry") {
+	return {
+        dataSource: datasource,
+        sortable: true,
+        toolbar: [{name: "create", text: title, template: "<a class='btn k-grid-add' href='javascript:void(0)'><i class='icon-remove sw-button-icon'></i>" + title + "</a>"}],
+		columns: [
+			{ field: "name", title: "Name", width: "125px" },
+			{ field: "value", title: "Value", width: "125px" },
+			{ command: [
+			    {name: "destroy", text: "Delete", template: "<a class='btn k-grid-delete' href='javascript:void(0)'><i class='icon-remove sw-button-icon'></i> Delete</a>"},
+				{name: "edit", text: "Edit", template: "<a class='btn k-grid-edit' href='javascript:void(0)' style='margin-left: 5px;'><i class='icon-edit sw-button-icon'></i> Edit</a>"}], 
+				title: "&nbsp;", width: "175px", attributes: { "class" : "command-buttons"} },
+		],
+        editable: "inline",
+        edit: function(e) {
+            var commandCell = e.container.find("td:last");
+            commandCell.html('<a class="btn k-grid-update" href="javascript:void(0)">' +
+            		'<i class="icon-check sw-button-icon"></i> Update</a>' +
+            		'<a class="btn k-grid-cancel" href="javascript:void(0)" style="margin-left: 5px;">' +
+            		'<i class="icon-remove sw-button-icon"></i> Cancel</a>');
+        }
+    }
+}
+
 /** Converts sitewhere metadata format into a lookup */
 function swMetadataAsLookup(metadata) {
 	var lookup = {};

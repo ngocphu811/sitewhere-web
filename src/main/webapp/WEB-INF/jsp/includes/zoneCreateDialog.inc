@@ -35,7 +35,7 @@
 				</div>
 			</div>
 			<div>
-				<div id="zc-metadata"></div>
+				<div id="zc-metadata" class="sw-metadata-grid"></div>
             </div>
 		</div>
 	</div>
@@ -88,18 +88,7 @@
 		zcMetadataDS = swMetadataDatasource();
 		
 		/** Grid for metadata */
-        $("#zc-metadata").kendoGrid({
-            dataSource: zcMetadataDS,
-            sortable: true,
-            toolbar: ["create"],
-			columns: [
-				{ field: "name", title: "Name", width: "125px" },
-				{ field: "value", title: "Value", width: "125px" },
-				{ command: ["edit", "destroy"], title: "&nbsp;", width: "175px", 
-						attributes: { "class" : "command-buttons"} },
-			],
-            editable: "inline"
-        });
+        $("#zc-metadata").kendoGrid(swMetadataGridOptions(zcMetadataDS));
 		
         $("#zc-border-picker").spectrum({
             color: "#000",

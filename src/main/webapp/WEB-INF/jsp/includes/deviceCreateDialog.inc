@@ -43,7 +43,7 @@
 	    		</form>		
     		</div>
 			<div>
-				<div id="dc-metadata"></div>
+				<div id="dc-metadata" class="sw-metadata-grid"></div>
             </div>
 		</div>
 	</div>
@@ -85,18 +85,7 @@
 		dcMetadataDS = swMetadataDatasource();
 		
 		/** Grid for metadata */
-        $("#dc-metadata").kendoGrid({
-            dataSource: dcMetadataDS,
-            sortable: true,
-            toolbar: ["create"],
-			columns: [
-				{ field: "name", title: "Name", width: "125px" },
-				{ field: "value", title: "Value", width: "125px" },
-				{ command: ["edit", "destroy"], title: "&nbsp;", width: "175px", 
-						attributes: { "class" : "command-buttons"} },
-			],
-            editable: "inline"
-        });
+        $("#dc-metadata").kendoGrid(swMetadataGridOptions(dcMetadataDS));
 		
 		/** Create AJAX datasource for hardware search */
 		dcHardwareDS = new kendo.data.DataSource({

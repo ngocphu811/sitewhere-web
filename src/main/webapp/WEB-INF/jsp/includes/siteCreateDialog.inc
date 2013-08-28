@@ -100,7 +100,7 @@
 				</div>
 			</div>
 			<div>
-				<div id="sc-metadata"></div>
+				<div id="sc-metadata" class="sw-metadata-grid"></div>
             </div>
 		</div>
 	</div>
@@ -142,18 +142,7 @@
 		scMetadataDS = swMetadataDatasource();
 		
 		/** Grid for metadata */
-        $("#sc-metadata").kendoGrid({
-            dataSource: scMetadataDS,
-            sortable: true,
-            toolbar: ["create"],
-			columns: [
-				{ field: "name", title: "Name", width: "125px" },
-				{ field: "value", title: "Value", width: "125px" },
-				{ command: ["edit", "destroy"], title: "&nbsp;", width: "175px", 
-						attributes: { "class" : "command-buttons"} },
-			],
-            editable: "inline"
-        });
+        $("#sc-metadata").kendoGrid(swMetadataGridOptions(scMetadataDS));
 
     	// create DropDownList from input HTML element
     	$("#sc-map-type").kendoDropDownList({

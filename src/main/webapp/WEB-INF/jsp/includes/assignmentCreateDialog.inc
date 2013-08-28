@@ -60,7 +60,7 @@
 				</form>
 			</div>
 			<div>
-				<div id="ac-metadata"></div>
+				<div id="ac-metadata" class="sw-metadata-grid"></div>
             </div>
 		</div>
 	</div>
@@ -106,18 +106,7 @@
 		acMetadataDS = swMetadataDatasource();
 		
 		/** Grid for metadata */
-        $("#ac-metadata").kendoGrid({
-            dataSource: acMetadataDS,
-            sortable: true,
-            toolbar: ["create"],
-			columns: [
-				{ field: "name", title: "Name", width: "125px" },
-				{ field: "value", title: "Value", width: "125px" },
-				{ command: ["edit", "destroy"], title: "&nbsp;", width: "175px", 
-						attributes: { "class" : "command-buttons"} },
-			],
-            editable: "inline"
-        });
+        $("#ac-metadata").kendoGrid(swMetadataGridOptions(acMetadataDS));
 
         acSitesDropdown = $("#ac-site-token").kendoDropDownList({
 			dataTextField: "name",

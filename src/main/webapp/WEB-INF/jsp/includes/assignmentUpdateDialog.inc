@@ -43,7 +43,7 @@
 				</div>
 			</div>
 			<div>
-				<div id="au-metadata"></div>
+				<div id="au-metadata" class="sw-metadata-grid"></div>
             </div>
 		</div>
 		<input type="hidden" id="au-token"/>
@@ -117,18 +117,7 @@
 		auMetadataDS = swMetadataDatasource();
 		
 		/** Grid for metadata */
-        $("#au-metadata").kendoGrid({
-            dataSource: auMetadataDS,
-            sortable: true,
-            toolbar: ["create"],
-			columns: [
-				{ field: "name", title: "Name", width: "125px" },
-				{ field: "value", title: "Value", width: "125px" },
-				{ command: ["edit", "destroy"], title: "&nbsp;", width: "175px", 
-						attributes: { "class" : "command-buttons"} },
-			],
-            editable: "inline"
-        });
+        $("#au-metadata").kendoGrid(swMetadataGridOptions(auMetadataDS));
 		
 		/** Create tab strip for the update dialog */
 		auTabs = $("#au-tabs").kendoTabStrip({

@@ -53,7 +53,7 @@
 				</form>
 			</div>
 			<div>
-				<div id="du-metadata"></div>
+				<div id="du-metadata" class="sw-metadata-grid"></div>
             </div>
 		</div>
 	</div>
@@ -94,18 +94,7 @@
 		duMetadataDS = swMetadataDatasource();
 		
 		/** Grid for metadata */
-        $("#du-metadata").kendoGrid({
-            dataSource: duMetadataDS,
-            sortable: true,
-            toolbar: ["create"],
-			columns: [
-				{ field: "name", title: "Name", width: "125px" },
-				{ field: "value", title: "Value", width: "125px" },
-				{ command: ["edit", "destroy"], title: "&nbsp;", width: "175px", 
-						attributes: { "class" : "command-buttons"} },
-			],
-            editable: "inline"
-        });
+        $("#du-metadata").kendoGrid(swMetadataGridOptions(duMetadataDS));
 		
         /** Handle update dialog submit */
 		$('#du-dialog-submit').click(function(event) {
