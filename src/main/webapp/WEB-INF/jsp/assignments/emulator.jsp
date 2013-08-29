@@ -44,7 +44,7 @@
 					</button>
 					<ul class="dropdown-menu" style="text-align: left;">
 						<li><a tabindex="-1" href="javascript:void(0)" onclick="mcOpen()">Measurements</a></li>
-						<li><a tabindex="-1" href="#">Alert</a></li>
+						<li><a tabindex="-1" href="javascript:void(0)" onclick="acOpen()">Alert</a></li>
 					</ul>
 				</div>			
 				<a id="mqtt-btn-connect" class="btn btn-primary" href="javascript:void(0)">
@@ -165,7 +165,7 @@
 				</form>
 			</div>
 			<div>
-				<div id="lc-metadata"></div>
+				<div id="lc-metadata" class="sw-metadata-grid"></div>
             </div>
 		</div>
 	</div>
@@ -199,13 +199,58 @@
 				</form>
             </div>
 			<div>
-				<div id="mc-metadata"></div>
+				<div id="mc-metadata" class="sw-metadata-grid"></div>
             </div>
 		</div>
 	</div>
 	<div class="modal-footer">
 		<a href="javascript:void(0)" class="btn" data-dismiss="modal">Cancel</a> 
 		<a id="mc-dialog-submit" href="javascript:void(0)" class="btn btn-primary">Create</a>
+	</div>
+</div>
+
+<!-- Dialog for creating a new location -->
+<div id="ac-dialog" class="modal hide">
+	<div class="modal-header k-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h3>Create Alert</h3>
+	</div>
+	<div class="modal-body">
+		<div id="ac-tabs" style="clear: both;">
+			<ul>
+				<li class="k-state-active">Alert</li>
+				<li>Metadata</li>
+			</ul>
+			<div>
+				<form class="form-horizontal" style="padding-top: 20px">
+					<div class="control-group">
+						<label class="control-label" for="ac-type">Alert Type</label>
+						<div class="controls">
+							<input type="text" id="ac-type" class="input-xlarge">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="ac-message">Message</label>
+						<div class="controls">
+							<textarea id="ac-message" class="input-xlarge" style="height: 120px;"></textarea>
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label" for="ac-event-date">Event Date</label>
+						<div class="controls">
+							<input id="ac-event-date" class="input-large">
+						</div>
+					</div>
+				</form>
+			</div>
+			<div>
+				<div id="ac-metadata" class="sw-metadata-grid"></div>
+            </div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<a href="javascript:void(0)" class="btn" data-dismiss="modal">Cancel</a> 
+		<a id="ac-dialog-submit" href="javascript:void(0)" class="btn btn-primary">Create</a>
 	</div>
 </div>
 
@@ -245,6 +290,15 @@
 	
 	/** Picker for event date */
 	var mcDatePicker;
+
+	/** Provides external access to tabs */
+	var acTabs;
+	
+	/** Metadata datasource */
+	var acMetadataDS;
+	
+	/** Picker for event date */
+	var acDatePicker;
 
 	/** MQTT client */
 	var client;
@@ -484,6 +538,32 @@
     	$('#mc-dialog').modal('hide');
 	}
 	
+	/** Open the alert dialog */
+	function acOpen() {
+		acTabs.select(0);
+		if (checkConnected()) {
+			$("#ac-type").val("");
+			$("#ac-message").val("");
+			acDatePicker.value(new Date());
+			acMetadataDS.data(new Array());
+			
+			$('#ac-dialog').modal('show');
+		}
+	}
+	
+	/** Submit alert data via MQTT */
+	function acSubmit() {
+		var type = $("#ac-type").val();
+		var message = $("#ac-message").val();
+		var eventDate = acDatePicker.value();
+		var eventDateStr = asISO8601(eventDate);
+		var batch = {"hardwareId": hardwareId};
+		batch.alerts = [{"type": type, "message": message, "eventDate": eventDateStr,
+			"metadata": acMetadataDS.data()}];
+		sendMessage(JSON.stringify(batch, null, "\t"));
+    	$('#ac-dialog').modal('hide');
+	}
+	
 	/** Make sure client is connected and warn if not */
 	function checkConnected() {
 		if (!connected) {
@@ -548,6 +628,26 @@
         /** Handle location create dialog submit */
 		$('#mc-dialog-submit').click(function(event) {
 			mcSubmit();
+		});
+		
+		/** Create tab strip */
+		acTabs = $("#ac-tabs").kendoTabStrip({
+			animation: false
+		}).data("kendoTabStrip");
+		
+        acDatePicker = $("#ac-event-date").kendoDateTimePicker({
+            value:new Date()
+        }).data("kendoDateTimePicker");
+		
+		/** Local source for metadata entries */
+		acMetadataDS = swMetadataDatasource();
+		
+		/** Grid for metadata */
+        $("#ac-metadata").kendoGrid(swMetadataGridOptions(acMetadataDS));
+		
+        /** Handle location create dialog submit */
+		$('#ac-dialog-submit').click(function(event) {
+			acSubmit();
 		});
 		
         /** Handle dialog submit */
