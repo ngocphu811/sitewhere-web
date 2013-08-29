@@ -30,7 +30,7 @@
 	}
 	
 	.login-submit-button {
-		width: 60px;
+		width: 70px;
 		font-size: 16px;
 		margin-top: 10px;	
 	}
@@ -50,18 +50,18 @@ $(document).ready(function() {
 	<div>
 		<div class="login-wrapper k-header">
 			<img class="logo-image" src="${pageContext.request.contextPath}/img/admin_console.png"/>
-			<form id="login-form" class="form-horizontal" style="padding-top: 20px;"
+			<form id="login-form" class="form-horizontal" style="padding-top: 20px; padding-left: 20px;"
 				method="GET" action="sites/list.html">
 				<div class="control-group">
 					<label class="control-label" for="login-username">Username</label>
 					<div class="controls">
-						<input type="text" id="login-username" class="input-xlarge" title="Username" value="admin">
+						<input type="text" id="login-username" class="input-large" title="Username" value="admin">
 					</div>
 				</div>
 				<div class="control-group">
 					<label class="control-label" for="login-password">Password</label>
 					<div class="controls">
-						<input type="password" id="login-password" class="input-xlarge" title="Password" value="admin">
+						<input type="password" id="login-password" class="input-large" title="Password" value="admin">
 					</div>
 				</div>
 				<div class="control-group">
