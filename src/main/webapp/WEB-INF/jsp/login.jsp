@@ -47,31 +47,39 @@ $(document).ready(function() {
 </script>
 
 <body class="sw-body">
-	<div>
-		<div class="login-wrapper k-header">
-			<img class="logo-image" src="${pageContext.request.contextPath}/img/admin_console.png"/>
-			<form id="login-form" class="form-horizontal" style="padding-top: 20px; padding-left: 20px;"
-				method="GET" action="sites/list.html">
-				<div class="control-group">
-					<label class="control-label" for="login-username">Username</label>
-					<div class="controls">
-						<input type="text" id="login-username" class="input-large" title="Username" value="admin">
-					</div>
+	<div class="sw-container">
+		<div class="k-content container sw-content">
+			<div>
+				<div class="login-wrapper k-header">
+					<img class="logo-image" src="${pageContext.request.contextPath}/img/admin_console.png"/>
+					<form id="login-form" class="form-horizontal" style="padding-top: 20px; padding-left: 20px;"
+						method="GET" action="sites/list.html">
+						<div class="control-group">
+							<label class="control-label" for="login-username">Username</label>
+							<div class="controls">
+								<input type="text" id="login-username" class="input-large" title="Username" value="admin">
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="login-password">Password</label>
+							<div class="controls">
+								<input type="password" id="login-password" class="input-large" title="Password" value="admin">
+							</div>
+						</div>
+						<div class="control-group">
+							<label class="control-label"></label>
+							<div class="controls">
+								<a id="login-submit" href="javascript:void(0)" class="btn btn-sw-red login-submit-button">
+									Log In</a>
+							</div>
+						</div>
+					</form>
 				</div>
-				<div class="control-group">
-					<label class="control-label" for="login-password">Password</label>
-					<div class="controls">
-						<input type="password" id="login-password" class="input-large" title="Password" value="admin">
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label"></label>
-					<div class="controls">
-						<a id="login-submit" href="javascript:void(0)" class="btn btn-sw-red login-submit-button">
-							Log In</a>
-					</div>
-				</div>
-			</form>
+			</div>
+		</div>
+		<div style="height: 10px;"></div>
+		<div class="sw-footer">
+			Copyright © 2013 Reveal Technologies, LLC.
 		</div>
 	</div>
 </body>

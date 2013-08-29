@@ -65,10 +65,10 @@
 				<a class="btn btn-small btn-primary" title="Edit Site" 
 					href="javascript:void(0)" onclick="onSiteEditClicked(event, '#:token#');">
 					<i class="icon-edit icon-white"></i></a>
-				<a class="btn btn-small btn-danger" title="Delete Site" 
+				<a class="btn btn-small btn-sw-red" title="Delete Site" 
 					href="javascript:void(0)" onclick="onSiteDeleteClicked(event, '#:token#')">
 					<i class="icon-remove icon-white"></i></a>
-				<a class="btn btn-small btn-success" title="View Site" 
+				<a class="btn btn-small btn-sw-success" title="View Site" 
 					href="javascript:void(0)" onclick="onSiteOpenClicked(event, '#:token#')">
 					<i class="icon-chevron-right icon-white"></i></a>
 			</div>

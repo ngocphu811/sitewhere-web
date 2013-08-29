@@ -149,10 +149,10 @@
 				<a class="btn btn-small btn-primary" title="Edit Assignment"
 					href="javascript:void(0)" onclick="onEditAssignment(event, '#:token#')">
 					<i class="icon-edit icon-white"></i></a>
-				<a class="btn btn-small btn-danger" title="Delete Assignment" 
+				<a class="btn btn-small btn-sw-red" title="Delete Assignment" 
 					href="javascript:void(0)" onclick="onDeleteAssignment(event, '#:token#')">
 					<i class="icon-remove icon-white"></i></a>
-				<a class="btn btn-small btn-success" title="View Assignment" 
+				<a class="btn btn-small btn-sw-success" title="View Assignment" 
 					href="javascript:void(0)" onclick="onViewAssignment(event, '#:token#')">
 					<i class="icon-chevron-right icon-white"></i></a>
 			</div>
