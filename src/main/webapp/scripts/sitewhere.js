@@ -65,6 +65,23 @@ function swAlert(title, message) {
 	$('#alert-dialog').modal('show');
 }
 
+/** Show an alert dialog */
+var swConfirmCallback;
+function swConfirm(title, message, callback) {
+	swConfirmCallback = callback;
+	$("#confirm-dialog-title").html(title);
+	$("#confirm-dialog-body").html(message);
+	$('#confirm-dialog').modal('show');
+}
+
+/** Called if confirm is submitted */
+function swConfirmSubmit(answer) {
+	if (swConfirmCallback) {
+		swConfirmCallback(answer);
+	}
+	$('#confirm-dialog').modal('hide');
+}
+
 // Format date if available, otherwise, show N/A
 function formattedDate(date) {
 	if (date) {

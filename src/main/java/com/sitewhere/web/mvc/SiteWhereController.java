@@ -39,6 +39,16 @@ public class SiteWhereController {
 	 * 
 	 * @return
 	 */
+	@RequestMapping("/")
+	public ModelAndView login() {
+		return new ModelAndView("login");
+	}
+
+	/**
+	 * Display the "list sites" page.
+	 * 
+	 * @return
+	 */
 	@RequestMapping("/sites/list")
 	public ModelAndView listSites() {
 		return new ModelAndView("sites/list");

@@ -5,7 +5,8 @@
 	/** Delete a device based on its hardware id */
 	function swDeviceDelete(hardwareId, successCallback) {
 		swSuccessCallback = successCallback;
-		bootbox.confirm("Delete device?", function(result) {
+		swConfirm("Delete Device", "Are you sure that you want to delete device with hardware id '" + hardwareId + 
+			"'?", function(result) {
 			if (result) {
 				$.deleteJSON("${pageContext.request.contextPath}/api/devices/"
 					+ hardwareId + "?force=true", swDeviceDeleteSuccess, swDeviceDeleteFail);
@@ -28,7 +29,7 @@
 	/** Delete a device assignment based on its token */
 	function swAssignmentDelete(token, successCallback) {
 		swSuccessCallback = successCallback;
-		bootbox.confirm("Delete device assignment?", function(result) {
+		swConfirm("Delete Assignment", "Are you sure you want to delete this device assignment?", function(result) {
 			if (result) {
 				$.deleteJSON("${pageContext.request.contextPath}/api/assignments/"
 					+ token + "?force=true", swAssignmentDeleteSuccess, swAssignmentDeleteFail);
@@ -51,7 +52,7 @@
 	/** Release an assignment based on its unique token */
 	function swReleaseAssignment(token, successCallback) {
 		swSuccessCallback = successCallback;
-		bootbox.confirm("Release device assignment?", function(result) {
+		swConfirm("Release Assignment", "Are you sure you want to release this device assignment?", function(result) {
 			if (result) {
 				$.postJSON("${pageContext.request.contextPath}/api/assignments/"
 					+ token + "/end", null, swReleaseSuccess, swReleaseFail);
@@ -74,7 +75,7 @@
 	/** Report assignment missing based on its unique token */
 	function swAssignmentMissing(token, successCallback) {
 		swSuccessCallback = successCallback;
-		bootbox.confirm("Report assignment missing?", function(result) {
+		swConfirm("Report Missing", "Are you sure you want to report this assignment missing?", function(result) {
 			if (result) {
 				$.postJSON("${pageContext.request.contextPath}/api/assignments/"
 					+ token + "/missing", null, swAssignmentMissingSuccess, swAssignmentMissingFail);
@@ -97,7 +98,7 @@
 	/** Delete a zone based on its unique token */
 	function swZoneDelete(zoneToken, successCallback) {
 		swSuccessCallback = successCallback;
-		bootbox.confirm("Delete zone?", function(result) {
+		swConfirm("Delete Zone", "Are you sure you want to delete this zone?", function(result) {
 			if (result) {
 				$.deleteJSON("${pageContext.request.contextPath}/api/zones/"
 					+ zoneToken + "?force=true", swZoneDeleteSuccess, swZoneDeleteFail);

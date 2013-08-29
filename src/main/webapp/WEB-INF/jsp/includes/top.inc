@@ -58,10 +58,16 @@
 					</ul>
 				</div>
 				<div class="sw-user-info">
-	 				<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-						Admin User
-						<span class="caret"></span>
-					</a>			
+					<div class="btn-group">
+						<a class="btn dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
+							<i class="icon-plus sw-button-icon"></i> 
+							Admin User
+							<span class="caret"style="margin-left: 4px"></span>
+						</a>
+						<ul class="dropdown-menu pull-right" style="text-align: left;">
+							<li><a tabindex="-1" href="${pageContext.request.contextPath}/admin/">Log Out</a></li>
+						</ul>
+					</div>			
 				</div>
 			</div>
 			
@@ -77,3 +83,19 @@
 					<a href="javascript:void(0)" data-dismiss="modal" class="btn btn-primary">Close</a>
 				</div>
 			</div>
+			
+			<!-- SiteWhere confirm dialog -->
+			<div id="confirm-dialog" class="modal hide">
+				<div class="modal-header k-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h3 id="confirm-dialog-title">Confirm Title</h3>
+				</div>
+				<div id="confirm-dialog-body" class="modal-body">
+				</div>
+				<div class="modal-footer">
+					<a href="javascript:void(0)" onclick="swConfirmSubmit(false)" class="btn">Cancel</a>
+					<a href="javascript:void(0)" onclick="swConfirmSubmit(true)" id="confirm-dialog-submit" 
+						class="btn btn-primary">OK</a>
+				</div>
+			</div>
+			

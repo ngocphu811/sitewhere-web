@@ -152,6 +152,23 @@
 	-webkit-font-smoothing: antialiased; 
 }
 
+.btn-sw-red { 
+	background-color: hsl(360, 100%, 32%) !important; 
+	background-repeat: repeat-x; 
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ff0000", endColorstr="#a30000"); 
+	background-image: -khtml-gradient(linear, left top, left bottom, from(#ff0000), to(#a30000)); 
+	background-image: -moz-linear-gradient(top, #ff0000, #a30000); 
+	background-image: -ms-linear-gradient(top, #ff0000, #a30000); 
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ff0000), color-stop(100%, #a30000)); 
+	background-image: -webkit-linear-gradient(top, #ff0000, #a30000); 
+	background-image: -o-linear-gradient(top, #ff0000, #a30000); 
+	background-image: linear-gradient(#ff0000, #a30000); 
+	border-color: #a30000 #a30000 hsl(360, 100%, 27.5%); 
+	color: #fff !important; 
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.29); 
+	-webkit-font-smoothing: antialiased; 
+}
+
 .ellipsis {
     white-space: nowrap;
     overflow: hidden;

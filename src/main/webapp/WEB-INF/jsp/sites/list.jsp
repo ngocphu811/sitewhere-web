@@ -59,7 +59,7 @@
 	function onSiteDeleteClicked(e, siteToken) {
 		var event = e || window.event;
 		event.stopPropagation();
-		bootbox.confirm("Delete site?", function(result) {
+		swConfirm("Delete Site", "Are you sure you want to delete this site?", function(result) {
 			if (result) {
 				$.deleteJSON("${pageContext.request.contextPath}/api/sites/" + siteToken + "?force=true", 
 						onDeleteSuccess, onDeleteFail);
