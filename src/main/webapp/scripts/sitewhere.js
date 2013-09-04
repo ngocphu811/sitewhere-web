@@ -245,12 +245,14 @@ function swInitMapForSite(map, site, tokenToSkip, onLoaded) {
 		geoserver.addTo(map);
 	}
 	// Asyncronously load zones and add layer to map.
-	var featureGroup = new L.FeatureGroup();
-	map.addLayer(featureGroup);
-	$.getJSON("/sitewhere/api/sites/" + siteToken + "/zones", 
-			function(zones) { swAddZonesToFeatureGroup(featureGroup, zones, tokenToSkip, onLoaded) }, 
-			function(jqXHR, textStatus, errorThrown) { handleError(jqXHR, "Unable to load zone data."); }
-	);
+	if (site.token) {
+		var featureGroup = new L.FeatureGroup();
+		map.addLayer(featureGroup);
+		$.getJSON("/sitewhere/api/sites/" + site.token + "/zones", 
+				function(zones) { swAddZonesToFeatureGroup(featureGroup, zones, tokenToSkip, onLoaded) }, 
+				function(jqXHR, textStatus, errorThrown) { handleError(jqXHR, "Unable to load zone data."); }
+		);
+	}
 	return map;
 }
 

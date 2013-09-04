@@ -1,3 +1,10 @@
+<style>
+.sc-map {
+	height: 290px;
+	width: 525px;
+	border: 1px solid #cccccc;
+}
+</style>
 
 <!-- Dialog for create/update -->
 <div id="sc-dialog" class="modal hide">
@@ -64,6 +71,14 @@
 								<input type="text" id="mq-zoom-level" class="input-large">
 							</div>
 						</div>
+						<div class="control-group">
+							<label class="control-label"></label>
+							<div class="controls">
+								<a href="javascript:void(0)" onclick="scShowMap()">
+									Choose location and zoom on map
+								</a>
+							</div>
+						</div>
 					</form>
 					<form id="geoserver" class="form-horizontal hide">
 						<div class="control-group">
@@ -96,6 +111,14 @@
 								<input type="text" id="gs-zoom-level" class="input-large">
 							</div>
 						</div>
+						<div class="control-group">
+							<label class="control-label"></label>
+							<div class="controls">
+								<a href="javascript:void(0)" onclick="scShowMap()">
+									Choose location and zoom on map
+								</a>
+							</div>
+						</div>
 					</form>
 				</div>
 			</div>
@@ -103,11 +126,20 @@
 				<div id="sc-metadata" class="sw-metadata-grid"></div>
             </div>
 		</div>
+		<div id="sc-map-content" class="hide">
+			<div id="sc-map" class="sc-map"></div>
+		</div>
 	</div>
 	<input id="site-token" type="hidden" value="" />
 	<div class="modal-footer">
-		<a href="javascript:void(0)" class="btn" data-dismiss="modal">Cancel</a> 
-		<a id="sc-dialog-submit" href="javascript:void(0)" class="btn btn-primary">Create</a>
+		<div id="sc-buttons">
+			<a href="javascript:void(0)" class="btn" data-dismiss="modal">Cancel</a> 
+			<a id="sc-dialog-submit" href="javascript:void(0)" class="btn btn-primary">Create</a>
+		</div>
+		<div id="sc-map-buttons" class="hide">
+			<a href="javascript:void(0)" class="btn" onclick="scHideMap(false)">Cancel</a> 
+			<a href="javascript:void(0)" class="btn btn-primary" onclick="scHideMap(true)">Use These Settings</a>
+		</div>
 	</div>
 </div>
 
@@ -130,6 +162,9 @@
 		{ text: "MapQuest World Map", value: "mapquest" },
 		{ text: "GeoServer Layer", value: "geoserver" },
 	];
+	
+	/** Map reference */
+	var scMap;
 
 	$(document).ready(function() {
 		
@@ -160,15 +195,7 @@
 				return;
 			}
 			var siteToken = $('#site-token').val();
-			var mapMetadata = scBuildMapMetadata();
-			var siteData = {
-				"name": $('#gen-site-name').val(), 
-				"description": $('#gen-site-desc').val(), 
-				"imageUrl": $('#gen-site-image-url').val(), 
-				"metadata": scMetadataDS.data(),
-				"mapType": $('#sc-map-type').val(), 
-				"mapMetadata": mapMetadata,
-			}
+			var siteData = scCreateSiteData();
 			if (siteToken == "") {
 				$.postJSON("${pageContext.request.contextPath}/api/sites", 
 						siteData, onSuccess, onCreateFail);
@@ -196,6 +223,20 @@
 			handleError(jqXHR, "Unable to update site.");
 		}
     });
+    
+    /** Create site data structure based on form input */
+    function scCreateSiteData() {
+		var mapMetadata = scBuildMapMetadata();
+		var siteData = {
+			"name": $('#gen-site-name').val(), 
+			"description": $('#gen-site-desc').val(), 
+			"imageUrl": $('#gen-site-image-url').val(), 
+			"metadata": scMetadataDS.data(),
+			"mapType": $('#sc-map-type').val(), 
+			"mapMetadata": mapMetadata,
+		}
+		return siteData;
+    }
 	
 	/** Validate everything */
 	function scValidate() {
@@ -231,6 +272,35 @@
 		
 		$.validity.clear();
 		$('#sc-dialog').modal('show');
+	}
+	
+	/** Show map for current info */
+	function scShowMap() {
+		$('#sc-tabs').addClass("hide");
+		$('#sc-map-content').removeClass("hide");
+		$('#sc-buttons').addClass("hide");
+		$('#sc-map-buttons').removeClass("hide");
+		
+		var siteData = scCreateSiteData();
+		
+		// Creates map if not already created, then inits from site settings.
+		if (scMap) {
+			scMap.remove();
+		}
+		scMap = L.map('sc-map');
+		swInitMapForSite(scMap, siteData);
+	}
+	
+	/** Show map for current info */
+	function scHideMap(useSettings) {
+		$('#sc-tabs').removeClass("hide");
+		$('#sc-map-content').addClass("hide");
+		$('#sc-buttons').removeClass("hide");
+		$('#sc-map-buttons').addClass("hide");
+		
+		if (useSettings) {
+			scUpdateFormFromMap();
+		}
 	}
 	
 	/** Called to load the given site and open it for edit */
@@ -306,6 +376,20 @@
 		return { "metadata": metadata };
     }
     
+    /** Update existing form data from map settings */
+    function scUpdateFormFromMap() {
+    	var mapMetadata = scBuildMapMetadata();
+		var center = scMap.getCenter();
+		var zoom = scMap.getZoom();
+		scAddMapMetadataEntry(mapMetadata.metadata, 'centerLatitude', center.lat);
+		scAddMapMetadataEntry(mapMetadata.metadata, 'centerLongitude', center.lng);
+		scAddMapMetadataEntry(mapMetadata.metadata, 'zoomLevel', zoom);
+		var data = {};
+		data.mapType = scGetMapType();
+		data.mapMetadata = mapMetadata;
+		scLoadMapFormFromMetadata(data);
+    }
+    
     /** Add a single entry into the map metadata */
     function scAddMapMetadataEntry(metadata, name, value) {
     	var entry = {"name": name, "value": value};
@@ -334,9 +418,14 @@
 		scMapTypeChanged();
 	}
 	
+	/** Get the currently selected map type */
+	function scGetMapType() {
+		return $("#sc-map-type").val();
+	}
+	
 	/** Called when map type dropdown value changes */
 	function scMapTypeChanged() {
-		var selectedMapType = $("#sc-map-type").val();
+		var selectedMapType = scGetMapType();
 		$("#map-type-forms").children().each(function(i) {
 			if (selectedMapType == $(this).attr("id")) {
 				$(this).removeClass("hide");

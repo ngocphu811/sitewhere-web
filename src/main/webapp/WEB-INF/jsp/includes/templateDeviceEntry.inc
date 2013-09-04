@@ -106,7 +106,7 @@
 				<img class="sw-device-list-entry-logo" src="#:assignment.assetImageUrl#"/>
 				<span class="label label-info sw-device-list-entry-logo-tag">Asset</span>
 			</div>
-			<p class="sw-device-list-entry-heading ellipsis">#:assignment.assetName#</p>
+			<p class="sw-device-list-entry-heading ellipsis"><span title="#:assignment.assetName#">#:assignment.assetName#</span></p>
 # } else { #
 			<div class="sw-device-list-entry-logowrapper">
 				<img class="sw-device-list-entry-logo" src="#:assetImageUrl#"/>
@@ -155,7 +155,7 @@
 		</div>
 # } #
 		<div>
-			<p class="sw-device-list-entry-heading ellipsis">#:assetName#</p>
+			<p class="sw-device-list-entry-heading ellipsis"><span title="#:assetName#">#:assetName#</span></p>
 			<p class="ellipsis"><span class="sw-device-list-entry-label" style="min-width: 35px;">Id:</span><span title="#:hardwareId#">#:hardwareId#</span></p>
 			<p class="ellipsis"><span class="sw-device-list-entry-label" style="min-width: 35px;">Info:</span><span title="#:comments#">#:comments#</span></p>
 		</div>
