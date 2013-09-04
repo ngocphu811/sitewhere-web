@@ -52,9 +52,9 @@ $.deleteJSON = function(url, onSuccess, onFail) {
 function handleError(jqXHR, info) {
 	var respError = jqXHR.getResponseHeader("X-SiteWhere-Error");
 	if (respError) {
-		bootbox.alert(respError);
+		swAlert("Error", respError);
 	} else {
-		bootbox.alert(info);
+		swAlert("Error", info);
 	}
 }
 

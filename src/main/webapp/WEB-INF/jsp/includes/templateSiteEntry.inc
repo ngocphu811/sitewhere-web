@@ -54,8 +54,8 @@
 <!-- Template for site row -->
 <script type="text/x-kendo-tmpl" id="tpl-site-entry">
 	<div class="sw-site-list-entry gradient-bg">
-		<div class="sw-site-list-entry-logowrapper">
-			<img class="sw-site-list-entry-logo" src="#:imageUrl#" width="100"/>
+		<div class="sw-site-list-entry-logowrapper" 
+			style="background-image: url(#:imageUrl#); background-size: contain; background-repeat: no-repeat; background-position: 50% 50%;">
 		</div>
 		<div class="sw-site-list-entry-actions">
 			<p class="ellipsis"><span class="sw-site-list-entry-label">Created:</span> #= formattedDate(createdDate) #</p>

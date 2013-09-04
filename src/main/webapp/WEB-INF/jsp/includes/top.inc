@@ -72,7 +72,7 @@
 			</div>
 			
 			<!-- SiteWhere alert dialog -->
-			<div id="alert-dialog" class="modal hide">
+			<div id="alert-dialog" class="modal hide" style="z-index: 5000;">
 				<div class="modal-header k-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					<h3 id="alert-dialog-title">Alert Title</h3>
@@ -85,7 +85,7 @@
 			</div>
 			
 			<!-- SiteWhere confirm dialog -->
-			<div id="confirm-dialog" class="modal hide">
+			<div id="confirm-dialog" class="modal hide" style="z-index: 5000;">
 				<div class="modal-header k-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					<h3 id="confirm-dialog-title">Confirm Title</h3>

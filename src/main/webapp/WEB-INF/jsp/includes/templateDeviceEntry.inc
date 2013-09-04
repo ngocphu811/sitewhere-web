@@ -8,7 +8,6 @@
 	font-size: 10pt;
 	text-align: left;
 	display: block;
-	cursor: pointer;
 }
 
 .sw-device-list-entry-heading {
@@ -79,8 +78,8 @@
 <!-- Device list item template -->
 <script type="text/x-kendo-tmpl" id="tpl-device-entry">
 	<div class="sw-device-list-entry gradient-bg">
-		<div class="sw-device-list-entry-logowrapper">
-			<img class="sw-device-list-entry-logo" src="#:assetImageUrl#" width="100"/>
+		<div class="sw-device-list-entry-logowrapper"
+			style="background-image: url(#:assetImageUrl#); background-size: contain; background-repeat: no-repeat; background-position: 50% 50%;">
 			<span class="label label-info sw-device-list-entry-logo-tag">Device</span>
 		</div>
 		<div class="sw-device-list-entry-actions">
@@ -157,8 +156,8 @@
 # } #
 		<div>
 			<p class="sw-device-list-entry-heading ellipsis">#:assetName#</p>
-			<p class="ellipsis"><span class="sw-device-list-entry-label sw-min-40">Id:</span> #:hardwareId#</p>
-			<p class="ellipsis"><span class="sw-device-list-entry-label sw-min-40">Info:</span> #:comments#</p>
+			<p class="ellipsis"><span class="sw-device-list-entry-label" style="min-width: 35px;">Id:</span><span title="#:hardwareId#">#:hardwareId#</span></p>
+			<p class="ellipsis"><span class="sw-device-list-entry-label" style="min-width: 35px;">Info:</span><span title="#:comments#">#:comments#</span></p>
 		</div>
 	</div>
 </script>
