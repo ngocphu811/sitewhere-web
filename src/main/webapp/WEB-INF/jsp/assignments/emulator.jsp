@@ -12,6 +12,10 @@
 		border: 1px solid #cccccc;
 		cursor: crosshair;
 	}
+	
+	#mc-measurements .k-grid-content {
+		min-height: 150px;
+	}
 </style>
 
 <!-- Title Bar -->
@@ -195,6 +199,8 @@
 					<div class="control-group">
 						<label class="control-label" for="lc-event-date">Event Date</label>
 						<div class="controls">
+							<select id="mc-date-type" class="input-xlarge" 
+								style="margin-bottom: 10px; width: 300px;"/>
 							<input id="mc-event-date" class="input-large">
 						</div>
 					</div>
@@ -240,6 +246,8 @@
 					<div class="control-group">
 						<label class="control-label" for="ac-event-date">Event Date</label>
 						<div class="controls">
+							<select id="ac-date-type" class="input-xlarge" 
+								style="margin-bottom: 10px; width: 300px;"/>
 							<input id="ac-event-date" class="input-large">
 						</div>
 					</div>
@@ -283,9 +291,6 @@
 	
 	/** Picker for event date */
 	var lcDatePicker;
-	
-	/** Current event date value */
-	var lcDateValue;
 
 	/** Provides external access to tabs */
 	var mcTabs;
@@ -296,6 +301,9 @@
 	/** Metadata datasource */
 	var mcMetadataDS;
 	
+	/** Event date type */
+	var mcDateType;
+	
 	/** Picker for event date */
 	var mcDatePicker;
 
@@ -304,6 +312,9 @@
 	
 	/** Metadata datasource */
 	var acMetadataDS;
+	
+	/** Event date type */
+	var acDateType;
 	
 	/** Picker for event date */
 	var acDatePicker;
@@ -534,17 +545,7 @@
 			lcDatePicker.value(new Date());
 			lcMetadataDS.data(new Array());
 			
-			var options = [];
-			options.push(createCurrentOption());
-			options.push(createDatePickerOption());
-			if (lastLocation) {
-				options.push(createDeltaOption("five minutes", 5));
-				options.push(createDeltaOption("fifteen minutes", 15));
-				options.push(createDeltaOption("one hour", 60));
-			}
-			var dataSource = new kendo.data.DataSource({
-				data: options
-			});	
+			var dataSource = createOptionsDatasource();
 			lcDateType.setDataSource(dataSource);
 			lcDateTypeChanged();
 			
@@ -583,6 +584,22 @@
 		return new Date();
 	}
 	
+	/** Create datasource for event date options */
+	function createOptionsDatasource() {
+		var options = [];
+		options.push(createCurrentOption());
+		options.push(createDatePickerOption());
+		if (lastLocation) {
+			options.push(createDeltaOption("five minutes", 5));
+			options.push(createDeltaOption("fifteen minutes", 15));
+			options.push(createDeltaOption("one hour", 60));
+		}
+		var dataSource = new kendo.data.DataSource({
+			data: options
+		});
+		return dataSource;
+	}
+	
 	/** Submit location data via MQTT */
 	function lcSubmit() {
 		var lat = $("#lc-lat").val();
@@ -607,13 +624,29 @@
 			mcMeasurementsDS.data(new Array());
 			mcMetadataDS.data(new Array());
 			
+			var dataSource = createOptionsDatasource();
+			mcDateType.setDataSource(dataSource);
+			mcDateTypeChanged();
+			
 			$('#mc-dialog').modal('show');
+		}
+	}
+	
+	/** Called when event date type dropdown selection changes */
+	function mcDateTypeChanged() {
+		var option = mcDateType.dataItem();
+		$('#mc-dialog .k-datetimepicker').removeClass("hide");
+		if (option.value != "picker") {
+			$('#mc-dialog .k-datetimepicker').addClass("hide");
 		}
 	}
 	
 	/** Submit measurements data via MQTT */
 	function mcSubmit() {
-		var eventDate = mcDatePicker.value();
+		var eventDate = calculateDateValue(mcDateType, mcDatePicker);
+		if (!eventDate) {
+			return;
+		}
 		var eventDateStr = asISO8601(eventDate);
 		var batch = {"hardwareId": hardwareId};
 		batch.measurements = [{"eventDate": eventDateStr, "measurements": mcMeasurementsDS.data(), 
@@ -631,7 +664,20 @@
 			acDatePicker.value(new Date());
 			acMetadataDS.data(new Array());
 			
+			var dataSource = createOptionsDatasource();
+			acDateType.setDataSource(dataSource);
+			acDateTypeChanged();
+			
 			$('#ac-dialog').modal('show');
+		}
+	}
+	
+	/** Called when event date type dropdown selection changes */
+	function acDateTypeChanged() {
+		var option = acDateType.dataItem();
+		$('#ac-dialog .k-datetimepicker').removeClass("hide");
+		if (option.value != "picker") {
+			$('#ac-dialog .k-datetimepicker').addClass("hide");
 		}
 	}
 	
@@ -639,7 +685,10 @@
 	function acSubmit() {
 		var type = $("#ac-type").val();
 		var message = $("#ac-message").val();
-		var eventDate = acDatePicker.value();
+		var eventDate = calculateDateValue(acDateType, acDatePicker);
+		if (!eventDate) {
+			return;
+		}
 		var eventDateStr = asISO8601(eventDate);
 		var batch = {"hardwareId": hardwareId};
 		batch.alerts = [{"type": type, "message": message, "eventDate": eventDateStr,
@@ -673,7 +722,7 @@
 			animation: false
 		}).data("kendoTabStrip");
 
-    	// Create DropDownList for locations event date type.
+    	// Create DropDownList for location event date type.
     	lcDateType = $("#lc-date-type").kendoDropDownList({
     		dataTextField: "label",
     		dataValueField: "value",
@@ -712,6 +761,14 @@
 		
 		/** Grid for metadata */
         $("#mc-metadata").kendoGrid(swMetadataGridOptions(mcMetadataDS));
+
+    	// Create DropDownList for measurements event date type.
+    	mcDateType = $("#mc-date-type").kendoDropDownList({
+    		dataTextField: "label",
+    		dataValueField: "value",
+    	    index: 0,
+    	    change: mcDateTypeChanged
+    	}).data("kendoDropDownList");
 		
         mcDatePicker = $("#mc-event-date").kendoDateTimePicker({
             value:new Date()
@@ -726,6 +783,14 @@
 		acTabs = $("#ac-tabs").kendoTabStrip({
 			animation: false
 		}).data("kendoTabStrip");
+
+    	// Create DropDownList for alert event date type.
+    	acDateType = $("#ac-date-type").kendoDropDownList({
+    		dataTextField: "label",
+    		dataValueField: "value",
+    	    index: 0,
+    	    change: acDateTypeChanged
+    	}).data("kendoDropDownList");
 		
         acDatePicker = $("#ac-event-date").kendoDateTimePicker({
             value:new Date()
