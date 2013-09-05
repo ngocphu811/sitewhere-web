@@ -97,24 +97,24 @@
 		<div class="sw-assignment-status-indicator"></div>
 # } #
 # if (data.assetType == 'Person') { #
-		<div class="sw-assignment-list-entry-logowrapper">
-			<img class="sw-assignment-list-entry-logo" src="#:associatedPerson.photoUrl#"/>
+		<div class="sw-assignment-list-entry-logowrapper"
+			style="background-image: url(#:associatedPerson.photoUrl#); background-size: contain; background-repeat: no-repeat; background-position: 50% 50%;">
 			<span class="label label-info sw-assignment-list-entry-logo-tag">Asset</span>
 		</div>
 # } else if (data.assetType == 'Hardware') { #
-		<div class="sw-assignment-list-entry-logowrapper">
-			<img class="sw-assignment-list-entry-logo" src="#:associatedHardware.imageUrl#"/>
+		<div class="sw-assignment-list-entry-logowrapper"
+			style="background-image: url(#:associatedHardware.imageUrl#); background-size: contain; background-repeat: no-repeat; background-position: 50% 50%;">
 			<span class="label label-info sw-assignment-list-entry-logo-tag">Asset</span>
 		</div>
 # } else if ((data.assetType == 'Unassociated') && (data.device)) { #
-		<div class="sw-assignment-list-entry-logowrapper">
-			<img class="sw-assignment-list-entry-logo" src="#:device.assetImageUrl#"/>
+		<div class="sw-assignment-list-entry-logowrapper"
+			style="background-image: url(#:device.assetImageUrl#); background-size: contain; background-repeat: no-repeat; background-position: 50% 50%;">
 			<span class="label label-info sw-assignment-list-entry-logo-tag">Unassociated</span>
 		</div>
 # } #
 		<div class="sw-assignment-list-entry-actions">
-			<p class="ellipsis"><span class="sw-min-70 sw-assignment-list-entry-label">Assigned:</span> #= formattedDate(activeDate) #</p>
-			<p class="ellipsis"><span class="sw-min-70 sw-assignment-list-entry-label">Released:</span> #= formattedDate(releasedDate) #</p>
+			<p class="ellipsis"><span class="sw-assignment-list-entry-label" style="min-width: 70px;">Assigned:</span> #= formattedDate(activeDate) #</p>
+			<p class="ellipsis"><span class="sw-assignment-list-entry-label" style="min-width: 70px;">Released:</span> #= formattedDate(releasedDate) #</p>
 # if (data.status == 'Active') { #
 			<span class="sw-min-70 sw-assignment-list-entry-label">Status:</span>			
 			<div class="btn-group" style="margin-top: -6px;">
@@ -165,8 +165,8 @@
 				<span class="label label-info sw-assignment-list-entry-logo-tag">Device</span>
 			</div>
 			<p class="sw-assignment-list-entry-heading ellipsis" title="#:device.assetName#">#:device.assetName#</p>
-			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label" title="#:device.hardwareId#">Id:</span> #:device.hardwareId#</p>
-			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label" title="#:device.comments#">Info:</span> #:device.comments#</p>
+			<p class="ellipsis"><span class="sw-assignment-list-entry-label" style="min-width: 40px;">Id:</span><span title="#:device.hardwareId#">#:device.hardwareId#</span></p>
+			<p class="ellipsis"><span class="sw-assignment-list-entry-label" style="min-width: 40px;">Info:</span><span title="#:device.comments#">#:device.comments#</span></p>
 		</div>
 # } else { #
 		<div class="sw-assignment-list-entry-no-device">
@@ -178,14 +178,14 @@
 # if (data.assetType == 'Person') { #
 		<div>
 			<p class="sw-assignment-list-entry-heading ellipsis" title="#:associatedPerson.name#">#:associatedPerson.name#</p>
-			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label" title="#:associatedPerson.emailAddress#">Email:</span> #:associatedPerson.emailAddress#</p>
-			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label" title="#:swArrayAsCommaDelimited(associatedPerson.roles)#">Roles:</span> #:swArrayAsCommaDelimited(associatedPerson.roles)#</p>
+			<p class="ellipsis"><span class="sw-assignment-list-entry-label" style="min-width: 45px;">Email:</span><span title="#:associatedPerson.emailAddress#">#:associatedPerson.emailAddress#</span></p>
+			<p class="ellipsis"><span class="sw-assignment-list-entry-label" style="min-width: 45px;">Roles:</span><span title="#:swArrayAsCommaDelimited(associatedPerson.roles)#">#:swArrayAsCommaDelimited(associatedPerson.roles)#</span></p>
 		</div>
 # } else if (data.assetType == 'Hardware') { #
 		<div>
 			<p class="sw-assignment-list-entry-heading ellipsis" title="#:associatedHardware.name#">#:associatedHardware.name#</p>
-			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label" title="#:associatedHardware.sku#">SKU:</span> #:associatedHardware.sku#</p>
-			<p class="ellipsis"><span class="sw-min-40 sw-assignment-list-entry-label" title="#:associatedHardware.description#">Info:</span> #:associatedHardware.description#</p>
+			<p class="ellipsis"><span class="sw-assignment-list-entry-label" style="min-width: 35px;">SKU:</span><span title="#:associatedHardware.sku#">#:associatedHardware.sku#</span></p>
+			<p class="ellipsis"><span class="sw-assignment-list-entry-label" style="min-width: 35px;">Info:</span><span title="#:associatedHardware.description#">#:associatedHardware.description#</span></p>
 		</div>
 # } else if (data.assetType == 'Unassociated') { #
 		<div>
