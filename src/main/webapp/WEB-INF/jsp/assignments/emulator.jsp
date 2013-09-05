@@ -159,6 +159,8 @@
 					<div class="control-group">
 						<label class="control-label" for="lc-event-date">Event Date</label>
 						<div class="controls">
+							<select id="lc-date-type" class="input-xlarge" 
+								style="margin-bottom: 10px; width: 300px;"/>
 							<input id="lc-event-date" class="input-large">
 						</div>
 					</div>
@@ -276,8 +278,14 @@
 	/** Metadata datasource */
 	var lcMetadataDS;
 	
+	/** Event date type */
+	var lcDateType;
+	
 	/** Picker for event date */
 	var lcDatePicker;
+	
+	/** Current event date value */
+	var lcDateValue;
 
 	/** Provides external access to tabs */
 	var mcTabs;
@@ -317,6 +325,9 @@
 	
 	/** Layer that holds most recent location info */
 	var locationsLayer;
+	
+	/** Last location recorded for the selected assignment */
+	var lastLocation;
 	
 	/** Attempt to connect */
 	function doConnect() {
@@ -410,8 +421,8 @@
     
     /** Called on successful locations load request */
     function locationsGetSuccess(response, status, jqXHR) {
+    	lastLocation = null;
     	var locations = response.results.reverse();
-    	var lastLocation;
     	var marker;
     	var latLngs = [];
     	locationsLayer.clearLayers();
@@ -433,6 +444,7 @@
     
 	/** Handle error on getting locations data */
 	function locationsGetFailed(jqXHR, textStatus, errorThrown) {
+    	lastLocation = null;
 		handleError(jqXHR, "Unable to load location data.");
 	}
 	
@@ -488,6 +500,30 @@
 		lcOpen(e.latlng.lat, e.latlng.lng);
 	}
 	
+	/** Create an option for the event date dropdown */
+	function createDateOption(label, value) {
+		var option = {};
+		option.label = label;
+		option.value = value;
+		return option;
+	}
+	
+	/** Create option for a delta based on current time and offset in minutes */
+	function createDeltaOption(label, deltaInMinutes) {
+		return createDateOption("Set to " + label + " after last location event", 
+				"delta" + deltaInMinutes);
+	}
+	
+	/** Create an option that accesses a date picker */
+	function createDatePickerOption() {
+		return createDateOption("Choose date/time for event", "picker");
+	}
+	
+	/** Create an option that returns the current date/time */
+	function createCurrentOption(datePicker) {
+		return createDateOption("Use current date/time for event", "current");
+	}
+	
 	/** Open the location dialog */
 	function lcOpen(lat, lng) {
 		lcTabs.select(0);
@@ -498,8 +534,53 @@
 			lcDatePicker.value(new Date());
 			lcMetadataDS.data(new Array());
 			
+			var options = [];
+			options.push(createCurrentOption());
+			options.push(createDatePickerOption());
+			if (lastLocation) {
+				options.push(createDeltaOption("five minutes", 5));
+				options.push(createDeltaOption("fifteen minutes", 15));
+				options.push(createDeltaOption("one hour", 60));
+			}
+			var dataSource = new kendo.data.DataSource({
+				data: options
+			});	
+			lcDateType.setDataSource(dataSource);
+			lcDateTypeChanged();
+			
 			$('#lc-dialog').modal('show');
 		}
+	}
+	
+	/** Called when event date type dropdown selection changes */
+	function lcDateTypeChanged() {
+		var option = lcDateType.dataItem();
+		$('#lc-dialog .k-datetimepicker').removeClass("hide");
+		if (option.value != "picker") {
+			$('#lc-dialog .k-datetimepicker').addClass("hide");
+		}
+	}
+	
+	/** Get date value based on dropdown setting */
+	function calculateDateValue(dropdown, picker) {
+		var option = dropdown.dataItem();
+		if (option.value == "current") {
+			return new Date();
+		}
+		if (option.value == "picker") {
+			var result = picker.value();
+			if (!result) {
+				swAlert("Error", "The date entered is invalid.");
+			}
+			return result;
+		}
+		if (option.value.startsWith("delta")) {
+			var nowMillis = (kendo.parseDate(lastLocation.eventDate)).getTime();
+			var delta = Number(option.value.substr(5));
+			var deltaMillis = delta * 60 * 1000;
+			return new Date(nowMillis + deltaMillis);
+		}
+		return new Date();
 	}
 	
 	/** Submit location data via MQTT */
@@ -507,7 +588,10 @@
 		var lat = $("#lc-lat").val();
 		var lng = $("#lc-lng").val();
 		var elevation = $("#lc-elevation").val();
-		var eventDate = lcDatePicker.value();
+		var eventDate = calculateDateValue(lcDateType, lcDatePicker);
+		if (!eventDate) {
+			return;
+		}
 		var eventDateStr = asISO8601(eventDate);
 		var batch = {"hardwareId": hardwareId};
 		batch.locations = [{"latitude": lat, "longitude": lng, "elevation": elevation, 
@@ -588,6 +672,14 @@
 		lcTabs = $("#lc-tabs").kendoTabStrip({
 			animation: false
 		}).data("kendoTabStrip");
+
+    	// Create DropDownList for locations event date type.
+    	lcDateType = $("#lc-date-type").kendoDropDownList({
+    		dataTextField: "label",
+    		dataValueField: "value",
+    	    index: 0,
+    	    change: lcDateTypeChanged
+    	}).data("kendoDropDownList");
 		
         lcDatePicker = $("#lc-event-date").kendoDateTimePicker({
             value:new Date()
