@@ -27,6 +27,8 @@
 	</div>
 </div>
 
+<!-- Detail panel for selected assignment -->
+<div id="assignment-details" style="line-height: normal;"></div>
 
 <!-- Tab panel -->
 <div id="tabs">
@@ -263,6 +265,10 @@
 		<a id="ac-dialog-submit" href="javascript:void(0)" class="btn btn-primary">Create</a>
 	</div>
 </div>
+
+<%@ include file="../includes/templateAssignmentEntry.inc"%>
+
+<%@ include file="../includes/commonFunctions.inc"%>
 
 <script>
 	/** Assignment token */
@@ -707,6 +713,49 @@
 		return connected;
 	}
 	
+	/** Loads information for the selected assignment */
+	function loadAssignment() {
+		$.getJSON("${pageContext.request.contextPath}/api/assignments/" + token, 
+			loadGetSuccess, loadGetFailed);
+	}
+    
+    /** Called on successful assignment load request */
+    function loadGetSuccess(data, status, jqXHR) {
+		var template = kendo.template($("#tpl-assignment-entry").html());
+		parseAssignmentData(data);
+		data.inDetailView = true;
+		$('#assignment-details').html(template(data));
+    }
+    
+	/** Handle error on getting assignment data */
+	function loadGetFailed(jqXHR, textStatus, errorThrown) {
+		handleError(jqXHR, "Unable to load assignment data.");
+	}
+	
+	/** Called when 'release assignment' is clicked */
+	function onReleaseAssignment(e, token) {
+		var event = e || window.event;
+		event.stopPropagation();
+		swReleaseAssignment(token, onReleaseAssignmentComplete);
+	}
+	
+	/** Called after successful release assignment */
+	function onReleaseAssignmentComplete() {
+		loadAssignment();
+	}
+	
+	/** Called when 'missing assignment' is clicked */
+	function onMissingAssignment(e, token) {
+		var event = e || window.event;
+		event.stopPropagation();
+		swAssignmentMissing(token, onMissingAssignmentComplete);
+	}
+	
+	/** Called after successful missing assignment */
+	function onMissingAssignmentComplete() {
+		loadAssignment();
+	}
+	
 	$(document).ready(function() {
 		/** Create the tab strip */
 		tabs = $("#tabs").kendoTabStrip({
@@ -829,6 +878,7 @@
        
         refreshSite();
         refreshLocations();
+        loadAssignment();
 	});
 </script>
 
