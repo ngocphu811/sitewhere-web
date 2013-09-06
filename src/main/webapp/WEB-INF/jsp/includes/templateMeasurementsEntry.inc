@@ -2,7 +2,10 @@
 <script type="text/x-kendo-tmpl" id="tpl-measurements-entry">
 	<tr class="sw-list-entry gradient-bg">
 		<td>
-			<div>#:assetName#</div>
+			<span class="ellipsis" style="max-width: 180px; display: inline-block; vertical-align: middle; line-height: normal">
+				#:assetName#</span>
+			<i class="icon-circle-arrow-right sw-action-glyph sw-view-glyph" title="View Assignment"
+				style="vertical-align: middle;" onclick="onViewAssignment(event, '#:deviceAssignmentToken#')"></i>
 		</td>
 		<td>
 			<div>#= formattedMetadata(measurements) #</div>

@@ -615,6 +615,7 @@
 			"eventDate": eventDateStr, "metadata": lcMetadataDS.data()}];
 		sendMessage(JSON.stringify(batch, null, "\t"));
     	$('#lc-dialog').modal('hide');
+    	setTimeout(refreshLocations, 2000);
 	}
 	
 	/** Open the measurements dialog */

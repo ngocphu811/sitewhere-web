@@ -1,7 +1,14 @@
 <!-- Template for location row -->
 <script type="text/x-kendo-tmpl" id="tpl-alert-entry">
 	<tr class="sw-list-entry gradient-bg">
-		<td class="ellipsis" style="max-width: 90px;" title="#:assetName#">#:assetName#</td>
+		<td class="ellipsis" style="max-width: 90px;" title="#:assetName#">
+			<div>
+				<span class="ellipsis" style="max-width: 120px; display: inline-block; vertical-align: middle; line-height: normal">
+					#:assetName#</span>
+				<i class="icon-circle-arrow-right sw-action-glyph sw-view-glyph" title="View Assignment"
+					style="vertical-align: middle;" onclick="onViewAssignment(event, '#:deviceAssignmentToken#')"></i>
+			</div>
+		</td>
 		<td class="ellipsis" style="max-width: 90px;" title="#:type#">#:type#</td>
 		<td class="ellipsis" style="max-width: 250px;" title="#:message#">#:message#</td>
 		<td class="ellipsis">#:source#</td>
