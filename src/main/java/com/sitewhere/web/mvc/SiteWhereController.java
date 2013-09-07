@@ -22,6 +22,7 @@ import com.sitewhere.spi.device.IDevice;
 import com.sitewhere.spi.device.IDeviceAssignment;
 import com.sitewhere.spi.device.IDeviceManagement;
 import com.sitewhere.spi.device.ISite;
+import com.sitewhere.version.VersionHelper;
 
 /**
  * Spring MVC controller for SiteWhere web application.
@@ -41,7 +42,9 @@ public class SiteWhereController {
 	 */
 	@RequestMapping("/")
 	public ModelAndView login() {
-		return new ModelAndView("login");
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("version", VersionHelper.getVersion());
+		return new ModelAndView("login", data);
 	}
 
 	/**
@@ -51,7 +54,8 @@ public class SiteWhereController {
 	 */
 	@RequestMapping("/sites/list")
 	public ModelAndView listSites() {
-		return new ModelAndView("sites/list");
+		Map<String, Object> data = createBaseData();
+		return new ModelAndView("sites/list", data);
 	}
 
 	/**
@@ -63,11 +67,11 @@ public class SiteWhereController {
 	@RequestMapping("/sites/detail")
 	public ModelAndView siteDetail(@RequestParam("siteToken") String siteToken) {
 		if (siteToken != null) {
+			Map<String, Object> data = createBaseData();
 			IDeviceManagement management = SiteWhereServer.getInstance().getDeviceManagement();
 			try {
 				ISite site = management.getSiteByToken(siteToken);
 				if (site != null) {
-					Map<String, Object> data = new HashMap<String, Object>();
 					data.put("site", site);
 					return new ModelAndView("sites/detail", data);
 				}
@@ -89,11 +93,11 @@ public class SiteWhereController {
 	@RequestMapping("/assignments/detail")
 	public ModelAndView assignmentDetail(@RequestParam("token") String token) {
 		if (token != null) {
+			Map<String, Object> data = createBaseData();
 			IDeviceManagement management = SiteWhereServer.getInstance().getDeviceManagement();
 			try {
 				IDeviceAssignment assignment = management.getDeviceAssignmentByToken(token);
 				if (assignment != null) {
-					Map<String, Object> data = new HashMap<String, Object>();
 					data.put("assignment", assignment);
 					return new ModelAndView("assignments/detail", data);
 				}
@@ -115,11 +119,11 @@ public class SiteWhereController {
 	@RequestMapping("/assignments/emulator")
 	public ModelAndView assignmentEmulator(@RequestParam("token") String token) {
 		if (token != null) {
+			Map<String, Object> data = createBaseData();
 			IDeviceManagement management = SiteWhereServer.getInstance().getDeviceManagement();
 			try {
 				IDeviceAssignment assignment = management.getDeviceAssignmentByToken(token);
 				if (assignment != null) {
-					Map<String, Object> data = new HashMap<String, Object>();
 					data.put("assignment", assignment);
 					return new ModelAndView("assignments/emulator", data);
 				}
@@ -139,7 +143,8 @@ public class SiteWhereController {
 	 */
 	@RequestMapping("/devices/list")
 	public ModelAndView listDevices() {
-		return new ModelAndView("devices/list");
+		Map<String, Object> data = createBaseData();
+		return new ModelAndView("devices/list", data);
 	}
 
 	/**
@@ -151,11 +156,11 @@ public class SiteWhereController {
 	@RequestMapping("/devices/detail")
 	public ModelAndView deviceDetail(@RequestParam("hardwareId") String hardwareId) {
 		if (hardwareId != null) {
+			Map<String, Object> data = createBaseData();
 			IDeviceManagement management = SiteWhereServer.getInstance().getDeviceManagement();
 			try {
 				IDevice device = management.getDeviceByHardwareId(hardwareId);
 				if (device != null) {
-					Map<String, Object> data = new HashMap<String, Object>();
 					data.put("device", device);
 					return new ModelAndView("devices/detail", data);
 				}
@@ -175,8 +180,19 @@ public class SiteWhereController {
 	 * @return
 	 */
 	protected ModelAndView showError(String message) {
-		Map<String, Object> data = new HashMap<String, Object>();
+		Map<String, Object> data = createBaseData();
 		data.put("message", message);
 		return new ModelAndView("error", data);
+	}
+
+	/**
+	 * Create data structure and common objects passed to pages.
+	 * 
+	 * @return
+	 */
+	protected Map<String, Object> createBaseData() {
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("version", VersionHelper.getVersion());
+		return data;
 	}
 }
