@@ -5,6 +5,7 @@
 <script src="${pageContext.request.contextPath}/scripts/jquery.js"></script>
 <script src="${pageContext.request.contextPath}/scripts/jquery.validity.js"></script>
 <script src="${pageContext.request.contextPath}/scripts/kendo.web.js"></script>
+<script src="${pageContext.request.contextPath}/scripts/modernizr.js"></script>
 <script src="${pageContext.request.contextPath}/scripts/sitewhere.js"></script>
 <link href="${pageContext.request.contextPath}/css/kendo.common.min.css" rel="stylesheet" />
 <link href="${pageContext.request.contextPath}/css/kendo.bootstrap.min.css" rel="stylesheet" />

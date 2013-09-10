@@ -757,6 +757,17 @@
 	}
 	
 	$(document).ready(function() {
+		
+		/** Handle browsers without websocket support */
+		if (!Modernizr.websockets) {
+	        loadAssignment();
+			$("#tabs").html('<div style="padding: 25px; font-size: 14pt; text-align: center;">' +
+				'Your browser does not support websockets, which is required by the emulator. ' +
+				'Download the latest version of your browser to enable this feature.' +
+				'</div>');
+			return;
+		}
+		
 		/** Create the tab strip */
 		tabs = $("#tabs").kendoTabStrip({
 			animation: false
