@@ -12,8 +12,8 @@ package com.sitewhere.web.rest.model;
 import org.apache.log4j.Logger;
 
 import com.sitewhere.rest.model.asset.HardwareAsset;
+import com.sitewhere.rest.model.common.MetadataProviderEntity;
 import com.sitewhere.rest.model.device.Device;
-import com.sitewhere.rest.model.device.MetadataProviderEntity;
 import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.asset.AssetType;

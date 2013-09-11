@@ -23,11 +23,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sitewhere.rest.model.common.MetadataProvider;
 import com.sitewhere.rest.model.device.DeviceAlert;
 import com.sitewhere.rest.model.device.DeviceAssignment;
 import com.sitewhere.rest.model.device.DeviceLocation;
 import com.sitewhere.rest.model.device.DeviceMeasurements;
-import com.sitewhere.rest.model.device.MetadataProvider;
 import com.sitewhere.rest.model.device.request.DeviceAlertCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceAssignmentCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceLocationCreateRequest;

@@ -357,10 +357,22 @@
 		var clientId = $('#mqtt-client-id').val();
 		var username = $('#mqtt-username').val();
 		var password = $('#mqtt-password').val();
+		
 		client = new Messaging.Client(host, Number(port), clientId);
 		client.onConnectionLost = onConnectionLost;
 		client.onMessageArrived = onMessageArrived;
 		client.connect({userName:username, password:password, onSuccess:onConnect, onFailure:onConnectFailed});
+	}
+	
+	/** Stores connection values for next page load if localStorage is supported */
+	function saveValues(host, port, clientId, username, password) {
+		if (Modernizr.localStorage) {
+			localStorage.swEmulatorMqttHost = host;
+			localStorage.swEmulatorMqttPort = port;
+			localStorage.swEmulatorMqttClientId = clientId;
+			localStorage.swEmulatorMqttUsername = username;
+			localStorage.swEmulatorMqttPassword = password;
+		}
 	}
 	
 	/** Called on successful connection */
@@ -368,6 +380,7 @@
 		if (testingConnection) {
 			swAlert("Connected", "MQTT client connected successfully");
 		}
+		saveValues(host, port, clientId, username, password);
 		showConnectedButton();
 		testingConnection = false;
 		connected = true;
