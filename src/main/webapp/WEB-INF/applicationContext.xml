@@ -21,6 +21,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 		<sec:form-login login-page='/admin/' default-target-url='/admin/sites/list.html'
 			login-processing-url="/admin/login.html"
 			authentication-failure-url="/admin/loginFailed.html"/>
+		<sec:logout logout-success-url="/admin/" />
 	</sec:http>
 
 	<!-- Implements Spring AuthenticationProvider interface -->
