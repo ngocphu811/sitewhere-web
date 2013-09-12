@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html class="sw-body">
 <head>
@@ -53,17 +54,18 @@ $(document).ready(function() {
 				<div class="login-wrapper k-header">
 					<img class="logo-image" src="${pageContext.request.contextPath}/img/admin_console.png"/>
 					<form id="login-form" class="form-horizontal" style="padding-top: 20px; padding-left: 20px;"
-						method="GET" action="sites/list.html">
+						method="POST" action="login.html">
 						<div class="control-group">
 							<label class="control-label" for="login-username">Username</label>
 							<div class="controls">
-								<input type="text" id="login-username" class="input-large" title="Username" value="admin">
+								<input type="text" id="login-username" name="j_username" class="input-large" title="Username" value="admin">
 							</div>
 						</div>
 						<div class="control-group">
 							<label class="control-label" for="login-password">Password</label>
 							<div class="controls">
-								<input type="password" id="login-password" class="input-large" title="Password" value="admin">
+								<input type="password" id="login-password" name="j_password" class="input-large" 
+									title="Password" value="password">
 							</div>
 						</div>
 						<div class="control-group">
@@ -72,6 +74,11 @@ $(document).ready(function() {
 								<a id="login-submit" href="javascript:void(0)" class="btn btn-sw-red login-submit-button">
 									Log In</a>
 							</div>
+						</div>
+						<div style="text-align: center; font-size: 16pt; color: #c00">
+<c:if test="${loginFailed == true}">
+							Invalid username or password was entered.
+</c:if>
 						</div>
 					</form>
 				</div>

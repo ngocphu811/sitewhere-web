@@ -36,7 +36,7 @@ public class SiteWhereController {
 	private static Logger LOGGER = Logger.getLogger(SiteWhereController.class);
 
 	/**
-	 * Display the "list sites" page.
+	 * Display the "login" page.
 	 * 
 	 * @return
 	 */
@@ -44,6 +44,19 @@ public class SiteWhereController {
 	public ModelAndView login() {
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("version", VersionHelper.getVersion());
+		return new ModelAndView("login", data);
+	}
+
+	/**
+	 * Display the "login" page after failed login.
+	 * 
+	 * @return
+	 */
+	@RequestMapping("/loginFailed")
+	public ModelAndView loginFailed() {
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("version", VersionHelper.getVersion());
+		data.put("loginFailed", true);
 		return new ModelAndView("login", data);
 	}
 
