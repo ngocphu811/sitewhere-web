@@ -1,5 +1,5 @@
 /*
- * UsersController.java 
+ * AuthoritiesController.java 
  * --------------------------------------------------------------------------------------
  * Copyright (c) Reveal Technologies, LLC. All rights reserved. http://www.reveal-tech.com
  *
@@ -22,16 +22,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.sitewhere.rest.model.user.User;
-import com.sitewhere.rest.model.user.UserSearchCriteria;
-import com.sitewhere.rest.model.user.request.UserCreateRequest;
+import com.sitewhere.rest.model.user.GrantedAuthority;
+import com.sitewhere.rest.model.user.GrantedAuthoritySearchCriteria;
+import com.sitewhere.rest.model.user.request.GrantedAuthorityCreateRequest;
 import com.sitewhere.rest.service.search.SearchResults;
 import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.SiteWhereSystemException;
 import com.sitewhere.spi.error.ErrorCode;
 import com.sitewhere.spi.error.ErrorLevel;
-import com.sitewhere.spi.user.IUser;
+import com.sitewhere.spi.user.IGrantedAuthority;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -42,12 +42,12 @@ import com.wordnik.swagger.annotations.ApiParam;
  * @author Derek Adams
  */
 @Controller
-@RequestMapping(value = "/users")
-@Api(value = "", description = "Operations related to SiteWhere users.")
-public class UsersController extends SiteWhereController {
+@RequestMapping(value = "/authorities")
+@Api(value = "", description = "Operations related to SiteWhere authorities.")
+public class AuthoritiesController extends SiteWhereController {
 
 	/**
-	 * Create a new user.
+	 * Create a new authority.
 	 * 
 	 * @param input
 	 * @return
@@ -55,54 +55,56 @@ public class UsersController extends SiteWhereController {
 	 */
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
-	@ApiOperation(value = "Create a new user")
-	public User createUser(@RequestBody UserCreateRequest input) throws SiteWhereException {
-		IUser user = SiteWhereServer.getInstance().getUserManagement().createUser(input);
-		return User.copy(user);
+	@ApiOperation(value = "Create a new authority")
+	public GrantedAuthority createAuthority(@RequestBody GrantedAuthorityCreateRequest input)
+			throws SiteWhereException {
+		IGrantedAuthority auth = SiteWhereServer.getInstance().getUserManagement()
+				.createGrantedAuthority(input);
+		return GrantedAuthority.copy(auth);
 	}
 
 	/**
-	 * Get a user by unique username.
+	 * Get an authority by unique name.
 	 * 
-	 * @param username
+	 * @param name
 	 * @return
 	 * @throws SiteWhereException
 	 */
-	@RequestMapping(value = "/{username}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{name}", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "Find user by unique username")
-	public User getUserByUsername(
-			@ApiParam(value = "Unique username", required = true) @PathVariable String username)
+	public GrantedAuthority getAuthorityByName(
+			@ApiParam(value = "Authority name", required = true) @PathVariable String name)
 			throws SiteWhereException {
-		IUser user = SiteWhereServer.getInstance().getUserManagement().getUserByUsername(username);
-		if (user == null) {
-			throw new SiteWhereSystemException(ErrorCode.InvalidUsername, ErrorLevel.ERROR,
+		IGrantedAuthority auth = SiteWhereServer.getInstance().getUserManagement()
+				.getGrantedAuthorityByName(name);
+		if (auth == null) {
+			throw new SiteWhereSystemException(ErrorCode.InvalidAuthority, ErrorLevel.ERROR,
 					HttpServletResponse.SC_NOT_FOUND);
 		}
-		return User.copy(user);
+		return GrantedAuthority.copy(auth);
 	}
 
 	/**
-	 * List devices that match given criteria.
+	 * List authorities that match given criteria.
 	 * 
 	 * @return
 	 * @throws SiteWhereException
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
-	@ApiOperation(value = "List users that match certain criteria")
-	public SearchResults<User> listUsers(
-			@ApiParam(value = "Include deleted", required = false) @RequestParam(defaultValue = "false") boolean includeDeleted,
+	@ApiOperation(value = "List authorities that match certain criteria")
+	public SearchResults<GrantedAuthority> listAuthorities(
 			@ApiParam(value = "Max records to return", required = false) @RequestParam(defaultValue = "100") int count)
 			throws SiteWhereException {
-		List<User> usersConv = new ArrayList<User>();
-		UserSearchCriteria criteria = new UserSearchCriteria();
-		criteria.setIncludeDeleted(includeDeleted);
-		List<IUser> users = SiteWhereServer.getInstance().getUserManagement().listUsers(criteria);
-		for (IUser user : users) {
-			usersConv.add(User.copy(user));
+		List<GrantedAuthority> authsConv = new ArrayList<GrantedAuthority>();
+		GrantedAuthoritySearchCriteria criteria = new GrantedAuthoritySearchCriteria();
+		List<IGrantedAuthority> auths = SiteWhereServer.getInstance().getUserManagement()
+				.listGrantedAuthorities(criteria);
+		for (IGrantedAuthority auth : auths) {
+			authsConv.add(GrantedAuthority.copy(auth));
 		}
-		SearchResults<User> results = new SearchResults<User>(usersConv);
+		SearchResults<GrantedAuthority> results = new SearchResults<GrantedAuthority>(authsConv);
 		return results;
 	}
 }
