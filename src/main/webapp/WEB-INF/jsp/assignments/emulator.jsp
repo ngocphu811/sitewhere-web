@@ -380,7 +380,7 @@
 		if (testingConnection) {
 			swAlert("Connected", "MQTT client connected successfully");
 		}
-		saveValues(host, port, clientId, username, password);
+//		saveValues(host, port, clientId, username, password);
 		showConnectedButton();
 		testingConnection = false;
 		connected = true;
