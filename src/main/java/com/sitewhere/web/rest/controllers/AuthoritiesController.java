@@ -72,7 +72,7 @@ public class AuthoritiesController extends SiteWhereController {
 	 */
 	@RequestMapping(value = "/{name}", method = RequestMethod.GET)
 	@ResponseBody
-	@ApiOperation(value = "Find user by unique username")
+	@ApiOperation(value = "Find authority by unique name")
 	public GrantedAuthority getAuthorityByName(
 			@ApiParam(value = "Authority name", required = true) @PathVariable String name)
 			throws SiteWhereException {

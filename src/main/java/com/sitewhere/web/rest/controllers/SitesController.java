@@ -12,6 +12,7 @@ package com.sitewhere.web.rest.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,6 +36,7 @@ import com.sitewhere.rest.service.search.DeviceMeasurementsSearchResults;
 import com.sitewhere.rest.service.search.SearchResults;
 import com.sitewhere.rest.service.search.ZoneSearchResults;
 import com.sitewhere.server.SiteWhereServer;
+import com.sitewhere.server.user.SitewhereRoles;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.SiteWhereSystemException;
 import com.sitewhere.spi.device.IDeviceAlert;
@@ -70,6 +72,7 @@ public class SitesController extends SiteWhereController {
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
 	@ApiOperation(value = "Create a new site")
+	@Secured({ SitewhereRoles.ROLE_ADMINISTER_SITES })
 	public Site createSite(@RequestBody SiteCreateRequest input) throws SiteWhereException {
 		ISite site = SiteWhereServer.getInstance().getDeviceManagement().createSite(input);
 		return Site.copy(site);
@@ -102,6 +105,7 @@ public class SitesController extends SiteWhereController {
 	@RequestMapping(value = "/{siteToken}", method = RequestMethod.PUT)
 	@ResponseBody
 	@ApiOperation(value = "Update an existing site")
+	@Secured({ SitewhereRoles.ROLE_ADMINISTER_SITES })
 	public Site updateSite(
 			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken,
 			@RequestBody SiteCreateRequest request) throws SiteWhereException {
@@ -120,6 +124,7 @@ public class SitesController extends SiteWhereController {
 	@RequestMapping(value = "/{siteToken}", method = RequestMethod.DELETE)
 	@ResponseBody
 	@ApiOperation(value = "Delete a site by unique token")
+	@Secured({ SitewhereRoles.ROLE_ADMINISTER_SITES })
 	public Site deleteSiteByToken(
 			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken,
 			@ApiParam(value = "Delete permanently", required = false) @RequestParam(defaultValue = "false") boolean force)

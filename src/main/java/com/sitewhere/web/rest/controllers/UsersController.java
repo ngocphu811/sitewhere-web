@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sitewhere.rest.model.user.GrantedAuthority;
 import com.sitewhere.rest.model.user.User;
 import com.sitewhere.rest.model.user.UserSearchCriteria;
 import com.sitewhere.rest.model.user.request.UserCreateRequest;
@@ -33,6 +34,7 @@ import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.SiteWhereSystemException;
 import com.sitewhere.spi.error.ErrorCode;
 import com.sitewhere.spi.error.ErrorLevel;
+import com.sitewhere.spi.user.IGrantedAuthority;
 import com.sitewhere.spi.user.IUser;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -58,6 +60,7 @@ public class UsersController extends SiteWhereController {
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
 	@ApiOperation(value = "Create a new user")
+	@Secured({ SitewhereRoles.ROLE_ADMINISTER_USERS })
 	public User createUser(@RequestBody UserCreateRequest input) throws SiteWhereException {
 		IUser user = SiteWhereServer.getInstance().getUserManagement().createUser(input);
 		return User.copy(user);
@@ -73,7 +76,7 @@ public class UsersController extends SiteWhereController {
 	@RequestMapping(value = "/{username}", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "Find user by unique username")
-	@Secured({ SitewhereRoles.ROLE_USER_MGMT_ADMIN })
+	@Secured({ SitewhereRoles.ROLE_ADMINISTER_USERS })
 	public User getUserByUsername(
 			@ApiParam(value = "Unique username", required = true) @PathVariable String username)
 			throws SiteWhereException {
@@ -86,6 +89,29 @@ public class UsersController extends SiteWhereController {
 	}
 
 	/**
+	 * Get a list of detailed authority information for a given user.
+	 * 
+	 * @param username
+	 * @return
+	 * @throws SiteWhereException
+	 */
+	@RequestMapping(value = "/{username}/authorities", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(value = "Find authorities assigned to a given user")
+	@Secured({ SitewhereRoles.ROLE_ADMINISTER_USERS })
+	public SearchResults<GrantedAuthority> getAuthoritiesForUsername(
+			@ApiParam(value = "Unique username", required = true) @PathVariable String username)
+			throws SiteWhereException {
+		List<IGrantedAuthority> matches = SiteWhereServer.getInstance().getUserManagement()
+				.getGrantedAuthorities(username);
+		List<GrantedAuthority> converted = new ArrayList<GrantedAuthority>();
+		for (IGrantedAuthority auth : matches) {
+			converted.add(GrantedAuthority.copy(auth));
+		}
+		return new SearchResults<GrantedAuthority>(converted);
+	}
+
+	/**
 	 * List devices that match given criteria.
 	 * 
 	 * @return
@@ -94,6 +120,7 @@ public class UsersController extends SiteWhereController {
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "List users that match certain criteria")
+	@Secured({ SitewhereRoles.ROLE_ADMINISTER_USERS })
 	public SearchResults<User> listUsers(
 			@ApiParam(value = "Include deleted", required = false) @RequestParam(defaultValue = "false") boolean includeDeleted,
 			@ApiParam(value = "Max records to return", required = false) @RequestParam(defaultValue = "100") int count)
