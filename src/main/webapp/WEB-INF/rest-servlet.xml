@@ -20,4 +20,7 @@ http://www.springframework.org/schema/context http://www.springframework.org/sch
 	<context:component-scan base-package="com.sitewhere.web.rest"/>
 	<bean id="documentationConfig"
 		class="com.mangofactory.swagger.configuration.DocumentationConfig"/>
+
+	<!-- Enable Spring security annotations on loaded classes -->
+	<sec:global-method-security secured-annotations="enabled"/>
 </beans>

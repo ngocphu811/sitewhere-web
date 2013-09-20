@@ -1383,12 +1383,23 @@ var Docs = {
                 headerParams = null;
                 invocationUrl = this.model.supportHeaderParams() ? (headerParams = this.model.getHeaderParams(map), this.model.urlify(map, false)) : this.model.urlify(map, true);
                 log('submitting ' + invocationUrl);
+                
+                // SiteWhere basic auth headers.
+                var swLogin = $("#sw-login").val();
+                var swPassword = $("#sw-password").val();
+                if ((swLogin.lenth == 0) || (swPassword.length == 0)) {
+                	alert("Login and password are required.");
+                	return false;
+                }
+                var encoded = $.base64.encode(swLogin + ":" + swPassword);
+                var swHeaders = {"Authorization": "Basic " + encoded};
+
                 $(".request_url", $(this.el)).html("<pre>" + invocationUrl + "</pre>");
                 $(".response_throbber", $(this.el)).show();
                 obj = {
                     type: this.model.httpMethod,
                     url: invocationUrl,
-                    headers: headerParams,
+                    headers: swHeaders,
                     data: bodyParam,
                     contentType: consumes,
                     dataType: 'json',

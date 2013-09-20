@@ -14,6 +14,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +28,7 @@ import com.sitewhere.rest.model.user.UserSearchCriteria;
 import com.sitewhere.rest.model.user.request.UserCreateRequest;
 import com.sitewhere.rest.service.search.SearchResults;
 import com.sitewhere.server.SiteWhereServer;
+import com.sitewhere.server.user.SitewhereRoles;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.SiteWhereSystemException;
 import com.sitewhere.spi.error.ErrorCode;
@@ -71,6 +73,7 @@ public class UsersController extends SiteWhereController {
 	@RequestMapping(value = "/{username}", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "Find user by unique username")
+	@Secured({ SitewhereRoles.ROLE_USER_MGMT_ADMIN })
 	public User getUserByUsername(
 			@ApiParam(value = "Unique username", required = true) @PathVariable String username)
 			throws SiteWhereException {

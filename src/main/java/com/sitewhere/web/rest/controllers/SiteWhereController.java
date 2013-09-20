@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -95,6 +97,21 @@ public class SiteWhereController {
 		LOGGER.error("Unhandled runtime exception.", e);
 		try {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	/**
+	 * Handles exceptions generated if {@link Secured} annotations are not satisfied.
+	 * 
+	 * @param e
+	 * @param response
+	 */
+	@ExceptionHandler
+	protected void handleAccessDenied(AccessDeniedException e, HttpServletResponse response) {
+		try {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}

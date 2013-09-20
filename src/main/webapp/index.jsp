@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Swagger UI</title>
+    <title>SiteWhere - Swagger UI</title>
     <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'/>
     <link href='css/hightlight.default.css' media='screen' rel='stylesheet' type='text/css'/>
+    <link href='css/bootstrap.min.css' media='screen' rel='stylesheet' type='text/css'/>
     <link href='css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
     <script src='lib/jquery-1.8.0.min.js' type='text/javascript'></script>
     <script src='lib/jquery.slideto.min.js' type='text/javascript'></script>
@@ -15,6 +16,7 @@
     <script src='lib/swagger.js' type='text/javascript'></script>
     <script src='lib/swagger-ui.js' type='text/javascript'></script>
     <script src='lib/highlight.7.3.pack.js' type='text/javascript'></script>
+    <script src='lib/jquery.base64.min.js' type='text/javascript'></script>
 
     <style type="text/css">
         .swagger-ui-wrap {
@@ -48,7 +50,9 @@
                 discoveryUrl:"${pageContext.request.contextPath}/api/api-docs",
                 apiKey:"",
                 dom_id:"swagger-ui-container",
-                supportHeaderParams: false,
+				apiKeyName: "Authorization",
+				headers: {"Authorization": "Basic YXBpdXNlcjphcGl1c2VycGFzc3dvcmQ=" },
+				supportHeaderParams: true,
                 supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
                 onComplete: function(swaggerApi, swaggerUi){
                 	if(console) {
@@ -69,30 +73,43 @@
 
             window.swaggerUi.load();
         });
-
-    </script>
+        
+    	
+    	$(document).ready(function() {
+    		
+    		$(document).on('submit', '.sandbox', function() {
+				alert("Nope!");
+				return false;
+	        });    
+    	});
+	</script>
 </head>
 
-<body>
-<div class="sw-top-bar"></div>
-<div id='header'>
+<body style="position: relative;">
+<div class="sw-top-bar" style="position: fixed; top: 0px; width: 100%; z-index: 500;"></div>
+<div id='header' style="position: fixed; top: 2px; width: 100%; z-index: 500; background-color: rgb(255, 255, 255);">
     <div class="swagger-ui-wrap">
-        <a id="logo" href="http://swagger.wordnik.com"><img src="img/sitewhere-small.png"/></a>
+        <a id="logo" href="http://www.sitewhere.org" target="_blank"><img src="img/sitewhere-small.png"/></a>
 
-        <form id='api_selector'>
-            <div class='input'><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl"
-                                      type="text"/></div>
-            <div class='input'><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"/></div>
-            <div class='input'><a id="explore" href="#">Explore</a></div>
-        </form>
+    	<form id='api_selector' class="form-inline" style="padding-top: 18px;">
+            <label for="sw-login">Login:</label>
+            <input type="text" id="sw-login" style="margin-left: 5px;"/>
+            <label for="sw-password" style="margin-left: 15px;">Password:</label>
+            <input type="password" id="sw-password" style="margin-left: 5px;"/>
+			<input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="hidden"/>
+			<input placeholder="api_key" id="input_apiKey" name="apiKey" type="hidden"/>
+    	</form>    
     </div>
 </div>
 
-<div id="message-bar" class="swagger-ui-wrap">
-    &nbsp;
+<div>
+	<div style="height: 50px;"></div>
+	<div id="message-bar" class="swagger-ui-wrap">
+		&nbsp;
+	</div>
+	<div id="swagger-ui-container" class="swagger-ui-wrap">
 </div>
 
-<div id="swagger-ui-container" class="swagger-ui-wrap">
 
 </div>
 
