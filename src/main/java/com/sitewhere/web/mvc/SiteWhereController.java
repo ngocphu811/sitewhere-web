@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.sitewhere.security.LoginManager;
 import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.device.IDevice;
@@ -67,8 +68,13 @@ public class SiteWhereController {
 	 */
 	@RequestMapping("/sites/list")
 	public ModelAndView listSites() {
-		Map<String, Object> data = createBaseData();
-		return new ModelAndView("sites/list", data);
+		try {
+			Map<String, Object> data = createBaseData();
+			return new ModelAndView("sites/list", data);
+		} catch (SiteWhereException e) {
+			LOGGER.error(e);
+			return showError(e.getMessage());
+		}
 	}
 
 	/**
@@ -80,9 +86,9 @@ public class SiteWhereController {
 	@RequestMapping("/sites/detail")
 	public ModelAndView siteDetail(@RequestParam("siteToken") String siteToken) {
 		if (siteToken != null) {
-			Map<String, Object> data = createBaseData();
-			IDeviceManagement management = SiteWhereServer.getInstance().getDeviceManagement();
 			try {
+				Map<String, Object> data = createBaseData();
+				IDeviceManagement management = SiteWhereServer.getInstance().getDeviceManagement();
 				ISite site = management.getSiteByToken(siteToken);
 				if (site != null) {
 					data.put("site", site);
@@ -106,9 +112,9 @@ public class SiteWhereController {
 	@RequestMapping("/assignments/detail")
 	public ModelAndView assignmentDetail(@RequestParam("token") String token) {
 		if (token != null) {
-			Map<String, Object> data = createBaseData();
-			IDeviceManagement management = SiteWhereServer.getInstance().getDeviceManagement();
 			try {
+				Map<String, Object> data = createBaseData();
+				IDeviceManagement management = SiteWhereServer.getInstance().getDeviceManagement();
 				IDeviceAssignment assignment = management.getDeviceAssignmentByToken(token);
 				if (assignment != null) {
 					data.put("assignment", assignment);
@@ -132,9 +138,9 @@ public class SiteWhereController {
 	@RequestMapping("/assignments/emulator")
 	public ModelAndView assignmentEmulator(@RequestParam("token") String token) {
 		if (token != null) {
-			Map<String, Object> data = createBaseData();
-			IDeviceManagement management = SiteWhereServer.getInstance().getDeviceManagement();
 			try {
+				Map<String, Object> data = createBaseData();
+				IDeviceManagement management = SiteWhereServer.getInstance().getDeviceManagement();
 				IDeviceAssignment assignment = management.getDeviceAssignmentByToken(token);
 				if (assignment != null) {
 					data.put("assignment", assignment);
@@ -146,7 +152,7 @@ public class SiteWhereController {
 				return showError(e.getMessage());
 			}
 		}
-		return showError("No assignment token passed.");
+		return showError("Assignment token was not passed.");
 	}
 
 	/**
@@ -156,8 +162,13 @@ public class SiteWhereController {
 	 */
 	@RequestMapping("/devices/list")
 	public ModelAndView listDevices() {
-		Map<String, Object> data = createBaseData();
-		return new ModelAndView("devices/list", data);
+		try {
+			Map<String, Object> data = createBaseData();
+			return new ModelAndView("devices/list", data);
+		} catch (SiteWhereException e) {
+			LOGGER.error(e);
+			return showError(e.getMessage());
+		}
 	}
 
 	/**
@@ -169,9 +180,9 @@ public class SiteWhereController {
 	@RequestMapping("/devices/detail")
 	public ModelAndView deviceDetail(@RequestParam("hardwareId") String hardwareId) {
 		if (hardwareId != null) {
-			Map<String, Object> data = createBaseData();
-			IDeviceManagement management = SiteWhereServer.getInstance().getDeviceManagement();
 			try {
+				Map<String, Object> data = createBaseData();
+				IDeviceManagement management = SiteWhereServer.getInstance().getDeviceManagement();
 				IDevice device = management.getDeviceByHardwareId(hardwareId);
 				if (device != null) {
 					data.put("device", device);
@@ -193,19 +204,27 @@ public class SiteWhereController {
 	 * @return
 	 */
 	protected ModelAndView showError(String message) {
-		Map<String, Object> data = createBaseData();
-		data.put("message", message);
-		return new ModelAndView("error", data);
+		try {
+			Map<String, Object> data = createBaseData();
+			data.put("message", message);
+			return new ModelAndView("error", data);
+		} catch (SiteWhereException e) {
+			Map<String, Object> data = new HashMap<String, Object>();
+			data.put("message", e.getMessage());
+			return new ModelAndView("error", data);
+		}
 	}
 
 	/**
 	 * Create data structure and common objects passed to pages.
 	 * 
 	 * @return
+	 * @throws SiteWhereException
 	 */
-	protected Map<String, Object> createBaseData() {
+	protected Map<String, Object> createBaseData() throws SiteWhereException {
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("version", VersionHelper.getVersion());
+		data.put("currentUser", LoginManager.getCurrentlyLoggedInUser());
 		return data;
 	}
 }

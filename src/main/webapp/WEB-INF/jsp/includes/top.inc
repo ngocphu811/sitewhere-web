@@ -61,8 +61,12 @@
 				<div class="sw-user-info">
 					<div class="btn-group">
 						<a class="btn dropdown-toggle" data-toggle="dropdown" href="javascript:void(0)">
-							<i class="icon-plus sw-button-icon"></i> 
-							Admin User
+							<i class="icon-off sw-button-icon"></i>
+							<div class="ellipsis" style="max-width: 120px; display: inline-block; vertical-align: top;">
+								<span>
+									<c:out value="${currentUser.firstName}"/>&nbsp;<c:out value="${currentUser.lastName}"/>
+								</span>
+							</div>
 							<span class="caret"style="margin-left: 4px"></span>
 						</a>
 						<ul class="dropdown-menu pull-right" style="text-align: left;">
