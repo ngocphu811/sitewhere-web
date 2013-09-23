@@ -169,6 +169,19 @@ function parseZoneData(item) {
     }
 }
 
+/** Converts fields that need to be parsed in a user */
+function parseUserData(item) {
+    if (item.createdDate && typeof item.createdDate === "string") {
+    	item.createdDate = kendo.parseDate(item.createdDate);
+    }
+    if (item.updatedDate && typeof item.updatedDate === "string") {
+    	item.updatedDate = kendo.parseDate(item.updatedDate);
+    }
+    if (item.lastLogin && typeof item.lastLogin === "string") {
+    	item.lastLogin = kendo.parseDate(item.lastLogin);
+    }
+}
+
 /** Creates datasource for SiteWhere metadata */
 function swMetadataDatasource() {
 	return new kendo.data.DataSource({

@@ -41,21 +41,28 @@
 					<ul class="nav nav-pills">
 <c:choose>
 	<c:when test="${sitewhere_section == 'sites'}">
-						<li class="active"><a href="${pageContext.request.contextPath}/admin/sites/list.html">Sites</a></li>
+		<li class="active"><a href="${pageContext.request.contextPath}/admin/sites/list.html">Sites</a></li>
 	</c:when>
 	<c:otherwise>
-						<li><a href="${pageContext.request.contextPath}/admin/sites/list.html">Sites</a></li>
+		<li><a href="${pageContext.request.contextPath}/admin/sites/list.html">Sites</a></li>
 	</c:otherwise>
 </c:choose>
 <c:choose>
 	<c:when test="${sitewhere_section == 'devices'}">
-						<li class="active"><a href="${pageContext.request.contextPath}/admin/devices/list.html">Devices</a></li>
+		<li class="active"><a href="${pageContext.request.contextPath}/admin/devices/list.html">Devices</a></li>
 	</c:when>
 	<c:otherwise>
-						<li><a href="${pageContext.request.contextPath}/admin/devices/list.html">Devices</a></li>
+		<li><a href="${pageContext.request.contextPath}/admin/devices/list.html">Devices</a></li>
 	</c:otherwise>
 </c:choose>
-						<li><a href="#">Administration</a></li>
+<c:choose>
+	<c:when test="${sitewhere_section == 'users'}">
+		<li class="active"><a href="${pageContext.request.contextPath}/admin/users/list.html">Users</a></li>
+	</c:when>
+	<c:otherwise>
+		<li><a href="${pageContext.request.contextPath}/admin/users/list.html">Users</a></li>
+	</c:otherwise>
+</c:choose>
 					</ul>
 				</div>
 				<div class="sw-user-info">

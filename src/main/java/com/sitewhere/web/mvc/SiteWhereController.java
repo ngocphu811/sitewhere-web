@@ -198,6 +198,22 @@ public class SiteWhereController {
 	}
 
 	/**
+	 * Display the "list users" page.
+	 * 
+	 * @return
+	 */
+	@RequestMapping("/users/list")
+	public ModelAndView listUsers() {
+		try {
+			Map<String, Object> data = createBaseData();
+			return new ModelAndView("users/list", data);
+		} catch (SiteWhereException e) {
+			LOGGER.error(e);
+			return showError(e.getMessage());
+		}
+	}
+
+	/**
 	 * Returns a {@link ModelAndView} that will display an error message.
 	 * 
 	 * @param message

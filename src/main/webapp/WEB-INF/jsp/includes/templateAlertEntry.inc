@@ -1,4 +1,4 @@
-<!-- Template for location row -->
+<!-- Template for alert row -->
 <script type="text/x-kendo-tmpl" id="tpl-alert-entry">
 	<tr class="sw-list-entry gradient-bg">
 		<td class="ellipsis" style="max-width: 90px;" title="#:assetName#">

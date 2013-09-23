@@ -1,4 +1,4 @@
-<!-- Template for location row -->
+<!-- Template for measurements row -->
 <script type="text/x-kendo-tmpl" id="tpl-measurements-entry">
 	<tr class="sw-list-entry gradient-bg">
 		<td>
