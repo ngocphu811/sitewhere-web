@@ -130,7 +130,6 @@
 			pageSize: 10
 		});
 		
-
 		/** Create the list of devices */
 		$("#devices").kendoListView({
 			dataSource : devicesDS,

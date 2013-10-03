@@ -43,11 +43,20 @@
 </table>
 <div id="pager" class="k-pager-wrap" style="margin-top: 10px;"></div>
 
-<%@ include file="../includes/templateUserEntry.inc"%>
+<%@ include file="../includes/templateUserEntry.inc"%>	
+
+<%@ include file="../includes/templateUserAuthorityEntry.inc"%>	
+
+<%@ include file="../includes/userCreateDialog.inc"%>
 
 <script>
 	/** Reference for user list datasource */
 	var usersDS;
+	
+	/** Called after a new user has been created */
+	function onUserCreated() {
+		usersDS.read();
+	}
 	
     $(document).ready(function() {
 		/** Create AJAX datasource for users list */
@@ -85,8 +94,9 @@
 		
         /** Handle create dialog */
 		$('#btn-add-user').click(function(event) {
+			ucOpen(onUserCreated);
 		});
-   });
+    });
 </script>
 
 <%@ include file="../includes/bottom.inc"%>
