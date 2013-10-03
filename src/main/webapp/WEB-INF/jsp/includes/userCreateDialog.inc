@@ -38,7 +38,7 @@
 						</div>
 					</div>
 					<div class="control-group">
-						<label class="control-label" for="uc-first-name">Last Name</label>
+						<label class="control-label" for="uc-last-name">Last Name</label>
 						<div class="controls">
 							<input type="text" id="uc-last-name" class="input-xlarge" title="Last Name">
 						</div>
@@ -80,6 +80,9 @@
 	/** Reference for metadata datasource */
 	var ucMetadataDS;
 	
+	/** Dropdown list of account statuses */
+	var ucStatusList;
+	
 	/** Available map types shown in dropdown */
     var ucAccountStatuses = [
 		{ text: "Active", status: "Active" },
@@ -95,12 +98,12 @@
 		}).data("kendoTabStrip");
 
     	// create DropDownList from input HTML element
-    	$("#uc-account-status").kendoDropDownList({
+    	ucStatusList = $("#uc-account-status").kendoDropDownList({
     		dataTextField: "text",
     		dataValueField: "status",
     	    dataSource: ucAccountStatuses,
     	    index: 0,
-    	});
+    	}).data("kendoDropDownList");;
     	
 		/** Create AJAX datasource for authorities list */
 		authsDS = new kendo.data.DataSource({
@@ -136,15 +139,23 @@
 				return;
 			}
 			var username = $('#uc-username').val();
-			var userdata = {};
 			var auths = ucGetCheckedAuths();
-			if (username == "") {
-//				$.postJSON("${pageContext.request.contextPath}/api/users", 
-//						userdata, onSuccess, onCreateFail);
-			} else {
+			var userdata = {
+					"username": $('#uc-username').val(),
+					"password": $('#uc-password').val(),
+					"firstName": $('#uc-first-name').val(),
+					"lastName": $('#uc-last-name').val(),
+					"authorities": auths,
+					"status": ucStatusList.dataItem().status,
+					"metadata": ucMetadataDS.data(),
+			};
+//			if (username == "") {
+				$.postJSON("${pageContext.request.contextPath}/api/users", 
+						userdata, onSuccess, onCreateFail);
+//			} else {
 //				$.putJSON("${pageContext.request.contextPath}/api/users/" + username, 
 //						userdata, onSuccess, onUpdateFail);
-			}
+//			}
 		});
         
         /** Get a list of checked auths */

@@ -34,6 +34,7 @@ import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.SiteWhereSystemException;
 import com.sitewhere.spi.error.ErrorCode;
 import com.sitewhere.spi.error.ErrorLevel;
+import com.sitewhere.spi.user.AccountStatus;
 import com.sitewhere.spi.user.IGrantedAuthority;
 import com.sitewhere.spi.user.IUser;
 import com.wordnik.swagger.annotations.Api;
@@ -62,6 +63,13 @@ public class UsersController extends SiteWhereController {
 	@ApiOperation(value = "Create a new user")
 	@Secured({ SitewhereRoles.ROLE_ADMINISTER_USERS })
 	public User createUser(@RequestBody UserCreateRequest input) throws SiteWhereException {
+		if ((input.getUsername() == null) || (input.getPassword() == null) || (input.getFirstName() == null)
+				|| (input.getLastName() == null)) {
+			throw new SiteWhereSystemException(ErrorCode.InvalidUserInformation, ErrorLevel.ERROR);
+		}
+		if (input.getStatus() == null) {
+			input.setStatus(AccountStatus.Active);
+		}
 		IUser user = SiteWhereServer.getInstance().getUserManagement().createUser(input);
 		return User.copy(user);
 	}
