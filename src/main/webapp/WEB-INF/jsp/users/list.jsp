@@ -71,6 +71,28 @@
 	function onUserEdited() {
 		usersDS.read();
 	}
+
+	/** Called when delete button is clicked */
+	function onDeleteUser(e, username) {
+		var event = e || window.event;
+		event.stopPropagation();
+		swConfirm("Delete User", "Are you sure you want to delete this user?", function(result) {
+			if (result) {
+				$.deleteJSON("${pageContext.request.contextPath}/api/users/" + username + "?force=true", 
+						onDeleteSuccess, onDeleteFail);
+			}
+		}); 
+	}
+    
+    /** Called on successful delete */
+    function onDeleteSuccess() {
+    	usersDS.read();
+    }
+    
+	/** Handle failed delete call */
+	function onDeleteFail(jqXHR, textStatus, errorThrown) {
+		handleError(jqXHR, "Unable to delete user.");
+	}
 	
     $(document).ready(function() {
 		/** Create AJAX datasource for users list */
