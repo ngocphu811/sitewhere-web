@@ -102,7 +102,6 @@
     		dataTextField: "text",
     		dataValueField: "status",
     	    dataSource: ucAccountStatuses,
-    	    index: 0,
     	}).data("kendoDropDownList");;
     	
 		/** Create AJAX datasource for authorities list */
@@ -295,23 +294,22 @@
     
     /** Called on successful user load request */
     function uuUserGetSuccess(data, status, jqXHR) {
-		ucClearDialog();
 		$('#uc-dialog-header').html("Edit User");
 		$('#uc-dialog-submit').html("Save");
 		
 		// Load text fields.
 		$('#uc-original-username').val(data.username);
 		$('#uc-username').val(data.username);
+		$('#uc-password').val("");
+		$('#uc-password-confirm').val("");
 		$('#uc-first-name').val(data.firstName);
 		$('#uc-last-name').val(data.lastName);
 		
-		// Select correct status.
-		ucStatusList.select(function(dataItem) {
-		    return dataItem.status === data.status;
-		});
-		
 		// Check off granted authorities.
 		ucSetCheckedAuths(data.authorities);
+		
+		// Select correct status.
+		ucStatusList.value(data.status);
 		
 		ucMetadataDS.data(data.metadata);
 		ucTabs.select(0);

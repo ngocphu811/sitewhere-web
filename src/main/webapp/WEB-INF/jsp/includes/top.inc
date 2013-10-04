@@ -74,7 +74,7 @@
 									<c:out value="${currentUser.firstName}"/>&nbsp;<c:out value="${currentUser.lastName}"/>
 								</span>
 							</div>
-							<span class="caret"style="margin-left: 4px"></span>
+							<span class="caret" style="margin-left: 4px"></span>
 						</a>
 						<ul class="dropdown-menu pull-right" style="text-align: left;">
 							<li><a tabindex="-1" href="<c:url value="/j_spring_security_logout"/>">Log Out</a></li>

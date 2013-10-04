@@ -115,6 +115,26 @@ public class UsersController extends SiteWhereController {
 	}
 
 	/**
+	 * Delete information for a given user based on username.
+	 * 
+	 * @param siteToken
+	 * @param force
+	 * @return
+	 * @throws SiteWhereException
+	 */
+	@RequestMapping(value = "/{username}", method = RequestMethod.DELETE)
+	@ResponseBody
+	@ApiOperation(value = "Delete a user by unique username")
+	@Secured({ SitewhereRoles.ROLE_ADMINISTER_USERS })
+	public User deleteUserByUsername(
+			@ApiParam(value = "Unique username", required = true) @PathVariable String username,
+			@ApiParam(value = "Delete permanently", required = false) @RequestParam(defaultValue = "false") boolean force)
+			throws SiteWhereException {
+		IUser user = SiteWhereServer.getInstance().getUserManagement().deleteUser(username, force);
+		return User.copy(user);
+	}
+
+	/**
 	 * Get a list of detailed authority information for a given user.
 	 * 
 	 * @param username
