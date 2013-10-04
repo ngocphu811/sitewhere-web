@@ -18,13 +18,14 @@
 </div>
 <table id="users">
 	<colgroup>
-		<col style="width: 15%;"/>
-		<col style="width: 15%;"/>
-		<col style="width: 15%;"/>
+		<col style="width: 14%;"/>
+		<col style="width: 14%;"/>
+		<col style="width: 14%;"/>
 		<col style="width: 10%;"/>
-		<col style="width: 15%;"/>
-		<col style="width: 15%;"/>
-		<col style="width: 15%;"/>
+		<col style="width: 14%;"/>
+		<col style="width: 14%;"/>
+		<col style="width: 14%;"/>
+		<col style="width: 6%;"/>
 	</colgroup>
 	<thead>
 		<tr>
@@ -35,10 +36,11 @@
 			<th>Last Login</th>
 			<th>Created</th>
 			<th>Updated</th>
+			<th></th>
 		</tr>
 	</thead>
 	<tbody>
-		<tr><td colspan="7"></td></tr>
+		<tr><td colspan="8"></td></tr>
 	</tbody>
 </table>
 <div id="pager" class="k-pager-wrap" style="margin-top: 10px;"></div>
@@ -55,6 +57,18 @@
 	
 	/** Called after a new user has been created */
 	function onUserCreated() {
+		usersDS.read();
+	}
+	
+	/** Edit an existing user */
+	function onEditUser(e, username) {
+		var event = e || window.event;
+		event.stopPropagation();
+		uuOpen(username, onUserEdited);
+	}
+	
+	/** Called after successful user edit */
+	function onUserEdited() {
 		usersDS.read();
 	}
 	

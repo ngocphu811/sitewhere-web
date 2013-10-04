@@ -59,7 +59,7 @@
             </div>
 		</div>
 	</div>
-	<input id="uc-username" type="hidden" value="" />
+	<input id="uc-original-username" type="hidden" value="" />
 	<div class="modal-footer">
 		<a href="javascript:void(0)" class="btn" data-dismiss="modal">Cancel</a> 
 		<a id="uc-dialog-submit" href="javascript:void(0)" class="btn btn-primary">Create</a>
@@ -135,39 +135,35 @@
         /** Handle dialog submit */
 		$('#uc-dialog-submit').click(function(event) {
 			event.preventDefault();
-			if (!ucValidate()) {
+			var username = $('#uc-original-username').val();
+			var password = $('#uc-password').val();
+			var isCreate = (username.length == 0);
+			if ((isCreate) && (!ucValidateForCreate())) {
 				return;
 			}
-			var username = $('#uc-username').val();
+			if ((!isCreate) && (!ucValidateForUpdate())) {
+				return;
+			}
 			var auths = ucGetCheckedAuths();
 			var userdata = {
 					"username": $('#uc-username').val(),
-					"password": $('#uc-password').val(),
 					"firstName": $('#uc-first-name').val(),
 					"lastName": $('#uc-last-name').val(),
 					"authorities": auths,
 					"status": ucStatusList.dataItem().status,
 					"metadata": ucMetadataDS.data(),
 			};
-//			if (username == "") {
+			if (password.length > 0) {
+				userdata.password = password;
+			}
+			if (isCreate) {
 				$.postJSON("${pageContext.request.contextPath}/api/users", 
 						userdata, onSuccess, onCreateFail);
-//			} else {
-//				$.putJSON("${pageContext.request.contextPath}/api/users/" + username, 
-//						userdata, onSuccess, onUpdateFail);
-//			}
+			} else {
+				$.putJSON("${pageContext.request.contextPath}/api/users/" + username, 
+						userdata, onSuccess, onUpdateFail);
+			}
 		});
-        
-        /** Get a list of checked auths */
-        function ucGetCheckedAuths() {
-        	var checked = [];
-        	$('#uc-permissions input').each(function() {
-        		if (this.checked == true) {
-					checked.push(this.value);
-        		}
-        	});
-        	return checked;
-        }
         
         /** Called on successful create/update */
         function onSuccess() {
@@ -187,9 +183,38 @@
 			handleError(jqXHR, "Unable to update user.");
 		}
     });
+    
+    /** Get a list of checked auths */
+    function ucGetCheckedAuths() {
+    	var checked = [];
+    	$('#uc-permissions input').each(function() {
+    		if (this.checked == true) {
+				checked.push(this.value);
+    		}
+    	});
+    	return checked;
+    }
+    
+    /** Reset authorities to unchecked */
+    function ucResetCheckedAuths() {
+    	$('#uc-permissions input').each(function() {
+    		this.checked = false;
+    	});
+    }
+   
+    /** Check the auths found in the given list */
+    function ucSetCheckedAuths(userAuths) {
+    	$('#uc-permissions input').each(function() {
+    		if ($.inArray(this.value, userAuths) != -1) {
+    			this.checked = true;
+    		} else {
+    			this.checked = false;
+    		}
+    	});
+    }
 	
-	/** Validate everything */
-	function ucValidate() {
+	/** Validate for create mode */
+	function ucValidateForCreate() {
 		$.validity.setup({ outputMode:"label" });
 		$.validity.start();
 
@@ -211,15 +236,45 @@
 		var result = $.validity.end();
 		return result.valid;
 	}
+	
+	/** Validate for update mode */
+	function ucValidateForUpdate() {
+		$.validity.setup({ outputMode:"label" });
+		$.validity.start();
+
+        /** Validate user form */
+		$("#uc-username").require();
+		$("#uc-first-name").require();
+		$("#uc-last-name").require();
+		$("#uc-password").assert(function(element) {
+			var pwd = $("#uc-password").val();
+			var pwdConfirm = $("#uc-password-confirm").val();
+			if ((pwd.length == 0) && (pwdConfirm.length == 0)) {
+				return true;
+			}
+			if (pwd == pwdConfirm) {
+				return true;
+			}
+			return false;
+		}, "Passwords must match.");
+      
+		var result = $.validity.end();
+		return result.valid;
+	}
 
 	/** Open the user create dialog */
 	function ucOpen(callback) {
 		ucClearDialog();
 		$('#uc-dialog-header').html("Create User");
 		$('#uc-dialog-submit').html("Create");
-		$('#uc-username').val("");
 		ucMetadataDS.data(new Array());
 		ucTabs.select(0);
+		
+		// Indicates create vs update.
+		$('#uc-original-username').val("");
+		
+		// Uncheck all auths.
+		ucResetCheckedAuths();
 		
 		// Function called on submit.
 		ucSubmitCallback = callback;
@@ -235,17 +290,28 @@
 		
 		// Get site for edit.
 		$.getJSON("${pageContext.request.contextPath}/api/users/" + username, 
-				uuSiteGetSuccess, uuSiteGetFailed);
+				uuUserGetSuccess, uuUserGetFailed);
 	}
     
     /** Called on successful user load request */
-    function uuSiteGetSuccess(data, status, jqXHR) {
+    function uuUserGetSuccess(data, status, jqXHR) {
 		ucClearDialog();
 		$('#uc-dialog-header').html("Edit User");
 		$('#uc-dialog-submit').html("Save");
 		
-		// Load fields here
-		$('#gen-site-name').val(data.name);
+		// Load text fields.
+		$('#uc-original-username').val(data.username);
+		$('#uc-username').val(data.username);
+		$('#uc-first-name').val(data.firstName);
+		$('#uc-last-name').val(data.lastName);
+		
+		// Select correct status.
+		ucStatusList.select(function(dataItem) {
+		    return dataItem.status === data.status;
+		});
+		
+		// Check off granted authorities.
+		ucSetCheckedAuths(data.authorities);
 		
 		ucMetadataDS.data(data.metadata);
 		ucTabs.select(0);
@@ -255,7 +321,7 @@
     }
     
 	/** Handle error on getting user */
-	function uuSiteGetFailed(jqXHR, textStatus, errorThrown) {
+	function uuUserGetFailed(jqXHR, textStatus, errorThrown) {
 		handleError(jqXHR, "Unable to load user for edit.");
 	}
     

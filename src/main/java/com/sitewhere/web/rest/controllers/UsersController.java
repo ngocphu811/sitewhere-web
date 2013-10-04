@@ -75,6 +75,24 @@ public class UsersController extends SiteWhereController {
 	}
 
 	/**
+	 * Update an existing user.
+	 * 
+	 * @param input
+	 * @return
+	 * @throws SiteWhereException
+	 */
+	@RequestMapping(value = "/{username}", method = RequestMethod.PUT)
+	@ResponseBody
+	@ApiOperation(value = "Update an existing user.")
+	@Secured({ SitewhereRoles.ROLE_ADMINISTER_USERS })
+	public User updateUser(
+			@ApiParam(value = "Unique username", required = true) @PathVariable String username,
+			@RequestBody UserCreateRequest input) throws SiteWhereException {
+		IUser user = SiteWhereServer.getInstance().getUserManagement().updateUser(username, input);
+		return User.copy(user);
+	}
+
+	/**
 	 * Get a user by unique username.
 	 * 
 	 * @param username
