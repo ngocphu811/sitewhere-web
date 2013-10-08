@@ -10,6 +10,7 @@
 package com.sitewhere.web.rest.controllers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -26,7 +27,10 @@ import com.sitewhere.rest.model.device.Device;
 import com.sitewhere.rest.model.device.DeviceAssignment;
 import com.sitewhere.rest.model.device.DeviceEventBatch;
 import com.sitewhere.rest.model.device.DeviceSearchCriteria;
+import com.sitewhere.rest.model.device.request.DeviceAlertCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceCreateRequest;
+import com.sitewhere.rest.model.device.request.DeviceLocationCreateRequest;
+import com.sitewhere.rest.model.device.request.DeviceMeasurementsCreateRequest;
 import com.sitewhere.rest.service.search.DeviceAssignmentSearchResults;
 import com.sitewhere.rest.service.search.SearchResults;
 import com.sitewhere.server.SiteWhereServer;
@@ -37,6 +41,9 @@ import com.sitewhere.spi.asset.IAsset;
 import com.sitewhere.spi.device.IDevice;
 import com.sitewhere.spi.device.IDeviceAssignment;
 import com.sitewhere.spi.device.IDeviceEventBatchResponse;
+import com.sitewhere.spi.device.request.IDeviceAlertCreateRequest;
+import com.sitewhere.spi.device.request.IDeviceLocationCreateRequest;
+import com.sitewhere.spi.device.request.IDeviceMeasurementsCreateRequest;
 import com.sitewhere.spi.error.ErrorCode;
 import com.sitewhere.spi.error.ErrorLevel;
 import com.sitewhere.web.rest.model.DeviceAssignmentMarshalHelper;
@@ -246,6 +253,24 @@ public class DevicesController extends SiteWhereController {
 		if (device.getAssignmentToken() == null) {
 			throw new SiteWhereSystemException(ErrorCode.DeviceNotAssigned, ErrorLevel.ERROR);
 		}
+
+		// Set event dates if not set by client.
+		for (IDeviceLocationCreateRequest locReq : batch.getLocations()) {
+			if (locReq.getEventDate() == null) {
+				((DeviceLocationCreateRequest) locReq).setEventDate(new Date());
+			}
+		}
+		for (IDeviceMeasurementsCreateRequest measReq : batch.getMeasurements()) {
+			if (measReq.getEventDate() == null) {
+				((DeviceMeasurementsCreateRequest) measReq).setEventDate(new Date());
+			}
+		}
+		for (IDeviceAlertCreateRequest alertReq : batch.getAlerts()) {
+			if (alertReq.getEventDate() == null) {
+				((DeviceAlertCreateRequest) alertReq).setEventDate(new Date());
+			}
+		}
+
 		IDeviceEventBatchResponse response = SiteWhereServer.getInstance().getDeviceManagement()
 				.addDeviceEventBatch(device.getAssignmentToken(), batch);
 		return response;
