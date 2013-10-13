@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sitewhere.rest.model.common.MetadataProvider;
+import com.sitewhere.rest.model.common.SearchCriteria;
 import com.sitewhere.rest.model.device.DeviceAlert;
 import com.sitewhere.rest.model.device.DeviceAssignment;
 import com.sitewhere.rest.model.device.DeviceLocation;
@@ -32,10 +33,7 @@ import com.sitewhere.rest.model.device.request.DeviceAlertCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceAssignmentCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceLocationCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceMeasurementsCreateRequest;
-import com.sitewhere.rest.service.search.DeviceAlertSearchResults;
-import com.sitewhere.rest.service.search.DeviceAssignmentSearchResults;
-import com.sitewhere.rest.service.search.DeviceLocationSearchResults;
-import com.sitewhere.rest.service.search.DeviceMeasurementsSearchResults;
+import com.sitewhere.rest.service.search.SearchResults;
 import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.SiteWhereSystemException;
@@ -198,17 +196,14 @@ public class AssignmentsController extends SiteWhereController {
 	 */
 	@RequestMapping(value = "/{token}/measurements", method = RequestMethod.GET)
 	@ResponseBody
-	@ApiOperation(value = "List recent measurements associated with a device assignment")
-	public DeviceMeasurementsSearchResults listAssignmentMeasurements(
+	@ApiOperation(value = "List measurements associated with a device assignment")
+	public SearchResults<IDeviceMeasurements> listAssignmentMeasurements(
 			@ApiParam(value = "Assignment token", required = true) @PathVariable String token,
-			@RequestParam(defaultValue = "100") int count) throws SiteWhereException {
-		List<IDeviceMeasurements> matches = SiteWhereServer.getInstance().getDeviceManagement()
-				.listDeviceMeasurements(token, count);
-		List<DeviceMeasurements> converted = new ArrayList<DeviceMeasurements>();
-		for (IDeviceMeasurements measurement : matches) {
-			converted.add(DeviceMeasurements.copy(measurement));
-		}
-		return new DeviceMeasurementsSearchResults(converted);
+			@ApiParam(value = "Page Number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
+			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
+			throws SiteWhereException {
+		SearchCriteria criteria = new SearchCriteria(page, pageSize);
+		return SiteWhereServer.getInstance().getDeviceManagement().listDeviceMeasurements(token, criteria);
 	}
 
 	/**
@@ -243,16 +238,13 @@ public class AssignmentsController extends SiteWhereController {
 	@RequestMapping(value = "/{token}/locations", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "List recent locations associated with a device assignment")
-	public DeviceLocationSearchResults listAssignmentLocations(
+	public SearchResults<IDeviceLocation> listAssignmentLocations(
 			@ApiParam(value = "Assignment token", required = true) @PathVariable String token,
-			@RequestParam(defaultValue = "100") int count) throws SiteWhereException {
-		List<IDeviceLocation> matches = SiteWhereServer.getInstance().getDeviceManagement()
-				.listDeviceLocations(token, count);
-		List<DeviceLocation> converted = new ArrayList<DeviceLocation>();
-		for (IDeviceLocation location : matches) {
-			converted.add(DeviceLocation.copy(location));
-		}
-		return new DeviceLocationSearchResults(converted);
+			@ApiParam(value = "Page Number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
+			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
+			throws SiteWhereException {
+		SearchCriteria criteria = new SearchCriteria(page, pageSize);
+		return SiteWhereServer.getInstance().getDeviceManagement().listDeviceLocations(token, criteria);
 	}
 
 	/**
@@ -286,16 +278,13 @@ public class AssignmentsController extends SiteWhereController {
 	@RequestMapping(value = "/{token}/alerts", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "List alerts associated with a device assignment")
-	public DeviceAlertSearchResults listDeviceAlerts(
+	public SearchResults<IDeviceAlert> listDeviceAlerts(
 			@ApiParam(value = "Assignment token", required = true) @PathVariable String token,
-			@RequestParam(defaultValue = "100") int count) throws SiteWhereException {
-		List<IDeviceAlert> matches = SiteWhereServer.getInstance().getDeviceManagement()
-				.listDeviceAlerts(token, count);
-		List<DeviceAlert> converted = new ArrayList<DeviceAlert>();
-		for (IDeviceAlert alert : matches) {
-			converted.add(DeviceAlert.copy(alert));
-		}
-		return new DeviceAlertSearchResults(converted);
+			@ApiParam(value = "Page Number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
+			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
+			throws SiteWhereException {
+		SearchCriteria criteria = new SearchCriteria(page, pageSize);
+		return SiteWhereServer.getInstance().getDeviceManagement().listDeviceAlerts(token, criteria);
 	}
 
 	/**
@@ -375,19 +364,24 @@ public class AssignmentsController extends SiteWhereController {
 	@RequestMapping(value = "/near/{latitude}/{longitude}", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "Find assignments near a given location")
-	public DeviceAssignmentSearchResults findDeviceAssignmentsNear(@PathVariable double latitude,
-			@PathVariable double longitude, @RequestParam(defaultValue = "10") double maxDistance,
-			@RequestParam(defaultValue = "100") int maxResults) throws SiteWhereException {
-		List<IDeviceAssignment> matches = SiteWhereServer.getInstance().getDeviceManagement()
-				.getDeviceAssignmentsNear(latitude, longitude, maxDistance, maxResults);
+	public SearchResults<DeviceAssignment> findDeviceAssignmentsNear(
+			@PathVariable double latitude,
+			@PathVariable double longitude,
+			@RequestParam(defaultValue = "10") double maxDistance,
+			@ApiParam(value = "Page Number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
+			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
+			throws SiteWhereException {
+		SearchCriteria criteria = new SearchCriteria(page, pageSize);
+		SearchResults<IDeviceAssignment> results = SiteWhereServer.getInstance().getDeviceManagement()
+				.getDeviceAssignmentsNear(latitude, longitude, maxDistance, criteria);
 		DeviceAssignmentMarshalHelper helper = new DeviceAssignmentMarshalHelper();
 		helper.setIncludeAsset(false);
 		helper.setIncludeDevice(false);
 		helper.setIncludeSite(false);
 		List<DeviceAssignment> converted = new ArrayList<DeviceAssignment>();
-		for (IDeviceAssignment assignment : matches) {
+		for (IDeviceAssignment assignment : results.getResults()) {
 			converted.add(helper.convert(assignment, SiteWhereServer.getInstance().getAssetModuleManager()));
 		}
-		return new DeviceAssignmentSearchResults(converted);
+		return new SearchResults<DeviceAssignment>(converted, results.getNumResults());
 	}
 }

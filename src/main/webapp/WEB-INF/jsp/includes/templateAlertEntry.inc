@@ -1,6 +1,6 @@
 <!-- Template for alert row -->
 <script type="text/x-kendo-tmpl" id="tpl-alert-entry">
-	<tr class="sw-list-entry gradient-bg">
+	<tr class="sw-list-entry">
 		<td class="ellipsis" style="max-width: 90px;" title="#:assetName#">
 			<div>
 				<span class="ellipsis" style="max-width: 120px; display: inline-block; vertical-align: middle; line-height: normal">

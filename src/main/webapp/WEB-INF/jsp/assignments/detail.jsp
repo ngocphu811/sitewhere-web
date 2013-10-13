@@ -73,10 +73,11 @@
 		</div>
 		<table id="measurements">
 			<colgroup>
-				<col style="width: 24%;"/>
-				<col style="width: 40%;"/>
-				<col style="width: 18%;"/>
-				<col style="width: 18%;"/>
+				<col style="width: 20%;"/>
+				<col style="width: 35%;"/>
+				<col style="width: 20%;"/>
+				<col style="width: 20%;"/>
+				<col style="width: 5%;"/>
 			</colgroup>
 			<thead>
 				<tr>
@@ -84,13 +85,13 @@
 					<th>Measurements</th>
 					<th>Event Date</th>
 					<th>Received Date</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr><td colspan="4"></td></tr>
+				<tr><td colspan="5"></td></tr>
 			</tbody>
 		</table>
-		<div id="measurements-pager" class="k-pager-wrap event-pager"></div>
 	</div>
 	<div>
 		<div class="k-header sw-button-bar">
@@ -240,19 +241,20 @@
 				total: "numResults",
 				parse: parseEventResults,
 			},
-			pageSize: 10
+            serverPaging: true,
+            serverSorting: true,
+            pageSize: 50,
 		});
 		
 		/** Create the measurements list */
         $("#measurements").kendoGrid({
 			dataSource : measurementsDS,
             rowTemplate: kendo.template($("#tpl-measurements-entry").html()),
-            scrollable: false,
+            scrollable: {
+                virtual: true
+            },
+            height: 300,
         });
-		
-	    $("#measurements-pager").kendoPager({
-	        dataSource: measurementsDS
-	    });
 		
 	    $("#btn-refresh-measurements").click(function() {
 	    	measurementsDS.read();

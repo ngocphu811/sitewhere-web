@@ -21,20 +21,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.sitewhere.rest.model.device.DeviceAlert;
+import com.sitewhere.rest.model.common.SearchCriteria;
 import com.sitewhere.rest.model.device.DeviceAssignment;
-import com.sitewhere.rest.model.device.DeviceLocation;
-import com.sitewhere.rest.model.device.DeviceMeasurements;
 import com.sitewhere.rest.model.device.Site;
 import com.sitewhere.rest.model.device.Zone;
 import com.sitewhere.rest.model.device.request.SiteCreateRequest;
 import com.sitewhere.rest.model.device.request.ZoneCreateRequest;
-import com.sitewhere.rest.service.search.DeviceAlertSearchResults;
-import com.sitewhere.rest.service.search.DeviceAssignmentSearchResults;
-import com.sitewhere.rest.service.search.DeviceLocationSearchResults;
-import com.sitewhere.rest.service.search.DeviceMeasurementsSearchResults;
 import com.sitewhere.rest.service.search.SearchResults;
-import com.sitewhere.rest.service.search.ZoneSearchResults;
 import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.server.user.SitewhereRoles;
 import com.sitewhere.spi.SiteWhereException;
@@ -142,14 +135,12 @@ public class SitesController extends SiteWhereController {
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "List all sites")
-	public SearchResults<Site> listSites() throws SiteWhereException {
-		List<Site> sitesConv = new ArrayList<Site>();
-		List<ISite> sites = SiteWhereServer.getInstance().getDeviceManagement().listSites();
-		for (ISite site : sites) {
-			sitesConv.add(Site.copy(site));
-		}
-		SearchResults<Site> results = new SearchResults<Site>(sitesConv);
-		return results;
+	public SearchResults<ISite> listSites(
+			@ApiParam(value = "Page Number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
+			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
+			throws SiteWhereException {
+		SearchCriteria criteria = new SearchCriteria(page, pageSize);
+		return SiteWhereServer.getInstance().getDeviceManagement().listSites(criteria);
 	}
 
 	/**
@@ -163,17 +154,14 @@ public class SitesController extends SiteWhereController {
 	@RequestMapping(value = "/{siteToken}/measurements", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "List measurements associated with a site")
-	public DeviceMeasurementsSearchResults listDeviceMeasurementsForSite(
+	public SearchResults<IDeviceMeasurements> listDeviceMeasurementsForSite(
 			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken,
-			@ApiParam(value = "Maximum number of matches to return", required = false, defaultValue = "100") @RequestParam(defaultValue = "100") int count)
+			@ApiParam(value = "Page Number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
+			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
 			throws SiteWhereException {
-		List<IDeviceMeasurements> matches = SiteWhereServer.getInstance().getDeviceManagement()
-				.listDeviceMeasurementsForSite(siteToken, count);
-		List<DeviceMeasurements> converted = new ArrayList<DeviceMeasurements>();
-		for (IDeviceMeasurements measurement : matches) {
-			converted.add(DeviceMeasurements.copy(measurement));
-		}
-		return new DeviceMeasurementsSearchResults(converted);
+		SearchCriteria criteria = new SearchCriteria(page, pageSize);
+		return SiteWhereServer.getInstance().getDeviceManagement()
+				.listDeviceMeasurementsForSite(siteToken, criteria);
 	}
 
 	/**
@@ -187,17 +175,14 @@ public class SitesController extends SiteWhereController {
 	@RequestMapping(value = "/{siteToken}/locations", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "List locations associated with a site")
-	public DeviceLocationSearchResults listDeviceLocationsForSite(
+	public SearchResults<IDeviceLocation> listDeviceLocationsForSite(
 			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken,
-			@ApiParam(value = "Maximum number of matches to return", required = false, defaultValue = "100") @RequestParam(defaultValue = "100") int count)
+			@ApiParam(value = "Page Number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
+			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
 			throws SiteWhereException {
-		List<IDeviceLocation> matches = SiteWhereServer.getInstance().getDeviceManagement()
-				.listDeviceLocationsForSite(siteToken, count);
-		List<DeviceLocation> converted = new ArrayList<DeviceLocation>();
-		for (IDeviceLocation location : matches) {
-			converted.add(DeviceLocation.copy(location));
-		}
-		return new DeviceLocationSearchResults(converted);
+		SearchCriteria criteria = new SearchCriteria(page, pageSize);
+		return SiteWhereServer.getInstance().getDeviceManagement()
+				.listDeviceLocationsForSite(siteToken, criteria);
 	}
 
 	/**
@@ -211,17 +196,14 @@ public class SitesController extends SiteWhereController {
 	@RequestMapping(value = "/{siteToken}/alerts", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "List alerts associated with a site")
-	public DeviceAlertSearchResults listDeviceAlertsForSite(
+	public SearchResults<IDeviceAlert> listDeviceAlertsForSite(
 			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken,
-			@ApiParam(value = "Maximum number of matches to return", required = false, defaultValue = "100") @RequestParam(defaultValue = "100") int count)
+			@ApiParam(value = "Page Number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
+			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
 			throws SiteWhereException {
-		List<IDeviceAlert> matches = SiteWhereServer.getInstance().getDeviceManagement()
-				.listDeviceAlertsForSite(siteToken, count);
-		List<DeviceAlert> converted = new ArrayList<DeviceAlert>();
-		for (IDeviceAlert alert : matches) {
-			converted.add(DeviceAlert.copy(alert));
-		}
-		return new DeviceAlertSearchResults(converted);
+		SearchCriteria criteria = new SearchCriteria(page, pageSize);
+		return SiteWhereServer.getInstance().getDeviceManagement()
+				.listDeviceAlertsForSite(siteToken, criteria);
 	}
 
 	/**
@@ -234,24 +216,26 @@ public class SitesController extends SiteWhereController {
 	@RequestMapping(value = "/{siteToken}/assignments", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "List device assignments associated with a site")
-	public DeviceAssignmentSearchResults findAssignmentsForSite(
+	public SearchResults<DeviceAssignment> findAssignmentsForSite(
 			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken,
 			@ApiParam(value = "Include detailed device information", required = false) @RequestParam(defaultValue = "false") boolean includeDevice,
 			@ApiParam(value = "Include detailed asset information", required = false) @RequestParam(defaultValue = "false") boolean includeAsset,
 			@ApiParam(value = "Include detailed site information", required = false) @RequestParam(defaultValue = "false") boolean includeSite,
-			@ApiParam(value = "Max records to return", required = false) @RequestParam(defaultValue = "100") int count)
+			@ApiParam(value = "Page Number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
+			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
 			throws SiteWhereException {
-		List<IDeviceAssignment> matches = SiteWhereServer.getInstance().getDeviceManagement()
-				.getDeviceAssignmentsForSite(siteToken);
+		SearchCriteria criteria = new SearchCriteria(page, pageSize);
+		SearchResults<IDeviceAssignment> matches = SiteWhereServer.getInstance().getDeviceManagement()
+				.getDeviceAssignmentsForSite(siteToken, criteria);
 		DeviceAssignmentMarshalHelper helper = new DeviceAssignmentMarshalHelper();
 		helper.setIncludeAsset(includeAsset);
 		helper.setIncludeDevice(includeDevice);
 		helper.setIncludeSite(includeSite);
 		List<DeviceAssignment> converted = new ArrayList<DeviceAssignment>();
-		for (IDeviceAssignment assignment : matches) {
+		for (IDeviceAssignment assignment : matches.getResults()) {
 			converted.add(helper.convert(assignment, SiteWhereServer.getInstance().getAssetModuleManager()));
 		}
-		return new DeviceAssignmentSearchResults(converted);
+		return new SearchResults<DeviceAssignment>(converted, matches.getNumResults());
 	}
 
 	/**
@@ -284,15 +268,12 @@ public class SitesController extends SiteWhereController {
 	@RequestMapping(value = "/{siteToken}/zones", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "List zones associated with a site")
-	public ZoneSearchResults listZonesForSite(
-			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken)
+	public SearchResults<IZone> listZonesForSite(
+			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken,
+			@ApiParam(value = "Page Number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
+			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
 			throws SiteWhereException {
-		List<Zone> conv = new ArrayList<Zone>();
-		List<IZone> zones = SiteWhereServer.getInstance().getDeviceManagement().listZones(siteToken);
-		for (IZone zone : zones) {
-			conv.add(Zone.copy(zone));
-		}
-		ZoneSearchResults results = new ZoneSearchResults(conv);
-		return results;
+		SearchCriteria criteria = new SearchCriteria(page, pageSize);
+		return SiteWhereServer.getInstance().getDeviceManagement().listZones(siteToken, criteria);
 	}
 }

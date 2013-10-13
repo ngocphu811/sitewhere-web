@@ -9,7 +9,6 @@
  */
 package com.sitewhere.web.rest.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -17,12 +16,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sitewhere.core.device.InterpolatedHistoryBuilder;
+import com.sitewhere.rest.model.common.SearchCriteria;
 import com.sitewhere.rest.model.device.DeviceLocation;
 import com.sitewhere.rest.model.device.InterpolatedAssignmentHistory;
-import com.sitewhere.rest.service.search.DeviceLocationSearchResults;
+import com.sitewhere.rest.service.search.SearchResults;
 import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.device.IDeviceLocation;
@@ -64,7 +65,8 @@ public class LocationsController extends SiteWhereController {
 	}
 
 	/**
-	 * Gets an interpolated history of locations derived from real locations within the search time period.
+	 * Gets an interpolated history of locations derived from real locations within the
+	 * search time period.
 	 * 
 	 * @param input
 	 * @return
@@ -74,24 +76,33 @@ public class LocationsController extends SiteWhereController {
 	@ResponseBody
 	@ApiOperation(value = "Get the interpolated assignment location history based on criteria")
 	public List<InterpolatedAssignmentHistory> getInterpolatedHistory(
-			@RequestBody AssignmentHistoryRequest input) throws SiteWhereException {
-		List<IDeviceLocation> matches = SiteWhereServer.getInstance().getDeviceManagement()
-				.listDeviceLocations(input.getAssignmentTokens(), input.getStartDate(), input.getEndDate());
+			@RequestBody AssignmentHistoryRequest input,
+			@ApiParam(value = "Page Number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
+			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
+			throws SiteWhereException {
+		SearchCriteria criteria = new SearchCriteria(page, pageSize);
+		SearchResults<IDeviceLocation> matches = SiteWhereServer
+				.getInstance()
+				.getDeviceManagement()
+				.listDeviceLocations(input.getAssignmentTokens(), input.getStartDate(), input.getEndDate(),
+						criteria);
 		InterpolatedHistoryBuilder builder = new InterpolatedHistoryBuilder();
-		return builder.build(matches);
+		return builder.build(matches.getResults());
 	}
 
 	@RequestMapping(value = "/history", method = RequestMethod.POST)
 	@ResponseBody
 	@ApiOperation(value = "Get the location history for assignments based on criteria")
-	public DeviceLocationSearchResults getDeviceAssignmentsLocationHistory(
-			@RequestBody AssignmentHistoryRequest input) throws SiteWhereException {
-		List<IDeviceLocation> matches = SiteWhereServer.getInstance().getDeviceManagement()
-				.listDeviceLocations(input.getAssignmentTokens(), input.getStartDate(), input.getEndDate());
-		List<DeviceLocation> converted = new ArrayList<DeviceLocation>();
-		for (IDeviceLocation location : matches) {
-			converted.add(DeviceLocation.copy(location));
-		}
-		return new DeviceLocationSearchResults(converted);
+	public SearchResults<IDeviceLocation> getDeviceAssignmentsLocationHistory(
+			@RequestBody AssignmentHistoryRequest input,
+			@ApiParam(value = "Page Number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
+			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
+			throws SiteWhereException {
+		SearchCriteria criteria = new SearchCriteria(page, pageSize);
+		return SiteWhereServer
+				.getInstance()
+				.getDeviceManagement()
+				.listDeviceLocations(input.getAssignmentTokens(), input.getStartDate(), input.getEndDate(),
+						criteria);
 	}
 }

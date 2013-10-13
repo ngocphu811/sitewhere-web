@@ -1,6 +1,6 @@
 <!-- Template for location row -->
 <script type="text/x-kendo-tmpl" id="tpl-location-entry">
-	<tr class="sw-list-entry gradient-bg">
+	<tr class="sw-list-entry">
 		<td>
 			<div>
 				<span class="ellipsis" style="max-width: 180px; display: inline-block; vertical-align: middle; line-height: normal">

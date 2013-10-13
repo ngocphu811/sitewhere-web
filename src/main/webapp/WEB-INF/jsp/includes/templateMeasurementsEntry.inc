@@ -1,6 +1,6 @@
 <!-- Template for measurements row -->
 <script type="text/x-kendo-tmpl" id="tpl-measurements-entry">
-	<tr class="sw-list-entry gradient-bg">
+	<tr class="sw-list-entry">
 		<td>
 			<span class="ellipsis" style="max-width: 180px; display: inline-block; vertical-align: middle; line-height: normal">
 				#:assetName#</span>
@@ -12,5 +12,6 @@
 		</td>
 		<td>#= formattedDate(eventDate) #</td>
 		<td>#= formattedDate(receivedDate) #</td>
+		<td>&nbsp;</td>
 	</tr>
 </script>

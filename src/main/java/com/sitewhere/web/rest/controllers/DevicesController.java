@@ -23,15 +23,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sitewhere.rest.model.common.SearchCriteria;
 import com.sitewhere.rest.model.device.Device;
 import com.sitewhere.rest.model.device.DeviceAssignment;
 import com.sitewhere.rest.model.device.DeviceEventBatch;
-import com.sitewhere.rest.model.device.DeviceSearchCriteria;
 import com.sitewhere.rest.model.device.request.DeviceAlertCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceLocationCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceMeasurementsCreateRequest;
-import com.sitewhere.rest.service.search.DeviceAssignmentSearchResults;
 import com.sitewhere.rest.service.search.SearchResults;
 import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.spi.SiteWhereException;
@@ -189,23 +188,26 @@ public class DevicesController extends SiteWhereController {
 	@RequestMapping(value = "/{hardwareId}/assignments", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "Get assignment history for a device")
-	public DeviceAssignmentSearchResults listDeviceAssignmentHistory(
+	public SearchResults<DeviceAssignment> listDeviceAssignmentHistory(
 			@ApiParam(value = "Hardware id", required = true) @PathVariable String hardwareId,
 			@ApiParam(value = "Include detailed asset information", required = false) @RequestParam(defaultValue = "false") boolean includeAsset,
 			@ApiParam(value = "Include detailed device information", required = false) @RequestParam(defaultValue = "false") boolean includeDevice,
-			@ApiParam(value = "Include detailed site information", required = false) @RequestParam(defaultValue = "false") boolean includeSite)
+			@ApiParam(value = "Include detailed site information", required = false) @RequestParam(defaultValue = "false") boolean includeSite,
+			@ApiParam(value = "Page Number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
+			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
 			throws SiteWhereException {
-		List<IDeviceAssignment> history = SiteWhereServer.getInstance().getDeviceManagement()
-				.getDeviceAssignmentHistory(hardwareId);
+		SearchCriteria criteria = new SearchCriteria(page, pageSize);
+		SearchResults<IDeviceAssignment> history = SiteWhereServer.getInstance().getDeviceManagement()
+				.getDeviceAssignmentHistory(hardwareId, criteria);
 		DeviceAssignmentMarshalHelper helper = new DeviceAssignmentMarshalHelper();
 		helper.setIncludeAsset(includeAsset);
 		helper.setIncludeDevice(includeDevice);
 		helper.setIncludeSite(includeSite);
 		List<DeviceAssignment> converted = new ArrayList<DeviceAssignment>();
-		for (IDeviceAssignment assignment : history) {
+		for (IDeviceAssignment assignment : history.getResults()) {
 			converted.add(helper.convert(assignment, SiteWhereServer.getInstance().getAssetModuleManager()));
 		}
-		return new DeviceAssignmentSearchResults(converted);
+		return new SearchResults<DeviceAssignment>(converted, history.getNumResults());
 	}
 
 	/**
@@ -220,25 +222,26 @@ public class DevicesController extends SiteWhereController {
 	public SearchResults<Device> listDevices(
 			@ApiParam(value = "Include deleted", required = false) @RequestParam(defaultValue = "false") boolean includeDeleted,
 			@ApiParam(value = "Include assignment if associated", required = false) @RequestParam(defaultValue = "false") boolean includeAssignment,
-			@ApiParam(value = "Max records to return", required = false) @RequestParam(defaultValue = "100") int count)
+			@ApiParam(value = "Page Number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
+			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
 			throws SiteWhereException {
-		List<Device> devicesConv = new ArrayList<Device>();
-		DeviceSearchCriteria criteria = new DeviceSearchCriteria();
-		criteria.setIncludeDeleted(includeDeleted);
-		List<IDevice> devices = SiteWhereServer.getInstance().getDeviceManagement().listDevices(criteria);
+		SearchCriteria criteria = new SearchCriteria(page, pageSize);
+		SearchResults<IDevice> results = SiteWhereServer.getInstance().getDeviceManagement()
+				.listDevices(includeDeleted, criteria);
 		DeviceMarshalHelper helper = new DeviceMarshalHelper();
 		helper.setIncludeAsset(false);
 		helper.setIncludeAssignment(includeAssignment);
-		for (IDevice device : devices) {
+		List<Device> devicesConv = new ArrayList<Device>();
+		for (IDevice device : results.getResults()) {
 			devicesConv.add(helper.convert(device, SiteWhereServer.getInstance().getAssetModuleManager()));
 		}
-		SearchResults<Device> results = new SearchResults<Device>(devicesConv);
-		return results;
+		return new SearchResults<Device>(devicesConv, results.getNumResults());
 	}
 
 	/**
-	 * Add a batch of events for the current assignment of the given device. Note that the hardware id in the
-	 * URL overrides the one specified in the {@link DeviceEventBatch} object.
+	 * Add a batch of events for the current assignment of the given device. Note that the
+	 * hardware id in the URL overrides the one specified in the {@link DeviceEventBatch}
+	 * object.
 	 * 
 	 * @param request
 	 * @return
@@ -285,17 +288,21 @@ public class DevicesController extends SiteWhereController {
 	@RequestMapping(value = "/unassigned", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "List devices that are not currently assigned")
-	public SearchResults<Device> listUnassignedDevices() throws SiteWhereException {
+	public SearchResults<Device> listUnassignedDevices(
+			@ApiParam(value = "Page Number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
+			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
+			throws SiteWhereException {
+		SearchCriteria criteria = new SearchCriteria(page, pageSize);
 		List<Device> devicesConv = new ArrayList<Device>();
-		List<IDevice> devices = SiteWhereServer.getInstance().getDeviceManagement().listUnassignedDevices();
+		SearchResults<IDevice> devices = SiteWhereServer.getInstance().getDeviceManagement()
+				.listUnassignedDevices(criteria);
 		DeviceMarshalHelper helper = new DeviceMarshalHelper();
 		helper.setIncludeAsset(false);
 		helper.setIncludeAssignment(false);
-		for (IDevice device : devices) {
+		for (IDevice device : devices.getResults()) {
 			devicesConv.add(helper.convert(device, SiteWhereServer.getInstance().getAssetModuleManager()));
 		}
-		SearchResults<Device> results = new SearchResults<Device>(devicesConv);
-		return results;
+		return new SearchResults<Device>(devicesConv, devices.getNumResults());
 	}
 
 	/**
