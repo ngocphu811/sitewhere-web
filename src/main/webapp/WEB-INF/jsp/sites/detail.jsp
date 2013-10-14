@@ -159,11 +159,11 @@
 		<table id="zones">
 			<colgroup>
 				<col style="width: 3%;"/>
-				<col style="width: 30%; max-width: 220px;"/>
+				<col style="width: 23%;"/>
 				<col style="width: 30%;"/>
 				<col style="width: 15%;"/>
 				<col style="width: 15%;"/>
-				<col style="width: 40px;"/>
+				<col style="width: 50px;"/>
 			</colgroup>
 			<thead>
 				<tr>
@@ -221,6 +221,12 @@
 	
 	/** Reference to tab panel */
 	var tabs;
+	
+	/** Size of pages from server */
+	var pageSize = 100;
+	
+	/** Height of event grids */
+	var gridHeight = 350;
 	
 	/** Called when 'delete assignment' is clicked */
 	function onDeleteAssignment(e, token) {
@@ -357,14 +363,17 @@
 				total: "numResults",
 				parse: parseEventResults,
 			},
-			pageSize: 10
+            serverPaging: true,
+            serverSorting: true,
+            pageSize: pageSize,
 		});
 		
 		/** Create the location list */
         $("#locations").kendoGrid({
 			dataSource : locationsDS,
             rowTemplate: kendo.template($("#tpl-location-entry").html()),
-            scrollable: false,
+            scrollable: true,
+            height: gridHeight,
         });
 		
 	    $("#locations-pager").kendoPager({
@@ -388,14 +397,17 @@
 				total: "numResults",
 				parse: parseEventResults,
 			},
-			pageSize: 10
+            serverPaging: true,
+            serverSorting: true,
+            pageSize: pageSize,
 		});
 		
 		/** Create the measurements list */
         $("#measurements").kendoGrid({
 			dataSource : measurementsDS,
             rowTemplate: kendo.template($("#tpl-measurements-entry").html()),
-            scrollable: false,
+            scrollable: true,
+            height: gridHeight,
         });
 		
 	    $("#measurements-pager").kendoPager({
@@ -419,14 +431,17 @@
 				total: "numResults",
 				parse: parseEventResults,
 			},
-			pageSize: 10
+            serverPaging: true,
+            serverSorting: true,
+            pageSize: pageSize,
 		});
 		
 		/** Create the measurements list */
         $("#alerts").kendoGrid({
 			dataSource : alertsDS,
             rowTemplate: kendo.template($("#tpl-alert-entry").html()),
-            scrollable: false,
+            scrollable: true,
+            height: gridHeight,
         });
 		
 	    $("#alerts-pager").kendoPager({
@@ -450,14 +465,17 @@
 				total: "numResults",
 				parse: parseZoneResults,
 			},
-			pageSize: 10
+            serverPaging: true,
+            serverSorting: true,
+            pageSize: pageSize,
 		});
 		
 		/** Create the measurements list */
         $("#zones").kendoGrid({
 			dataSource : zonesDS,
             rowTemplate: kendo.template($("#tpl-zone-entry").html()),
-            scrollable: false,
+            scrollable: true,
+            height: gridHeight,
         });
 		
 	    $("#zones-pager").kendoPager({
@@ -483,11 +501,32 @@
 		
 		/** Create the tab strip */
 		tabs = $("#tabs").kendoTabStrip({
-			animation: false
+			animation: false,
+			activate: onActivate
 		}).data("kendoTabStrip");
 		
 		loadSite();
 	});
+	
+	/** Force grid refresh on first tab activate (KendoUI bug) */
+	function onActivate(e) {
+		var tabName = e.item.textContent;
+		if (!e.item.swInitialized) {
+			if (tabName =="Locations") {
+				locationsDS.read();
+				e.item.swInitialized = true;
+			} else if (tabName =="Measurements") {
+				measurementsDS.read();
+				e.item.swInitialized = true;
+			} else if (tabName =="Alerts") {
+				alertsDS.read();
+				e.item.swInitialized = true;
+			} else if (tabName =="Zones") {
+				zonesDS.read();
+				e.item.swInitialized = true;
+			}
+		}
+	};
 	
 	/** Parses event response records to format dates */
 	function parseEventResults(response) {

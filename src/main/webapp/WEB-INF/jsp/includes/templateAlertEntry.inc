@@ -3,7 +3,7 @@
 	<tr class="sw-list-entry">
 		<td class="ellipsis" style="max-width: 90px;" title="#:assetName#">
 			<div>
-				<span class="ellipsis" style="max-width: 120px; display: inline-block; vertical-align: middle; line-height: normal">
+				<span class="ellipsis" style="max-width: 150px; display: inline-block; vertical-align: middle; line-height: normal">
 					#:assetName#</span>
 				<i class="icon-circle-arrow-right sw-action-glyph sw-view-glyph" title="View Assignment"
 					style="vertical-align: middle;" onclick="onViewAssignment(event, '#:deviceAssignmentToken#')"></i>
