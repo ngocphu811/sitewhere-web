@@ -42,10 +42,10 @@
 		</div>
 		<table id="locations">
 			<colgroup>
-				<col style="width: 24%;"/>
-				<col style="width: 40%;"/>
-				<col style="width: 18%;"/>
-				<col style="width: 18%;"/>
+				<col style="width: 20%;"/>
+				<col style="width: 37%;"/>
+				<col style="width: 20%;"/>
+				<col style="width: 20%;"/>
 			</colgroup>
 			<thead>
 				<tr>
@@ -74,10 +74,9 @@
 		<table id="measurements">
 			<colgroup>
 				<col style="width: 20%;"/>
-				<col style="width: 35%;"/>
+				<col style="width: 37%;"/>
 				<col style="width: 20%;"/>
 				<col style="width: 20%;"/>
-				<col style="width: 5%;"/>
 			</colgroup>
 			<thead>
 				<tr>
@@ -85,13 +84,13 @@
 					<th>Measurements</th>
 					<th>Event Date</th>
 					<th>Received Date</th>
-					<th></th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr><td colspan="5"></td></tr>
+				<tr><td colspan="4"></td></tr>
 			</tbody>
 		</table>
+		<div id="measurements-pager" class="k-pager-wrap event-pager"></div>
 	</div>
 	<div>
 		<div class="k-header sw-button-bar">
@@ -109,9 +108,8 @@
 				<col style="width: 10%;"/>
 				<col style="width: 20%;"/>
 				<col style="width: 10%;"/>
-				<col style="width: 4%;"/>
-				<col style="width: 18%;"/>
-				<col style="width: 18%;"/>
+				<col style="width: 20%;"/>
+				<col style="width: 20%;"/>
 			</colgroup>
 			<thead>
 				<tr>
@@ -119,13 +117,12 @@
 					<th>Type</th>
 					<th>Message</th>
 					<th>Source</th>
-					<th>Ack</th>
 					<th>Event Date</th>
 					<th>Received Date</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr><td colspan="7"></td></tr>
+				<tr><td colspan="6"></td></tr>
 			</tbody>
 		</table>
 		<div id="alerts-pager" class="k-pager-wrap event-pager"></div>
@@ -158,6 +155,12 @@
 	
 	/** Reference to tab panel */
 	var tabs;
+	
+	/** Size of pages from server */
+	var pageSize = 100;
+	
+	/** Height of event grids */
+	var gridHeight = 350;
 	
 	/** Called when 'edit assignment' is clicked */
 	function onEditAssignment(e, token) {
@@ -210,14 +213,17 @@
 				total: "numResults",
 				parse: parseEventResults,
 			},
-			pageSize: 10
+            serverPaging: true,
+            serverSorting: true,
+            pageSize: pageSize,
 		});
 		
 		/** Create the location list */
         $("#locations").kendoGrid({
 			dataSource : locationsDS,
             rowTemplate: kendo.template($("#tpl-location-entry").html()),
-            scrollable: false,
+            scrollable: true,
+            height: gridHeight,
         });
 		
 	    $("#locations-pager").kendoPager({
@@ -243,18 +249,20 @@
 			},
             serverPaging: true,
             serverSorting: true,
-            pageSize: 50,
+            pageSize: pageSize,
 		});
 		
 		/** Create the measurements list */
         $("#measurements").kendoGrid({
 			dataSource : measurementsDS,
             rowTemplate: kendo.template($("#tpl-measurements-entry").html()),
-            scrollable: {
-                virtual: true
-            },
-            height: 300,
+            scrollable: true,
+            height: gridHeight,
         });
+		
+	    $("#measurements-pager").kendoPager({
+	        dataSource: measurementsDS
+	    });
 		
 	    $("#btn-refresh-measurements").click(function() {
 	    	measurementsDS.read();
@@ -273,14 +281,19 @@
 				total: "numResults",
 				parse: parseEventResults,
 			},
-			pageSize: 10
+            serverPaging: true,
+            serverSorting: true,
+            pageSize: pageSize,
 		});
 		
 		/** Create the measurements list */
         $("#alerts").kendoGrid({
 			dataSource : alertsDS,
             rowTemplate: kendo.template($("#tpl-alert-entry").html()),
-            scrollable: false,
+            scrollable: {
+                virtual: true
+            },
+            height: gridHeight,
         });
 		
 	    $("#alerts-pager").kendoPager({
@@ -297,11 +310,26 @@
 		
 		/** Create the tab strip */
 		tabs = $("#tabs").kendoTabStrip({
-			animation: false
+			animation: false,
+			activate: onActivate
 		}).data("kendoTabStrip");
 		
 		loadAssignment();
 	});
+	
+	/** Force grid refresh on first tab activate (KendoUI bug) */
+	function onActivate(e) {
+		var tabName = e.item.textContent;
+		if (!e.item.swInitialized) {
+			if (tabName =="Measurements") {
+				measurementsDS.read();
+				e.item.swInitialized = true;
+			} else if (tabName =="Alerts") {
+				alertsDS.read();
+				e.item.swInitialized = true;
+			}
+		}
+	};
 	
 	/** Loads information for the selected assignment */
 	function loadAssignment() {

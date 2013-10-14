@@ -12,6 +12,5 @@
 		</td>
 		<td>#= formattedDate(eventDate) #</td>
 		<td>#= formattedDate(receivedDate) #</td>
-		<td>&nbsp;</td>
 	</tr>
 </script>

@@ -307,6 +307,7 @@ td[role="gridcell"] > input[type="text"] {
 
 .k-grid-content {
 	min-height: 200px;
+	overflow-x: hidden;
 }
 
 .k-virtual-scrollable-wrap {

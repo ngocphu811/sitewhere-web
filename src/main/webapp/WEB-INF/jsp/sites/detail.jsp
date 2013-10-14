@@ -61,10 +61,10 @@
 		</div>
 		<table id="locations">
 			<colgroup>
-				<col style="width: 24%;"/>
-				<col style="width: 40%;"/>
-				<col style="width: 18%;"/>
-				<col style="width: 18%;"/>
+				<col style="width: 20%;"/>
+				<col style="width: 37%;"/>
+				<col style="width: 20%;"/>
+				<col style="width: 20%;"/>
 			</colgroup>
 			<thead>
 				<tr>
@@ -92,10 +92,10 @@
 		</div>
 		<table id="measurements">
 			<colgroup>
-				<col style="width: 24%;"/>
-				<col style="width: 40%;"/>
-				<col style="width: 18%;"/>
-				<col style="width: 18%;"/>
+				<col style="width: 20%;"/>
+				<col style="width: 37%;"/>
+				<col style="width: 20%;"/>
+				<col style="width: 20%;"/>
 			</colgroup>
 			<thead>
 				<tr>
@@ -127,9 +127,8 @@
 				<col style="width: 10%;"/>
 				<col style="width: 20%;"/>
 				<col style="width: 10%;"/>
-				<col style="width: 4%;"/>
-				<col style="width: 18%;"/>
-				<col style="width: 18%;"/>
+				<col style="width: 20%;"/>
+				<col style="width: 20%;"/>
 			</colgroup>
 			<thead>
 				<tr>
@@ -137,13 +136,12 @@
 					<th>Type</th>
 					<th>Message</th>
 					<th>Source</th>
-					<th>Ack</th>
 					<th>Event Date</th>
 					<th>Received Date</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr><td colspan="7"></td></tr>
+				<tr><td colspan="6"></td></tr>
 			</tbody>
 		</table>
 		<div id="alerts-pager" class="k-pager-wrap event-pager"></div>
