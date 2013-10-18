@@ -15,13 +15,19 @@
 	<dependencies>
 		<dependency>
 			<groupId>sitewhere</groupId>
+			<artifactId>sitewhere-client</artifactId>
+			<version>${sitewhere.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>sitewhere</groupId>
 			<artifactId>sitewhere-core</artifactId>
 			<version>${sitewhere.version}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>sitewhere</groupId>
-			<artifactId>sitewhere-client</artifactId>
+			<artifactId>sitewhere-magento</artifactId>
 			<version>${sitewhere.version}</version>
 			<scope>compile</scope>
 		</dependency>
