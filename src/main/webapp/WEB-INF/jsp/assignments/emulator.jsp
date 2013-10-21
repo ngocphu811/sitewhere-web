@@ -424,44 +424,7 @@
     function onZonesLoaded() {
         initMap();
         hideTooltip();
-        refreshLocations();
-    	locationsLayer.bringToFront();
     }
-	
-	/** Get locations information from server */
-	function refreshLocations() {
-		$.getJSON("${pageContext.request.contextPath}/api/assignments/" + token + "/locations",
-				locationsGetSuccess, locationsGetFailed);
-	}
-    
-    /** Called on successful locations load request */
-    function locationsGetSuccess(response, status, jqXHR) {
-    	lastLocation = null;
-    	var locations = response.results.reverse();
-    	var marker;
-    	var latLngs = [];
-    	locationsLayer.clearLayers();
-    	for (var i = 0; i < locations.length; i++) {
-    		lastLocation = locations[i];
-    		marker = L.marker([lastLocation.latitude, lastLocation.longitude]).bindPopup(lastLocation.assetName);
-    		locationsLayer.addLayer(marker);
-    		latLngs.push(new L.LatLng(lastLocation.latitude, lastLocation.longitude));
-    	}
-    	if (latLngs.length > 0) {
-    		var line = L.polyline(latLngs, {color: 'white', opacity: 0.9});
-    		locationsLayer.addLayer(line);
-    	}
-    	if (lastLocation) {
-    		map.panTo(new L.LatLng(lastLocation.latitude, lastLocation.longitude));
-    	}
-    	locationsLayer.bringToFront();
-    }
-    
-	/** Handle error on getting locations data */
-	function locationsGetFailed(jqXHR, textStatus, errorThrown) {
-    	lastLocation = null;
-		handleError(jqXHR, "Unable to load location data.");
-	}
 	
 	/** Show the connect button */
 	function showConnectButton() {
@@ -490,8 +453,21 @@
 		map.on('click', onMouseClick);
 		
 		// Create layer for locations
-		locationsLayer = new L.FeatureGroup();
+		locationsLayer = L.FeatureGroup.SiteWhere.assignmentLocations({
+			'assignmentToken': token,
+			'onLocationsLoaded': onLocationsUpdated,
+		});
 		map.addLayer(locationsLayer);
+	}
+	
+	/** Refresh the location layer */
+	function refreshLocations() {
+		locationsLayer.refresh();
+	}
+	
+	/** When locations are updated, re-recenter map on last location */
+	function onLocationsUpdated() {
+		locationsLayer.panToLastLocation(map);
 	}
 	
 	/** Called when mouse moves over map */
