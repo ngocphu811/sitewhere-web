@@ -76,7 +76,7 @@ public class LocationsController extends SiteWhereController {
 	@ResponseBody
 	@ApiOperation(value = "Get the interpolated assignment location history based on criteria")
 	public List<InterpolatedAssignmentHistory> getInterpolatedHistory(
-			@ApiParam(value = "Assignment Tokens", required = false) @RequestParam List<String> tokens,
+			@ApiParam(value = "Assignment Tokens") @RequestParam List<String> tokens,
 			@ApiParam(value = "Start date", required = false) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date startDate,
 			@ApiParam(value = "End date", required = false) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate,
 			@ApiParam(value = "Page number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
@@ -93,7 +93,7 @@ public class LocationsController extends SiteWhereController {
 	@ResponseBody
 	@ApiOperation(value = "Get the location history for assignments based on criteria")
 	public SearchResults<IDeviceLocation> getDeviceAssignmentsLocationHistory(
-			@ApiParam(value = "Assignment Tokens", required = false) @RequestParam List<String> tokens,
+			@ApiParam(value = "Assignment Tokens") @RequestParam List<String> tokens,
 			@ApiParam(value = "Start date", required = false) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date startDate,
 			@ApiParam(value = "End date", required = false) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate,
 			@ApiParam(value = "Page number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
