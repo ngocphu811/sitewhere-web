@@ -9,25 +9,25 @@
  */
 package com.sitewhere.web.rest.controllers;
 
+import java.util.Date;
 import java.util.List;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sitewhere.core.device.InterpolatedHistoryBuilder;
-import com.sitewhere.rest.model.common.SearchCriteria;
+import com.sitewhere.rest.model.common.DateRangeSearchCriteria;
 import com.sitewhere.rest.model.device.DeviceLocation;
 import com.sitewhere.rest.model.device.InterpolatedAssignmentHistory;
 import com.sitewhere.rest.service.search.SearchResults;
 import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.device.IDeviceLocation;
-import com.sitewhere.web.rest.model.AssignmentHistoryRequest;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -72,37 +72,34 @@ public class LocationsController extends SiteWhereController {
 	 * @return
 	 * @throws SiteWhereException
 	 */
-	@RequestMapping(value = "/history/interpolated", method = RequestMethod.POST)
+	@RequestMapping(value = "/history/interpolated", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "Get the interpolated assignment location history based on criteria")
 	public List<InterpolatedAssignmentHistory> getInterpolatedHistory(
-			@RequestBody AssignmentHistoryRequest input,
-			@ApiParam(value = "Page Number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
+			@ApiParam(value = "Assignment Tokens", required = false) @RequestParam List<String> tokens,
+			@ApiParam(value = "Start date", required = false) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date startDate,
+			@ApiParam(value = "End date", required = false) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate,
+			@ApiParam(value = "Page number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
 			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
 			throws SiteWhereException {
-		SearchCriteria criteria = new SearchCriteria(page, pageSize);
-		SearchResults<IDeviceLocation> matches = SiteWhereServer
-				.getInstance()
-				.getDeviceManagement()
-				.listDeviceLocations(input.getAssignmentTokens(), input.getStartDate(), input.getEndDate(),
-						criteria);
+		DateRangeSearchCriteria criteria = new DateRangeSearchCriteria(page, pageSize, startDate, endDate);
+		SearchResults<IDeviceLocation> matches = SiteWhereServer.getInstance().getDeviceManagement()
+				.listDeviceLocations(tokens, criteria);
 		InterpolatedHistoryBuilder builder = new InterpolatedHistoryBuilder();
 		return builder.build(matches.getResults());
 	}
 
-	@RequestMapping(value = "/history", method = RequestMethod.POST)
+	@RequestMapping(value = "/history", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "Get the location history for assignments based on criteria")
 	public SearchResults<IDeviceLocation> getDeviceAssignmentsLocationHistory(
-			@RequestBody AssignmentHistoryRequest input,
-			@ApiParam(value = "Page Number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
+			@ApiParam(value = "Assignment Tokens", required = false) @RequestParam List<String> tokens,
+			@ApiParam(value = "Start date", required = false) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date startDate,
+			@ApiParam(value = "End date", required = false) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate,
+			@ApiParam(value = "Page number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
 			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
 			throws SiteWhereException {
-		SearchCriteria criteria = new SearchCriteria(page, pageSize);
-		return SiteWhereServer
-				.getInstance()
-				.getDeviceManagement()
-				.listDeviceLocations(input.getAssignmentTokens(), input.getStartDate(), input.getEndDate(),
-						criteria);
+		DateRangeSearchCriteria criteria = new DateRangeSearchCriteria(page, pageSize, startDate, endDate);
+		return SiteWhereServer.getInstance().getDeviceManagement().listDeviceLocations(tokens, criteria);
 	}
 }
