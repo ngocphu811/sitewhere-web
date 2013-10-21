@@ -419,29 +419,14 @@
 	/** Called when a message is received */
 	function onMessageArrived(message) {
 	}
-	
-	/** Get site information from server */
-	function refreshSite() {
-		$.getJSON("${pageContext.request.contextPath}/api/sites/" + siteToken,
-				siteGetSuccess, siteGetFailed);
-	}
-    
-    /** Called on successful site load request */
-    function siteGetSuccess(site, status, jqXHR) {
-		swInitMapForSite(map, site, null, onZonesLoaded);
-		hideTooltip();
-    }
     
     /** Brings locations layer to front once zones are loaded */
     function onZonesLoaded() {
+        initMap();
+        hideTooltip();
+        refreshLocations();
     	locationsLayer.bringToFront();
     }
-    
-	/** Handle error on getting site data */
-	function siteGetFailed(jqXHR, textStatus, errorThrown) {
-		handleError(jqXHR, "Unable to load site data.");
-		hideTooltip();
-	}
 	
 	/** Get locations information from server */
 	function refreshLocations() {
@@ -897,11 +882,11 @@
         showConnectButton();
        
         /** Create emulator map */
-		map = L.map('emulator-map');
-        initMap();
-       
-        refreshSite();
-        refreshLocations();
+		map = L.Map.siteWhere('emulator-map', {
+		    siteToken: siteToken,
+		    onZonesLoaded: onZonesLoaded,
+		});
+
         loadAssignment();
 	});
 </script>

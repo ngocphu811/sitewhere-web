@@ -20,6 +20,7 @@
 <link href="${pageContext.request.contextPath}/css/leaflet.draw.css" rel="stylesheet" />
 <link  href="${pageContext.request.contextPath}/css/highlight.default.css" rel="stylesheet">
 <script src="${pageContext.request.contextPath}/scripts/highlight.pack.js"></script>
+<script src="${pageContext.request.contextPath}/scripts/sitewhere-leaflet.js"></script>
 </c:if>
 <c:if test="${use_color_picker_includes == true}">
 <script src="${pageContext.request.contextPath}/scripts/spectrum.js"></script>
