@@ -64,12 +64,12 @@ public class DeviceAssignmentHelper {
 	}
 
 	/**
-	 * Get a string representation of the asset type.
+	 * Get a string representation of the device assignment type.
 	 * 
 	 * @return
 	 */
-	public String getAssetType() {
-		return getAssignment().getAssetType().toString();
+	public String getAssignmentType() {
+		return getAssignment().getAssignmentType().toString();
 	}
 
 	protected IDeviceAssignment getAssignment() {

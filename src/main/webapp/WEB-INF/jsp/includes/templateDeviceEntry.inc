@@ -101,7 +101,7 @@
 		</div>
 # if (data.assignment) { #
 		<div class="sw-device-list-entry-assignment">
-# if (assignment.assetType != 'Unassociated') { #
+# if (assignment.assignmentType != 'Unassociated') { #
 			<div class="sw-device-list-entry-logowrapper">
 				<img class="sw-device-list-entry-logo" src="#:assignment.assetImageUrl#"/>
 				<span class="label label-info sw-device-list-entry-logo-tag">Asset</span>

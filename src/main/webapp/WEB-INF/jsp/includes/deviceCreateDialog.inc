@@ -91,7 +91,7 @@
 		dcHardwareDS = new kendo.data.DataSource({
 			transport : {
 				read : {
-					url : "${pageContext.request.contextPath}/api/assets/hardware",
+					url : "${pageContext.request.contextPath}/api/assets/devices",
 					dataType : "json",
 				}
 			},
@@ -164,7 +164,7 @@
 	function dcHardwareSearchCriteriaUpdated() {
 		var criteria = $('#dc-hardware-search').val();
 		if (criteria != dcLastSearch) {
-			var url = "${pageContext.request.contextPath}/api/assets/hardware?criteria=" + criteria;
+			var url = "${pageContext.request.contextPath}/api/assets/devices?criteria=" + criteria;
 			dcHardwareDS.transport.options.read.url = url;
 			dcHardwareDS.read();
 		}

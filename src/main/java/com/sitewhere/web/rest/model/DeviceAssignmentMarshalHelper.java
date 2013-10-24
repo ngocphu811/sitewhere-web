@@ -19,16 +19,16 @@ import com.sitewhere.rest.model.device.DeviceLocation;
 import com.sitewhere.rest.model.device.Site;
 import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.spi.SiteWhereException;
-import com.sitewhere.spi.asset.AssetType;
 import com.sitewhere.spi.asset.IAsset;
 import com.sitewhere.spi.asset.IAssetModuleManager;
+import com.sitewhere.spi.device.DeviceAssignmentType;
 import com.sitewhere.spi.device.IDevice;
 import com.sitewhere.spi.device.IDeviceAssignment;
 import com.sitewhere.spi.device.ISite;
 
 /**
- * Configurable helper class that allows DeviceAssignment model objects to be created from IDeviceAssignment
- * SPI objects.
+ * Configurable helper class that allows DeviceAssignment model objects to be created from
+ * IDeviceAssignment SPI objects.
  * 
  * @author dadams
  */
@@ -64,14 +64,14 @@ public class DeviceAssignmentMarshalHelper {
 		result.setActiveDate(source.getActiveDate());
 		result.setReleasedDate(source.getReleasedDate());
 		result.setStatus(source.getStatus());
-		result.setAssetType(source.getAssetType());
+		result.setAssignmentType(source.getAssignmentType());
 		result.setAssetId(source.getAssetId());
 		MetadataProviderEntity.copy(source, result);
 		if (source.getLastLocation() != null) {
 			result.setLastLocation(DeviceLocation.copy(source.getLastLocation()));
 		}
-		if (source.getAssetType() != AssetType.Unassociated) {
-			IAsset asset = manager.getAssetById(source.getAssetType(), source.getAssetId());
+		if (source.getAssignmentType() != DeviceAssignmentType.Unassociated) {
+			IAsset asset = manager.getAssignedAsset(source.getAssignmentType(), source.getAssetId());
 			if (isIncludeAsset() || (asset == null)) {
 				if (asset instanceof HardwareAsset) {
 					result.setAssociatedHardware((HardwareAsset) asset);

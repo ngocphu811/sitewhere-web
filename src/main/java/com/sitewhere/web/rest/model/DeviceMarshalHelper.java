@@ -22,7 +22,8 @@ import com.sitewhere.spi.device.IDevice;
 import com.sitewhere.spi.device.IDeviceAssignment;
 
 /**
- * Configurable helper class that allows Device model objects to be created from IDevice SPI objects.
+ * Configurable helper class that allows Device model objects to be created from IDevice
+ * SPI objects.
  * 
  * @author dadams
  */
@@ -53,7 +54,7 @@ public class DeviceMarshalHelper {
 		result.setHardwareId(source.getHardwareId());
 		result.setComments(source.getComments());
 		MetadataProviderEntity.copy(source, result);
-		HardwareAsset deviceAsset = (HardwareAsset) manager.getAssetById(AssetType.Hardware,
+		HardwareAsset deviceAsset = (HardwareAsset) manager.getAssetById(AssetType.Device,
 				source.getAssetId());
 		if ((includeAsset) || (deviceAsset == null)) {
 			result.setDeviceAsset(deviceAsset);

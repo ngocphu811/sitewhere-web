@@ -1,12 +1,12 @@
 /*
-* $Id$
-* --------------------------------------------------------------------------------------
-* Copyright (c) Reveal Technologies, LLC. All rights reserved. http://www.reveal-tech.com
-*
-* The software in this package is published under the terms of the CPAL v1.0
-* license, a copy of which has been included with this distribution in the
-* LICENSE.txt file.
-*/
+ * $Id$
+ * --------------------------------------------------------------------------------------
+ * Copyright (c) Reveal Technologies, LLC. All rights reserved. http://www.reveal-tech.com
+ *
+ * The software in this package is published under the terms of the CPAL v1.0
+ * license, a copy of which has been included with this distribution in the
+ * LICENSE.txt file.
+ */
 package com.sitewhere.web.rest.controllers;
 
 import java.util.List;
@@ -87,6 +87,49 @@ public class AssetsController extends SiteWhereController {
 	}
 
 	/**
+	 * Search device assets for the given criteria.
+	 * 
+	 * @param criteria
+	 * @return
+	 * @throws SiteWhereException
+	 */
+	@RequestMapping(value = "/devices", method = RequestMethod.GET)
+	@ResponseBody
+	@SuppressWarnings("unchecked")
+	@ApiOperation(value = "Search device assets")
+	public SearchResults<HardwareAsset> searchDeviceAssets(
+			@ApiParam(value = "Criteria for search", required = false) @RequestParam(defaultValue = "") String criteria)
+			throws SiteWhereException {
+		List<HardwareAsset> found = (List<HardwareAsset>) SiteWhereServer.getInstance()
+				.getAssetModuleManager().search(AssetType.Device, criteria);
+		SearchResults<HardwareAsset> results = new SearchResults<HardwareAsset>(found);
+		return results;
+	}
+
+	/**
+	 * Get a device asset by unique id.
+	 * 
+	 * @param assetId
+	 * @return
+	 * @throws SiteWhereException
+	 */
+	@RequestMapping(value = "/devices/{assetId}", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(value = "Find device asset by unique id")
+	public HardwareAsset getDeviceAssetById(
+			@ApiParam(value = "Unique asset id", required = true) @PathVariable String assetId)
+			throws SiteWhereException {
+		IAsset result = SiteWhereServer.getInstance().getAssetModuleManager()
+				.getAssetById(AssetType.Device, assetId);
+		if (result instanceof HardwareAsset) {
+			return (HardwareAsset) result;
+		} else {
+			LOGGER.error("Result could not be marshaled as a hardware asset.");
+			return null;
+		}
+	}
+
+	/**
 	 * Search person assets for the given criteria.
 	 * 
 	 * @param criteria
@@ -104,5 +147,28 @@ public class AssetsController extends SiteWhereController {
 				.search(AssetType.Person, criteria);
 		SearchResults<PersonAsset> results = new SearchResults<PersonAsset>(found);
 		return results;
+	}
+
+	/**
+	 * Get a person asset by unique id.
+	 * 
+	 * @param assetId
+	 * @return
+	 * @throws SiteWhereException
+	 */
+	@RequestMapping(value = "/people/{assetId}", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(value = "Find person asset by unique id")
+	public PersonAsset getPersonAssetById(
+			@ApiParam(value = "Unique asset id", required = true) @PathVariable String assetId)
+			throws SiteWhereException {
+		IAsset result = SiteWhereServer.getInstance().getAssetModuleManager()
+				.getAssetById(AssetType.Person, assetId);
+		if (result instanceof PersonAsset) {
+			return (PersonAsset) result;
+		} else {
+			LOGGER.error("Result could not be marshaled as a person asset.");
+			return null;
+		}
 	}
 }

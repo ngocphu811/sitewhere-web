@@ -25,12 +25,12 @@
 						</div>
 					</div>
 					<div class="control-group">
-						<label class="control-label" for="ac-asset-type">Asset Type</label>
+						<label class="control-label" for="ac-asset-type">Assignment Type</label>
 						<div class="controls">
-							<select id="ac-asset-type"/></select>
+							<select id="ac-assignment-type"/></select>
 						</div>
 					</div>
-					<div id="ac-asset-type-forms">
+					<div id="ac-assignment-type-forms">
 						<div class="control-group" id="ac-asset-hardware-panel">
 							<label class="control-label" for="ac-hardware-search">Choose Hardware</label>
 							<div class="controls">
@@ -125,20 +125,20 @@
             }
         }).data("kendoDropDownList");
 		
-		/** Available asset types shown in dropdown */
-	    var assetTypes = [
+		/** Available assignment types shown in dropdown */
+	    var assignmentTypes = [
 			{ text: "Hardware", value: "Hardware" },
 			{ text: "Person", value: "Person" },
 			{ text: "Unassociated", value: "Unassociated" },
 		];
 
     	// create DropDownList from input HTML element
-    	$("#ac-asset-type").kendoDropDownList({
+    	$("#ac-assignment-type").kendoDropDownList({
     		dataTextField: "text",
     		dataValueField: "value",
-    	    dataSource: assetTypes,
+    	    dataSource: assignmentTypes,
     	    index: 0,
-    	    change: acAssetTypeChanged
+    	    change: acAssignmentTypeChanged
     	});
 		
 		/** Create AJAX datasource for hardware search */
@@ -209,18 +209,18 @@
 				return;
 			}
 	        
-	        var assetType = $("#ac-asset-type").val();
+	        var assignmentType = $("#ac-assignment-type").val();
 	        var assetId;
-	        if (assetType == "Hardware") {
+	        if (assignmentType == "Hardware") {
 	        	assetId = $('#ac-hardware-asset-id').val();
-	        } else if (assetType == "Person") {
+	        } else if (assignmentType == "Person") {
 	        	assetId = $('#ac-person-asset-id').val();
 	        }
 	        
 			var assignmentData = {
 				"deviceHardwareId": $('#ac-hardware-id').val(), 
 				"siteToken": $('#ac-site-token').val(), 
-				"assetType": $('#ac-asset-type').val(), 
+				"assignmentType": $('#ac-assignment-type').val(), 
 				"assetId": assetId, 
 				"metadata": acMetadataDS.data(),
 			}
@@ -256,10 +256,10 @@
         /** Verify that a site was chosen */
 		$("#ac-asset-type").require();
         
-        var assetType = $("#ac-asset-type").val();
-        if (assetType == "Hardware") {
+        var assignmentType = $("#ac-assignment-type").val();
+        if (assignmentType == "Hardware") {
         	$('#ac-hardware-asset-id').require();
-        } else if (assetType == "Person") {
+        } else if (assignmentType == "Person") {
         	$('#ac-person-asset-id').require();
         }
       
@@ -289,11 +289,11 @@
 		acLastSearch = criteria;
 	}
 	
-	/** Called to swap panel when asset type dropdown value changes */
-	function acAssetTypeChanged() {
-		var assetType = $("#ac-asset-type").val();
-		var panelName = "ac-asset-" + assetType.toLowerCase() + "-panel";
-		$("#ac-asset-type-forms").children().each(function(i) {
+	/** Called to swap panel when assignment type dropdown value changes */
+	function acAssignmentTypeChanged() {
+		var assignmentType = $("#ac-assignment-type").val();
+		var panelName = "ac-asset-" + assignmentType.toLowerCase() + "-panel";
+		$("#ac-assignment-type-forms").children().each(function(i) {
 			if (panelName == $(this).attr("id")) {
 				$(this).removeClass("hide");
 			} else if (!$(this).hasClass("hide")) {
@@ -344,8 +344,8 @@
 		acHardwareMatches.clearSelection();
 		$('#ac-person-asset-id').val("");
 		acPersonMatches.clearSelection();
-		$("#ac-asset-type").val("Hardware");
-		acAssetTypeChanged();
+		$("#ac-assignment-type").val("Hardware");
+		acAssignmentTypeChanged();
    	
 		// Select first tab.
 		acTabs.select(0);

@@ -56,7 +56,7 @@
 
 <!-- Static content in top of update dialog -->
 <script type="text/x-kendo-tmpl" id="au-static-block">
-# if ((assetType == 'Hardware') && (associatedHardware)) { #
+# if ((assignmentType == 'Hardware') && (associatedHardware)) { #
 	<div style="min-height: 120px;">
 		<div class="sw-assignment-update-imgwrapper">
 			<img class="sw-assignment-update-img" src="#:associatedHardware.imageUrl#"/>
@@ -66,7 +66,7 @@
 			<p class="ellipsis"><span class="sw-assignment-update-label">Asset:</span> #:associatedHardware.name#</p>
 			<p class="ellipsis"><span class="sw-assignment-update-label">SKU:</span> #:associatedHardware.sku#</p>
 			<p class="ellipsis"><span class="sw-assignment-update-label">Info:</span> #:associatedHardware.description#</p>
-# } else if ((assetType == 'Person') && (associatedPerson)) { #
+# } else if ((assignmentType == 'Person') && (associatedPerson)) { #
 	<div style="min-height: 120px;">
 		<div class="sw-assignment-update-imgwrapper">
 			<img class="sw-assignment-update-img" src="#:associatedPerson.photoUrl#"/>
@@ -76,7 +76,7 @@
 			<p class="ellipsis"><span class="sw-assignment-update-label">Asset:</span> #:associatedPerson.name#</p>
 			<p class="ellipsis"><span class="sw-assignment-update-label">Email:</span> #:associatedPerson.emailAddress#</p>
 			<p class="ellipsis"><span class="sw-assignment-update-label">Roles:</span> #:swArrayAsCommaDelimited(associatedPerson.roles)#</p>
-# } else if (assetType == 'Unassociated') { #
+# } else if (assignmentType == 'Unassociated') { #
 	<div style="min-height: 120px;">
 		<div class="sw-assignment-update-imgwrapper">
 			<img class="sw-assignment-update-img" src="#:device.assetImageUrl#"/>

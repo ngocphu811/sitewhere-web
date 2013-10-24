@@ -74,7 +74,7 @@ public class DevicesController extends SiteWhereController {
 	@ApiError(code = HttpServletResponse.SC_NOT_FOUND, reason = "Device references unknown hardware asset id")
 	public Device createDevice(@RequestBody DeviceCreateRequest request) throws SiteWhereException {
 		IAsset asset = SiteWhereServer.getInstance().getAssetModuleManager()
-				.getAssetById(AssetType.Hardware, request.getAssetId());
+				.getAssetById(AssetType.Device, request.getAssetId());
 		if (asset == null) {
 			throw new SiteWhereSystemException(ErrorCode.InvalidAssetReferenceId, ErrorLevel.ERROR,
 					HttpServletResponse.SC_NOT_FOUND);

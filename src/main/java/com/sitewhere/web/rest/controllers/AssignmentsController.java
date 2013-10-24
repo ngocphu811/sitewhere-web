@@ -40,8 +40,8 @@ import com.sitewhere.rest.service.search.SearchResults;
 import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.SiteWhereSystemException;
-import com.sitewhere.spi.asset.AssetType;
 import com.sitewhere.spi.device.DeviceAssignmentStatus;
+import com.sitewhere.spi.device.DeviceAssignmentType;
 import com.sitewhere.spi.device.IDeviceAlert;
 import com.sitewhere.spi.device.IDeviceAssignment;
 import com.sitewhere.spi.device.IDeviceLocation;
@@ -81,10 +81,11 @@ public class AssignmentsController extends SiteWhereController {
 		if (StringUtils.isEmpty(request.getSiteToken())) {
 			throw new SiteWhereException("Site token required.");
 		}
-		if (request.getAssetType() == null) {
-			throw new SiteWhereException("Asset type required.");
+		if (request.getAssignmentType() == null) {
+			throw new SiteWhereException("Assignment type required.");
 		}
-		if ((request.getAssetType() != AssetType.Unassociated) && (request.getAssetId() == null)) {
+		if ((request.getAssignmentType() != DeviceAssignmentType.Unassociated)
+				&& (request.getAssetId() == null)) {
 			throw new SiteWhereException("Asset id required.");
 		}
 		IDeviceManagement management = SiteWhereServer.getInstance().getDeviceManagement();
