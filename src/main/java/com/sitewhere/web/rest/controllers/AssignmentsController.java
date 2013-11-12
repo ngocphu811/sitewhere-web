@@ -177,7 +177,7 @@ public class AssignmentsController extends SiteWhereController {
 	@ApiOperation(value = "Update current location for a device assignment")
 	public DeviceAssignment updateDeviceAssignmentLocation(
 			@ApiParam(value = "Assignment token", required = true) @PathVariable String token,
-			@RequestBody DeviceLocation location) throws SiteWhereException {
+			@RequestBody DeviceLocationCreateRequest location) throws SiteWhereException {
 
 		IDeviceAssignment result = SiteWhereServer.getInstance().getDeviceManagement()
 				.updateDeviceAssignmentLocation(token, location);
