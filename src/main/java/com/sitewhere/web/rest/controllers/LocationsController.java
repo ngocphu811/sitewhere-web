@@ -13,8 +13,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,13 +20,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sitewhere.core.device.InterpolatedHistoryBuilder;
 import com.sitewhere.rest.model.common.DateRangeSearchCriteria;
-import com.sitewhere.rest.model.device.DeviceLocation;
 import com.sitewhere.rest.model.device.InterpolatedAssignmentHistory;
 import com.sitewhere.rest.service.search.SearchResults;
 import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.device.IDeviceLocation;
-import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 
@@ -37,32 +33,11 @@ import com.wordnik.swagger.annotations.ApiParam;
  * 
  * @author Derek Adams
  */
-@Controller
-@RequestMapping(value = "/locations")
-@Api(value = "", description = "Operations related to SiteWhere assignment locations.")
+// Location queries are being redesigned. These REST services are no longer available.
+// @Controller
+// @RequestMapping(value = "/locations")
+// @Api(value = "", description = "Operations related to SiteWhere assignment locations.")
 public class LocationsController extends SiteWhereController {
-
-	/**
-	 * Associates an alert with a device location.
-	 * 
-	 * @param locationId
-	 *            unique location id
-	 * @param alertId
-	 *            unique alert id
-	 * @return updated device location
-	 * @throws SiteWhereException
-	 */
-	@RequestMapping(value = "/{locationId}/alerts/{alertId}", method = RequestMethod.PUT)
-	@ResponseBody
-	@ApiOperation(value = "Associate an alert with a device location")
-	public DeviceLocation associateAlertWithDeviceLocation(
-			@ApiParam(value = "Location id", required = true) @PathVariable String locationId,
-			@ApiParam(value = "Alert Id", required = true) @PathVariable String alertId)
-			throws SiteWhereException {
-		IDeviceLocation updated = SiteWhereServer.getInstance().getDeviceManagement()
-				.associateAlertWithLocation(alertId, locationId);
-		return DeviceLocation.copy(updated);
-	}
 
 	/**
 	 * Gets an interpolated history of locations derived from real locations within the
