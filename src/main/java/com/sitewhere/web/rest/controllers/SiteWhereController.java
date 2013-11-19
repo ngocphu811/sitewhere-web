@@ -80,6 +80,7 @@ public class SiteWhereController {
 					response.setHeader(ISiteWhereWebConstants.HEADER_SITEWHERE_ERROR, e.getMessage());
 					response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
 				}
+				LOGGER.error("Exeception thrown during REST processing.", e);
 			}
 		} catch (IOException e1) {
 			e1.printStackTrace();
