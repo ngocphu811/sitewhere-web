@@ -88,6 +88,9 @@ public class SitesController extends SiteWhereController {
 			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken)
 			throws SiteWhereException {
 		ISite site = SiteWhereServer.getInstance().getDeviceManagement().getSiteByToken(siteToken);
+		if (site == null) {
+			throw new SiteWhereSystemException(ErrorCode.InvalidSiteToken, ErrorLevel.ERROR);
+		}
 		return Site.copy(site);
 	}
 
