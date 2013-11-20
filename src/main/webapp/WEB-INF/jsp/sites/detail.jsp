@@ -333,7 +333,9 @@
 				    return response;
 				}
 			},
-			pageSize: 10
+            serverPaging: true,
+            serverSorting: true,
+            pageSize: 15,
 		});
 		
 		/** Create the assignments list */
@@ -467,7 +469,7 @@
 			},
             serverPaging: true,
             serverSorting: true,
-            pageSize: pageSize,
+            pageSize: 20,
 		});
 		
 		/** Create the measurements list */

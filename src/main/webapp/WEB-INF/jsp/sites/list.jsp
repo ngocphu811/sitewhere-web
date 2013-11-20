@@ -110,6 +110,8 @@
 				    return response;
 				}
 			},
+            serverPaging: true,
+            serverSorting: true,
 			pageSize: 10
 		});
 		
