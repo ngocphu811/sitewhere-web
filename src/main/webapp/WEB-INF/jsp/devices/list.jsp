@@ -127,7 +127,9 @@
 				    return response;
 				}
 			},
-			pageSize: 10
+            serverPaging: true,
+            serverSorting: true,
+            pageSize: 15,
 		});
 		
 		/** Create the list of devices */
