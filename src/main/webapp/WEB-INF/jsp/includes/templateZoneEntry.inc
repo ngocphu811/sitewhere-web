@@ -1,6 +1,6 @@
 <!-- Template for location row -->
 <script type="text/x-kendo-tmpl" id="tpl-zone-entry">
-	<tr class="sw-list-entry gradient-bg">
+	<tr class="sw-list-entry row-gradient">
 		<td style="padding: 5px;">
 			<div style="width: 15px; height: 100% margin: 3px; border: 2px solid #= borderColor #">
 				<div style="width: 100%; height: 15px; background-color: #= fillColor #; opacity: #= opacity #"></div>

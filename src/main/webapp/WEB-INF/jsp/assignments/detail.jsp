@@ -42,15 +42,15 @@
 		</div>
 		<table id="locations">
 			<colgroup>
-				<col style="width: 20%;"/>
-				<col style="width: 37%;"/>
-				<col style="width: 20%;"/>
-				<col style="width: 20%;"/>
+				<col style="width: 25%;"/>
+				<col style="width: 25%;"/>
+				<col style="width: 25%;"/>
+				<col style="width: 25%;"/>
 			</colgroup>
 			<thead>
 				<tr>
-					<th>Asset</th>
-					<th>Location (Lat/Long)</th>
+					<th>Latitude</th>
+					<th>Longitude</th>
 					<th>Event Date</th>
 					<th>Received Date</th>
 				</tr>
@@ -73,21 +73,19 @@
 		</div>
 		<table id="measurements">
 			<colgroup>
-				<col style="width: 20%;"/>
 				<col style="width: 37%;"/>
 				<col style="width: 20%;"/>
 				<col style="width: 20%;"/>
 			</colgroup>
 			<thead>
 				<tr>
-					<th>Asset</th>
 					<th>Measurements</th>
 					<th>Event Date</th>
 					<th>Received Date</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr><td colspan="4"></td></tr>
+				<tr><td colspan="3"></td></tr>
 			</tbody>
 		</table>
 		<div id="measurements-pager" class="k-pager-wrap event-pager"></div>
@@ -104,7 +102,6 @@
 		</div>
 		<table id="alerts">
 			<colgroup>
-				<col style="width: 20%;"/>
 				<col style="width: 10%;"/>
 				<col style="width: 20%;"/>
 				<col style="width: 10%;"/>
@@ -113,7 +110,6 @@
 			</colgroup>
 			<thead>
 				<tr>
-					<th>Asset</th>
 					<th>Type</th>
 					<th>Message</th>
 					<th>Source</th>
@@ -122,7 +118,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr><td colspan="6"></td></tr>
+				<tr><td colspan="5"></td></tr>
 			</tbody>
 		</table>
 		<div id="alerts-pager" class="k-pager-wrap event-pager"></div>
@@ -290,9 +286,7 @@
         $("#alerts").kendoGrid({
 			dataSource : alertsDS,
             rowTemplate: kendo.template($("#tpl-alert-entry").html()),
-            scrollable: {
-                virtual: true
-            },
+            scrollable: true,
             height: gridHeight,
         });
 		

@@ -196,6 +196,15 @@
    background-image: -o-linear-gradient(top, #ffffff, #f0f0f0);
 }
 
+.row-gradient {
+   background-color: #ffffff; 
+   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ffffff), to(#fafafa));
+   background-image: -webkit-linear-gradient(top, #ffffff, #fafafa); 
+   background-image: -moz-linear-gradient(top, #ffffff, #fafafa);
+   background-image: -ms-linear-gradient(top, #ffffff, #fafafa);
+   background-image: -o-linear-gradient(top, #ffffff, #fafafa);
+}
+
 .sw-assignment-active {
    background-color: #f5fff5; 
    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ffffff), to(#f5fff5));
