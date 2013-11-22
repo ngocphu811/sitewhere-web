@@ -42,21 +42,23 @@
 		</div>
 		<table id="locations">
 			<colgroup>
-				<col style="width: 25%;"/>
-				<col style="width: 25%;"/>
-				<col style="width: 25%;"/>
-				<col style="width: 25%;"/>
+				<col style="width: 20%;"/>
+				<col style="width: 20%;"/>
+				<col style="width: 20%;"/>
+				<col style="width: 20%;"/>
+				<col style="width: 20%;"/>
 			</colgroup>
 			<thead>
 				<tr>
 					<th>Latitude</th>
 					<th>Longitude</th>
+					<th>Elevation</th>
 					<th>Event Date</th>
 					<th>Received Date</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr><td colspan="4"></td></tr>
+				<tr><td colspan="5"></td></tr>
 			</tbody>
 		</table>
 		<div id="locations-pager" class="k-pager-wrap event-pager"></div>

@@ -28,6 +28,9 @@ import com.sitewhere.rest.model.common.SearchCriteria;
 import com.sitewhere.rest.model.device.DeviceAssignment;
 import com.sitewhere.rest.model.device.Site;
 import com.sitewhere.rest.model.device.Zone;
+import com.sitewhere.rest.model.device.asset.DeviceAlertWithAsset;
+import com.sitewhere.rest.model.device.asset.DeviceLocationWithAsset;
+import com.sitewhere.rest.model.device.asset.DeviceMeasurementsWithAsset;
 import com.sitewhere.rest.model.device.request.SiteCreateRequest;
 import com.sitewhere.rest.model.device.request.ZoneCreateRequest;
 import com.sitewhere.rest.service.search.SearchResults;
@@ -35,6 +38,7 @@ import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.server.user.SitewhereRoles;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.SiteWhereSystemException;
+import com.sitewhere.spi.asset.IAssetModuleManager;
 import com.sitewhere.spi.device.IDeviceAlert;
 import com.sitewhere.spi.device.IDeviceAssignment;
 import com.sitewhere.spi.device.IDeviceLocation;
@@ -168,8 +172,17 @@ public class SitesController extends SiteWhereController {
 			@ApiParam(value = "End date", required = false) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate)
 			throws SiteWhereException {
 		DateRangeSearchCriteria criteria = new DateRangeSearchCriteria(page, pageSize, startDate, endDate);
-		return SiteWhereServer.getInstance().getDeviceManagement()
+		SearchResults<IDeviceMeasurements> results = SiteWhereServer.getInstance().getDeviceManagement()
 				.listDeviceMeasurementsForSite(siteToken, criteria);
+
+		// Marshal with asset info since multiple assignments might match.
+		List<IDeviceMeasurements> wrapped = new ArrayList<IDeviceMeasurements>();
+		IAssetModuleManager assets = SiteWhereServer.getInstance().getAssetModuleManager();
+		for (IDeviceMeasurements result : results.getResults()) {
+			wrapped.add(new DeviceMeasurementsWithAsset(result, assets));
+		}
+		results.setResults(wrapped);
+		return results;
 	}
 
 	/**
@@ -191,8 +204,17 @@ public class SitesController extends SiteWhereController {
 			@ApiParam(value = "End date", required = false) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate)
 			throws SiteWhereException {
 		DateRangeSearchCriteria criteria = new DateRangeSearchCriteria(page, pageSize, startDate, endDate);
-		return SiteWhereServer.getInstance().getDeviceManagement()
+		SearchResults<IDeviceLocation> results = SiteWhereServer.getInstance().getDeviceManagement()
 				.listDeviceLocationsForSite(siteToken, criteria);
+
+		// Marshal with asset info since multiple assignments might match.
+		List<IDeviceLocation> wrapped = new ArrayList<IDeviceLocation>();
+		IAssetModuleManager assets = SiteWhereServer.getInstance().getAssetModuleManager();
+		for (IDeviceLocation result : results.getResults()) {
+			wrapped.add(new DeviceLocationWithAsset(result, assets));
+		}
+		results.setResults(wrapped);
+		return results;
 	}
 
 	/**
@@ -214,8 +236,17 @@ public class SitesController extends SiteWhereController {
 			@ApiParam(value = "End date", required = false) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate)
 			throws SiteWhereException {
 		DateRangeSearchCriteria criteria = new DateRangeSearchCriteria(page, pageSize, startDate, endDate);
-		return SiteWhereServer.getInstance().getDeviceManagement()
+		SearchResults<IDeviceAlert> results = SiteWhereServer.getInstance().getDeviceManagement()
 				.listDeviceAlertsForSite(siteToken, criteria);
+
+		// Marshal with asset info since multiple assignments might match.
+		List<IDeviceAlert> wrapped = new ArrayList<IDeviceAlert>();
+		IAssetModuleManager assets = SiteWhereServer.getInstance().getAssetModuleManager();
+		for (IDeviceAlert result : results.getResults()) {
+			wrapped.add(new DeviceAlertWithAsset(result, assets));
+		}
+		results.setResults(wrapped);
+		return results;
 	}
 
 	/**

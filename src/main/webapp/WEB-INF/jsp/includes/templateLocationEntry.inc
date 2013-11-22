@@ -7,6 +7,9 @@
 		<td>
 			<div>#= kendo.toString(longitude, "\\#\\#\\#.000000")#</div>
 		</td>
+		<td>
+			<div>#= kendo.toString(elevation, "\\#\\#\\#.000000")#</div>
+		</td>
 		<td>#= formattedDate(eventDate) #</td>
 		<td>#= formattedDate(receivedDate) #</td>
 	</tr>

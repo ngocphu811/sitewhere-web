@@ -10,7 +10,7 @@
 			</div>
 		</td>
 		<td>
-			<div>#= kendo.toString(latitude, "\\#\\#\\#.000000") + ", " + kendo.toString(longitude, "\\#\\#\\#.000000")#</div>
+			<div>#= kendo.toString(latitude, "\\#\\#\\#.000000") + ", " + kendo.toString(longitude, "\\#\\#\\#.000000")+ ", " + kendo.toString(elevation, "\\#\\#\\#.000000")#</div>
 		</td>
 		<td>#= formattedDate(eventDate) #</td>
 		<td>#= formattedDate(receivedDate) #</td>

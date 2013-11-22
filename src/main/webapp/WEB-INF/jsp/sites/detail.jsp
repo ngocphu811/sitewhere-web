@@ -69,7 +69,7 @@
 			<thead>
 				<tr>
 					<th>Asset</th>
-					<th>Location (Lat/Long)</th>
+					<th>Location (Lat/Long/Elevation)</th>
 					<th>Event Date</th>
 					<th>Received Date</th>
 				</tr>
@@ -192,9 +192,9 @@
 <%@ include file="../includes/assignmentUpdateDialog.inc"%>
 <%@ include file="../includes/templateSiteEntry.inc"%>
 <%@ include file="../includes/templateAssignmentEntry.inc"%>
-<%@ include file="../includes/templateLocationEntry.inc"%>
-<%@ include file="../includes/templateMeasurementsEntry.inc"%>
-<%@ include file="../includes/templateAlertEntry.inc"%>
+<%@ include file="../includes/templateSiteLocationEntry.inc"%>
+<%@ include file="../includes/templateSiteMeasurementsEntry.inc"%>
+<%@ include file="../includes/templateSiteAlertEntry.inc"%>
 <%@ include file="../includes/templateZoneEntry.inc"%>
 <%@ include file="../includes/commonFunctions.inc"%>
 
