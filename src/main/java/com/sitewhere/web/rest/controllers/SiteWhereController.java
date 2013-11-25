@@ -98,6 +98,7 @@ public class SiteWhereController {
 		LOGGER.error("Unhandled runtime exception.", e);
 		try {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			LOGGER.error("Unhandled runtime exception.", e);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -113,6 +114,7 @@ public class SiteWhereController {
 	protected void handleAccessDenied(AccessDeniedException e, HttpServletResponse response) {
 		try {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);
+			LOGGER.error("Access denied.", e);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
