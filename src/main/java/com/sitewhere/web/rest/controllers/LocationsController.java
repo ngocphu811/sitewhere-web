@@ -19,12 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sitewhere.core.device.InterpolatedHistoryBuilder;
-import com.sitewhere.rest.model.common.DateRangeSearchCriteria;
 import com.sitewhere.rest.model.device.InterpolatedAssignmentHistory;
-import com.sitewhere.rest.service.search.SearchResults;
+import com.sitewhere.rest.model.search.DateRangeSearchCriteria;
 import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.device.IDeviceLocation;
+import com.sitewhere.spi.search.ISearchResults;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 
@@ -58,8 +58,8 @@ public class LocationsController extends SiteWhereController {
 			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
 			throws SiteWhereException {
 		DateRangeSearchCriteria criteria = new DateRangeSearchCriteria(page, pageSize, startDate, endDate);
-		SearchResults<IDeviceLocation> matches = SiteWhereServer.getInstance().getDeviceManagement()
-				.listDeviceLocations(tokens, criteria);
+		ISearchResults<IDeviceLocation> matches =
+				SiteWhereServer.getInstance().getDeviceManagement().listDeviceLocations(tokens, criteria);
 		InterpolatedHistoryBuilder builder = new InterpolatedHistoryBuilder();
 		return builder.build(matches.getResults());
 	}
@@ -67,7 +67,7 @@ public class LocationsController extends SiteWhereController {
 	@RequestMapping(value = "/history", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "Get the location history for assignments based on criteria")
-	public SearchResults<IDeviceLocation> getDeviceAssignmentsLocationHistory(
+	public ISearchResults<IDeviceLocation> getDeviceAssignmentsLocationHistory(
 			@ApiParam(value = "Assignment Tokens") @RequestParam List<String> tokens,
 			@ApiParam(value = "Start date", required = false) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date startDate,
 			@ApiParam(value = "End date", required = false) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate,

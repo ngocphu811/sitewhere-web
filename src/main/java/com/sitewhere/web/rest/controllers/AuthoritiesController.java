@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sitewhere.rest.model.search.SearchResults;
 import com.sitewhere.rest.model.user.GrantedAuthority;
 import com.sitewhere.rest.model.user.GrantedAuthoritySearchCriteria;
 import com.sitewhere.rest.model.user.request.GrantedAuthorityCreateRequest;
-import com.sitewhere.rest.service.search.SearchResults;
 import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.SiteWhereSystemException;

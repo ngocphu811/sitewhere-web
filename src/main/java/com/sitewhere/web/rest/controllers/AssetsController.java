@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sitewhere.rest.model.asset.HardwareAsset;
 import com.sitewhere.rest.model.asset.PersonAsset;
-import com.sitewhere.rest.service.search.SearchResults;
+import com.sitewhere.rest.model.search.SearchResults;
 import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.asset.AssetType;

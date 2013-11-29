@@ -24,8 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sitewhere.core.user.SitewhereRoles;
-import com.sitewhere.rest.model.common.DateRangeSearchCriteria;
-import com.sitewhere.rest.model.common.SearchCriteria;
 import com.sitewhere.rest.model.device.DeviceAssignment;
 import com.sitewhere.rest.model.device.Site;
 import com.sitewhere.rest.model.device.Zone;
@@ -34,7 +32,9 @@ import com.sitewhere.rest.model.device.asset.DeviceLocationWithAsset;
 import com.sitewhere.rest.model.device.asset.DeviceMeasurementsWithAsset;
 import com.sitewhere.rest.model.device.request.SiteCreateRequest;
 import com.sitewhere.rest.model.device.request.ZoneCreateRequest;
-import com.sitewhere.rest.service.search.SearchResults;
+import com.sitewhere.rest.model.search.DateRangeSearchCriteria;
+import com.sitewhere.rest.model.search.SearchCriteria;
+import com.sitewhere.rest.model.search.SearchResults;
 import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.SiteWhereSystemException;
@@ -47,6 +47,7 @@ import com.sitewhere.spi.device.ISite;
 import com.sitewhere.spi.device.IZone;
 import com.sitewhere.spi.error.ErrorCode;
 import com.sitewhere.spi.error.ErrorLevel;
+import com.sitewhere.spi.search.ISearchResults;
 import com.sitewhere.web.rest.model.DeviceAssignmentMarshalHelper;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -145,7 +146,7 @@ public class SitesController extends SiteWhereController {
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "List all sites")
-	public SearchResults<ISite> listSites(
+	public ISearchResults<ISite> listSites(
 			@ApiParam(value = "Page Number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
 			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
 			throws SiteWhereException {
@@ -164,7 +165,7 @@ public class SitesController extends SiteWhereController {
 	@RequestMapping(value = "/{siteToken}/measurements", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "List measurements associated with a site")
-	public SearchResults<IDeviceMeasurements> listDeviceMeasurementsForSite(
+	public ISearchResults<IDeviceMeasurements> listDeviceMeasurementsForSite(
 			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken,
 			@ApiParam(value = "Page number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
 			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize,
@@ -172,8 +173,9 @@ public class SitesController extends SiteWhereController {
 			@ApiParam(value = "End date", required = false) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate)
 			throws SiteWhereException {
 		DateRangeSearchCriteria criteria = new DateRangeSearchCriteria(page, pageSize, startDate, endDate);
-		SearchResults<IDeviceMeasurements> results = SiteWhereServer.getInstance().getDeviceManagement()
-				.listDeviceMeasurementsForSite(siteToken, criteria);
+		ISearchResults<IDeviceMeasurements> results =
+				SiteWhereServer.getInstance().getDeviceManagement().listDeviceMeasurementsForSite(siteToken,
+						criteria);
 
 		// Marshal with asset info since multiple assignments might match.
 		List<IDeviceMeasurements> wrapped = new ArrayList<IDeviceMeasurements>();
@@ -181,8 +183,7 @@ public class SitesController extends SiteWhereController {
 		for (IDeviceMeasurements result : results.getResults()) {
 			wrapped.add(new DeviceMeasurementsWithAsset(result, assets));
 		}
-		results.setResults(wrapped);
-		return results;
+		return new SearchResults<IDeviceMeasurements>(wrapped, results.getNumResults());
 	}
 
 	/**
@@ -196,7 +197,7 @@ public class SitesController extends SiteWhereController {
 	@RequestMapping(value = "/{siteToken}/locations", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "List locations associated with a site")
-	public SearchResults<IDeviceLocation> listDeviceLocationsForSite(
+	public ISearchResults<IDeviceLocation> listDeviceLocationsForSite(
 			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken,
 			@ApiParam(value = "Page number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
 			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize,
@@ -204,8 +205,9 @@ public class SitesController extends SiteWhereController {
 			@ApiParam(value = "End date", required = false) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate)
 			throws SiteWhereException {
 		DateRangeSearchCriteria criteria = new DateRangeSearchCriteria(page, pageSize, startDate, endDate);
-		SearchResults<IDeviceLocation> results = SiteWhereServer.getInstance().getDeviceManagement()
-				.listDeviceLocationsForSite(siteToken, criteria);
+		ISearchResults<IDeviceLocation> results =
+				SiteWhereServer.getInstance().getDeviceManagement().listDeviceLocationsForSite(siteToken,
+						criteria);
 
 		// Marshal with asset info since multiple assignments might match.
 		List<IDeviceLocation> wrapped = new ArrayList<IDeviceLocation>();
@@ -213,8 +215,7 @@ public class SitesController extends SiteWhereController {
 		for (IDeviceLocation result : results.getResults()) {
 			wrapped.add(new DeviceLocationWithAsset(result, assets));
 		}
-		results.setResults(wrapped);
-		return results;
+		return new SearchResults<IDeviceLocation>(wrapped, results.getNumResults());
 	}
 
 	/**
@@ -228,7 +229,7 @@ public class SitesController extends SiteWhereController {
 	@RequestMapping(value = "/{siteToken}/alerts", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "List alerts associated with a site")
-	public SearchResults<IDeviceAlert> listDeviceAlertsForSite(
+	public ISearchResults<IDeviceAlert> listDeviceAlertsForSite(
 			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken,
 			@ApiParam(value = "Page number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
 			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize,
@@ -236,8 +237,9 @@ public class SitesController extends SiteWhereController {
 			@ApiParam(value = "End date", required = false) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate)
 			throws SiteWhereException {
 		DateRangeSearchCriteria criteria = new DateRangeSearchCriteria(page, pageSize, startDate, endDate);
-		SearchResults<IDeviceAlert> results = SiteWhereServer.getInstance().getDeviceManagement()
-				.listDeviceAlertsForSite(siteToken, criteria);
+		ISearchResults<IDeviceAlert> results =
+				SiteWhereServer.getInstance().getDeviceManagement().listDeviceAlertsForSite(siteToken,
+						criteria);
 
 		// Marshal with asset info since multiple assignments might match.
 		List<IDeviceAlert> wrapped = new ArrayList<IDeviceAlert>();
@@ -245,8 +247,7 @@ public class SitesController extends SiteWhereController {
 		for (IDeviceAlert result : results.getResults()) {
 			wrapped.add(new DeviceAlertWithAsset(result, assets));
 		}
-		results.setResults(wrapped);
-		return results;
+		return new SearchResults<IDeviceAlert>(wrapped, results.getNumResults());
 	}
 
 	/**
@@ -259,7 +260,7 @@ public class SitesController extends SiteWhereController {
 	@RequestMapping(value = "/{siteToken}/assignments", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "List device assignments associated with a site")
-	public SearchResults<DeviceAssignment> findAssignmentsForSite(
+	public ISearchResults<DeviceAssignment> findAssignmentsForSite(
 			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken,
 			@ApiParam(value = "Include detailed device information", required = false) @RequestParam(defaultValue = "false") boolean includeDevice,
 			@ApiParam(value = "Include detailed asset information", required = false) @RequestParam(defaultValue = "false") boolean includeAsset,
@@ -268,8 +269,9 @@ public class SitesController extends SiteWhereController {
 			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
 			throws SiteWhereException {
 		SearchCriteria criteria = new SearchCriteria(page, pageSize);
-		SearchResults<IDeviceAssignment> matches = SiteWhereServer.getInstance().getDeviceManagement()
-				.getDeviceAssignmentsForSite(siteToken, criteria);
+		ISearchResults<IDeviceAssignment> matches =
+				SiteWhereServer.getInstance().getDeviceManagement().getDeviceAssignmentsForSite(siteToken,
+						criteria);
 		DeviceAssignmentMarshalHelper helper = new DeviceAssignmentMarshalHelper();
 		helper.setIncludeAsset(includeAsset);
 		helper.setIncludeDevice(includeDevice);
@@ -311,7 +313,7 @@ public class SitesController extends SiteWhereController {
 	@RequestMapping(value = "/{siteToken}/zones", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "List zones associated with a site")
-	public SearchResults<IZone> listZonesForSite(
+	public ISearchResults<IZone> listZonesForSite(
 			@ApiParam(value = "Unique token that identifies site", required = true) @PathVariable String siteToken,
 			@ApiParam(value = "Page Number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
 			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)

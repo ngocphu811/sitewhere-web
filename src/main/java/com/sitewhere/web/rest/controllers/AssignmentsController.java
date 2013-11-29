@@ -23,9 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.sitewhere.rest.model.common.DateRangeSearchCriteria;
 import com.sitewhere.rest.model.common.MetadataProvider;
-import com.sitewhere.rest.model.common.SearchCriteria;
 import com.sitewhere.rest.model.device.DeviceAlert;
 import com.sitewhere.rest.model.device.DeviceAssignment;
 import com.sitewhere.rest.model.device.DeviceLocation;
@@ -34,7 +32,9 @@ import com.sitewhere.rest.model.device.request.DeviceAlertCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceAssignmentCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceLocationCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceMeasurementsCreateRequest;
-import com.sitewhere.rest.service.search.SearchResults;
+import com.sitewhere.rest.model.search.DateRangeSearchCriteria;
+import com.sitewhere.rest.model.search.SearchCriteria;
+import com.sitewhere.rest.model.search.SearchResults;
 import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.SiteWhereSystemException;
@@ -47,6 +47,7 @@ import com.sitewhere.spi.device.IDeviceManagement;
 import com.sitewhere.spi.device.IDeviceMeasurements;
 import com.sitewhere.spi.error.ErrorCode;
 import com.sitewhere.spi.error.ErrorLevel;
+import com.sitewhere.spi.search.ISearchResults;
 import com.sitewhere.web.rest.model.DeviceAssignmentMarshalHelper;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -108,8 +109,8 @@ public class AssignmentsController extends SiteWhereController {
 	public DeviceAssignment getDeviceAssignment(
 			@ApiParam(value = "Assignment token", required = true) @PathVariable String token)
 			throws SiteWhereException {
-		IDeviceAssignment assignment = SiteWhereServer.getInstance().getDeviceManagement()
-				.getDeviceAssignmentByToken(token);
+		IDeviceAssignment assignment =
+				SiteWhereServer.getInstance().getDeviceManagement().getDeviceAssignmentByToken(token);
 		if (assignment == null) {
 			throw new SiteWhereSystemException(ErrorCode.InvalidDeviceAssignmentToken, ErrorLevel.ERROR);
 		}
@@ -134,8 +135,8 @@ public class AssignmentsController extends SiteWhereController {
 			@ApiParam(value = "Assignment token", required = true) @PathVariable String token,
 			@ApiParam(value = "Delete permanently", required = false) @RequestParam(defaultValue = "false") boolean force)
 			throws SiteWhereException {
-		IDeviceAssignment assignment = SiteWhereServer.getInstance().getDeviceManagement()
-				.deleteDeviceAssignment(token, force);
+		IDeviceAssignment assignment =
+				SiteWhereServer.getInstance().getDeviceManagement().deleteDeviceAssignment(token, force);
 		DeviceAssignmentMarshalHelper helper = new DeviceAssignmentMarshalHelper();
 		helper.setIncludeAsset(true);
 		helper.setIncludeDevice(true);
@@ -155,8 +156,9 @@ public class AssignmentsController extends SiteWhereController {
 	public DeviceAssignment updateDeviceAssignmentMetadata(
 			@ApiParam(value = "Assignment token", required = true) @PathVariable String token,
 			@RequestBody MetadataProvider metadata) throws SiteWhereException {
-		IDeviceAssignment result = SiteWhereServer.getInstance().getDeviceManagement()
-				.updateDeviceAssignmentMetadata(token, metadata);
+		IDeviceAssignment result =
+				SiteWhereServer.getInstance().getDeviceManagement().updateDeviceAssignmentMetadata(token,
+						metadata);
 		DeviceAssignmentMarshalHelper helper = new DeviceAssignmentMarshalHelper();
 		helper.setIncludeAsset(true);
 		helper.setIncludeDevice(true);
@@ -179,8 +181,9 @@ public class AssignmentsController extends SiteWhereController {
 			@ApiParam(value = "Assignment token", required = true) @PathVariable String token,
 			@RequestBody DeviceLocationCreateRequest location) throws SiteWhereException {
 
-		IDeviceAssignment result = SiteWhereServer.getInstance().getDeviceManagement()
-				.updateDeviceAssignmentLocation(token, location);
+		IDeviceAssignment result =
+				SiteWhereServer.getInstance().getDeviceManagement().updateDeviceAssignmentLocation(token,
+						location);
 		DeviceAssignmentMarshalHelper helper = new DeviceAssignmentMarshalHelper();
 		helper.setIncludeAsset(true);
 		helper.setIncludeDevice(true);
@@ -198,7 +201,7 @@ public class AssignmentsController extends SiteWhereController {
 	@RequestMapping(value = "/{token}/measurements", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "List measurements associated with a device assignment")
-	public SearchResults<IDeviceMeasurements> listAssignmentMeasurements(
+	public ISearchResults<IDeviceMeasurements> listAssignmentMeasurements(
 			@ApiParam(value = "Assignment token", required = true) @PathVariable String token,
 			@ApiParam(value = "Page number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
 			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize,
@@ -224,10 +227,10 @@ public class AssignmentsController extends SiteWhereController {
 			@RequestBody DeviceMeasurementsCreateRequest input,
 			@ApiParam(value = "Assignment token", required = true) @PathVariable String token)
 			throws SiteWhereException {
-		IDeviceAssignment assignment = SiteWhereServer.getInstance().getDeviceManagement()
-				.getDeviceAssignmentByToken(token);
-		IDeviceMeasurements result = SiteWhereServer.getInstance().getDeviceManagement()
-				.addDeviceMeasurements(assignment, input);
+		IDeviceAssignment assignment =
+				SiteWhereServer.getInstance().getDeviceManagement().getDeviceAssignmentByToken(token);
+		IDeviceMeasurements result =
+				SiteWhereServer.getInstance().getDeviceManagement().addDeviceMeasurements(assignment, input);
 		return DeviceMeasurements.copy(result);
 	}
 
@@ -241,7 +244,7 @@ public class AssignmentsController extends SiteWhereController {
 	@RequestMapping(value = "/{token}/locations", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "List recent locations associated with a device assignment")
-	public SearchResults<IDeviceLocation> listAssignmentLocations(
+	public ISearchResults<IDeviceLocation> listAssignmentLocations(
 			@ApiParam(value = "Assignment token", required = true) @PathVariable String token,
 			@ApiParam(value = "Page number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
 			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize,
@@ -266,10 +269,10 @@ public class AssignmentsController extends SiteWhereController {
 	public DeviceLocation createAssignmentLocation(@RequestBody DeviceLocationCreateRequest input,
 			@ApiParam(value = "Assignment token", required = true) @PathVariable String token)
 			throws SiteWhereException {
-		IDeviceAssignment assignment = SiteWhereServer.getInstance().getDeviceManagement()
-				.getDeviceAssignmentByToken(token);
-		IDeviceLocation result = SiteWhereServer.getInstance().getDeviceManagement()
-				.addDeviceLocation(assignment, input);
+		IDeviceAssignment assignment =
+				SiteWhereServer.getInstance().getDeviceManagement().getDeviceAssignmentByToken(token);
+		IDeviceLocation result =
+				SiteWhereServer.getInstance().getDeviceManagement().addDeviceLocation(assignment, input);
 		return DeviceLocation.copy(result);
 	}
 
@@ -283,7 +286,7 @@ public class AssignmentsController extends SiteWhereController {
 	@RequestMapping(value = "/{token}/alerts", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "List alerts associated with a device assignment")
-	public SearchResults<IDeviceAlert> listDeviceAlerts(
+	public ISearchResults<IDeviceAlert> listDeviceAlerts(
 			@ApiParam(value = "Assignment token", required = true) @PathVariable String token,
 			@ApiParam(value = "Page number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
 			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize,
@@ -308,10 +311,10 @@ public class AssignmentsController extends SiteWhereController {
 	public DeviceAlert createAssignmentAlert(@RequestBody DeviceAlertCreateRequest input,
 			@ApiParam(value = "Assignment token", required = true) @PathVariable String token)
 			throws SiteWhereException {
-		IDeviceAssignment assignment = SiteWhereServer.getInstance().getDeviceManagement()
-				.getDeviceAssignmentByToken(token);
-		IDeviceAlert result = SiteWhereServer.getInstance().getDeviceManagement()
-				.addDeviceAlert(assignment, input);
+		IDeviceAssignment assignment =
+				SiteWhereServer.getInstance().getDeviceManagement().getDeviceAssignmentByToken(token);
+		IDeviceAlert result =
+				SiteWhereServer.getInstance().getDeviceManagement().addDeviceAlert(assignment, input);
 		return DeviceAlert.copy(result);
 	}
 
@@ -351,8 +354,8 @@ public class AssignmentsController extends SiteWhereController {
 			@ApiParam(value = "Assignment token", required = true) @PathVariable String token)
 			throws SiteWhereException {
 		IDeviceManagement management = SiteWhereServer.getInstance().getDeviceManagement();
-		IDeviceAssignment updated = management.updateDeviceAssignmentStatus(token,
-				DeviceAssignmentStatus.Missing);
+		IDeviceAssignment updated =
+				management.updateDeviceAssignmentStatus(token, DeviceAssignmentStatus.Missing);
 		DeviceAssignmentMarshalHelper helper = new DeviceAssignmentMarshalHelper();
 		helper.setIncludeAsset(true);
 		helper.setIncludeDevice(true);
@@ -371,7 +374,7 @@ public class AssignmentsController extends SiteWhereController {
 	@RequestMapping(value = "/near/{latitude}/{longitude}", method = RequestMethod.GET)
 	@ResponseBody
 	@ApiOperation(value = "Find assignments near a given location")
-	public SearchResults<DeviceAssignment> findDeviceAssignmentsNear(
+	public ISearchResults<DeviceAssignment> findDeviceAssignmentsNear(
 			@PathVariable double latitude,
 			@PathVariable double longitude,
 			@RequestParam(defaultValue = "10") double maxDistance,
@@ -379,8 +382,9 @@ public class AssignmentsController extends SiteWhereController {
 			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize)
 			throws SiteWhereException {
 		SearchCriteria criteria = new SearchCriteria(page, pageSize);
-		SearchResults<IDeviceAssignment> results = SiteWhereServer.getInstance().getDeviceManagement()
-				.getDeviceAssignmentsNear(latitude, longitude, maxDistance, criteria);
+		ISearchResults<IDeviceAssignment> results =
+				SiteWhereServer.getInstance().getDeviceManagement().getDeviceAssignmentsNear(latitude,
+						longitude, maxDistance, criteria);
 		DeviceAssignmentMarshalHelper helper = new DeviceAssignmentMarshalHelper();
 		helper.setIncludeAsset(false);
 		helper.setIncludeDevice(false);

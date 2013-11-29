@@ -24,11 +24,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sitewhere.core.user.SitewhereRoles;
+import com.sitewhere.rest.model.search.SearchResults;
 import com.sitewhere.rest.model.user.GrantedAuthority;
 import com.sitewhere.rest.model.user.User;
 import com.sitewhere.rest.model.user.UserSearchCriteria;
 import com.sitewhere.rest.model.user.request.UserCreateRequest;
-import com.sitewhere.rest.service.search.SearchResults;
 import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.SiteWhereSystemException;
