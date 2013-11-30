@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sitewhere.core.device.charting.ChartBuilder;
 import com.sitewhere.rest.model.common.MetadataProvider;
 import com.sitewhere.rest.model.device.DeviceAlert;
 import com.sitewhere.rest.model.device.DeviceAssignment;
@@ -45,6 +46,7 @@ import com.sitewhere.spi.device.IDeviceAssignment;
 import com.sitewhere.spi.device.IDeviceLocation;
 import com.sitewhere.spi.device.IDeviceManagement;
 import com.sitewhere.spi.device.IDeviceMeasurements;
+import com.sitewhere.spi.device.charting.IChartSeries;
 import com.sitewhere.spi.error.ErrorCode;
 import com.sitewhere.spi.error.ErrorLevel;
 import com.sitewhere.spi.search.ISearchResults;
@@ -210,6 +212,30 @@ public class AssignmentsController extends SiteWhereController {
 			throws SiteWhereException {
 		DateRangeSearchCriteria criteria = new DateRangeSearchCriteria(page, pageSize, startDate, endDate);
 		return SiteWhereServer.getInstance().getDeviceManagement().listDeviceMeasurements(token, criteria);
+	}
+
+	/**
+	 * List all device measurements for a given assignment.
+	 * 
+	 * @param assignmentToken
+	 * @return
+	 * @throws SiteWhereException
+	 */
+	@RequestMapping(value = "/{token}/measurements/series", method = RequestMethod.GET)
+	@ResponseBody
+	@ApiOperation(value = "List measurements associated with a device assignment")
+	public List<IChartSeries<Double>> listAssignmentMeasurementsAsChartSeries(
+			@ApiParam(value = "Assignment token", required = true) @PathVariable String token,
+			@ApiParam(value = "Page number (First page is 1)", required = false) @RequestParam(defaultValue = "1") int page,
+			@ApiParam(value = "Page size", required = false) @RequestParam(defaultValue = "100") int pageSize,
+			@ApiParam(value = "Start date", required = false) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date startDate,
+			@ApiParam(value = "End date", required = false) @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Date endDate)
+			throws SiteWhereException {
+		DateRangeSearchCriteria criteria = new DateRangeSearchCriteria(page, pageSize, startDate, endDate);
+		ISearchResults<IDeviceMeasurements> measurements =
+				SiteWhereServer.getInstance().getDeviceManagement().listDeviceMeasurements(token, criteria);
+		ChartBuilder builder = new ChartBuilder();
+		return builder.process(measurements.getResults());
 	}
 
 	/**
