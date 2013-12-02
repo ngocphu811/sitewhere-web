@@ -2,9 +2,9 @@
 <html class="sw-body">
 <head>
 <title>SiteWhere - <c:out value="${sitewhere_title}"/></title>
-<script src="${pageContext.request.contextPath}/scripts/jquery.js"></script>
+<script src="${pageContext.request.contextPath}/scripts/jquery-1.10.2.min.js"></script>
 <script src="${pageContext.request.contextPath}/scripts/jquery.validity.js"></script>
-<script src="${pageContext.request.contextPath}/scripts/kendo.web.js"></script>
+<script src="${pageContext.request.contextPath}/scripts/kendo.web.min.js"></script>
 <script src="${pageContext.request.contextPath}/scripts/modernizr.js"></script>
 <script src="${pageContext.request.contextPath}/scripts/sitewhere.js"></script>
 <link href="${pageContext.request.contextPath}/css/kendo.common.min.css" rel="stylesheet" />
@@ -14,7 +14,7 @@
 <link href="${pageContext.request.contextPath}/css/jquery.validity.css" rel="stylesheet">
 <link href="${pageContext.request.contextPath}/css/sitewhere.css" rel="stylesheet" />
 <c:if test="${use_map_includes == true}">
-<script src="${pageContext.request.contextPath}/scripts/leaflet-src.js"></script>
+<script src="${pageContext.request.contextPath}/scripts/leaflet.js"></script>
 <script src="${pageContext.request.contextPath}/scripts/leaflet.draw.js"></script>
 <link href="${pageContext.request.contextPath}/css/leaflet.css" rel="stylesheet" />
 <link href="${pageContext.request.contextPath}/css/leaflet.draw.css" rel="stylesheet" />
