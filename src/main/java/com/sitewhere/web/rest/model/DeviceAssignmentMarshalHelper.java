@@ -15,7 +15,7 @@ import com.sitewhere.rest.model.asset.HardwareAsset;
 import com.sitewhere.rest.model.asset.PersonAsset;
 import com.sitewhere.rest.model.common.MetadataProviderEntity;
 import com.sitewhere.rest.model.device.DeviceAssignment;
-import com.sitewhere.rest.model.device.DeviceLocation;
+import com.sitewhere.rest.model.device.DeviceAssignmentState;
 import com.sitewhere.rest.model.device.Site;
 import com.sitewhere.server.SiteWhereServer;
 import com.sitewhere.spi.SiteWhereException;
@@ -67,8 +67,8 @@ public class DeviceAssignmentMarshalHelper {
 		result.setAssignmentType(source.getAssignmentType());
 		result.setAssetId(source.getAssetId());
 		MetadataProviderEntity.copy(source, result);
-		if (source.getLastLocation() != null) {
-			result.setLastLocation(DeviceLocation.copy(source.getLastLocation()));
+		if (source.getState() != null) {
+			result.setState(DeviceAssignmentState.copy(source.getState()));
 		}
 		if (source.getAssignmentType() != DeviceAssignmentType.Unassociated) {
 			IAsset asset = manager.getAssignedAsset(source.getAssignmentType(), source.getAssetId());
@@ -97,8 +97,8 @@ public class DeviceAssignmentMarshalHelper {
 			result.setSiteToken(source.getSiteToken());
 		}
 		if (isIncludeDevice()) {
-			IDevice device = SiteWhereServer.getInstance().getDeviceManagement()
-					.getDeviceForAssignment(source);
+			IDevice device =
+					SiteWhereServer.getInstance().getDeviceManagement().getDeviceForAssignment(source);
 			if (device != null) {
 				result.setDevice(getDeviceHelper().convert(device, manager));
 			} else {

@@ -27,6 +27,7 @@ import com.sitewhere.core.device.charting.ChartBuilder;
 import com.sitewhere.rest.model.common.MetadataProvider;
 import com.sitewhere.rest.model.device.DeviceAlert;
 import com.sitewhere.rest.model.device.DeviceAssignment;
+import com.sitewhere.rest.model.device.DeviceEventBatch;
 import com.sitewhere.rest.model.device.DeviceLocation;
 import com.sitewhere.rest.model.device.DeviceMeasurements;
 import com.sitewhere.rest.model.device.request.DeviceAlertCreateRequest;
@@ -169,23 +170,22 @@ public class AssignmentsController extends SiteWhereController {
 	}
 
 	/**
-	 * Update latest location associated with an assignment.
+	 * Update latest state information associated with an assignment.
 	 * 
 	 * @param token
-	 * @param location
+	 * @param batch
 	 * @return
 	 * @throws SiteWhereException
 	 */
-	@RequestMapping(value = "/{token}/location", method = RequestMethod.PUT)
+	@RequestMapping(value = "/{token}/state", method = RequestMethod.PUT)
 	@ResponseBody
-	@ApiOperation(value = "Update current location for a device assignment")
-	public DeviceAssignment updateDeviceAssignmentLocation(
+	@ApiOperation(value = "Update current state for a device assignment")
+	public DeviceAssignment updateDeviceAssignmentState(
 			@ApiParam(value = "Assignment token", required = true) @PathVariable String token,
-			@RequestBody DeviceLocationCreateRequest location) throws SiteWhereException {
+			@RequestBody DeviceEventBatch batch) throws SiteWhereException {
 
 		IDeviceAssignment result =
-				SiteWhereServer.getInstance().getDeviceManagement().updateDeviceAssignmentLocation(token,
-						location);
+				SiteWhereServer.getInstance().getDeviceManagement().updateDeviceAssignmentState(token, batch);
 		DeviceAssignmentMarshalHelper helper = new DeviceAssignmentMarshalHelper();
 		helper.setIncludeAsset(true);
 		helper.setIncludeDevice(true);
