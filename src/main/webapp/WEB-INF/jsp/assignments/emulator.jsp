@@ -592,7 +592,7 @@
 		var eventDateStr = asISO8601(eventDate);
 		var batch = {"hardwareId": hardwareId};
 		batch.locations = [{"latitude": lat, "longitude": lng, "elevation": elevation, 
-			"eventDate": eventDateStr, "metadata": lcMetadataDS.data()}];
+			"eventDate": eventDateStr, "metadata": swMetadataAsLookup(lcMetadataDS.data())}];
 		sendMessage(JSON.stringify(batch, null, "\t"));
     	$('#lc-dialog').modal('hide');
     	setTimeout(refreshLocations, 2000);
@@ -631,7 +631,7 @@
 		var eventDateStr = asISO8601(eventDate);
 		var batch = {"hardwareId": hardwareId};
 		batch.measurements = [{"eventDate": eventDateStr, "measurements": mcMeasurementsDS.data(), 
-			"metadata": mcMetadataDS.data()}];
+			"metadata": swMetadataAsLookup(mcMetadataDS.data())}];
 		sendMessage(JSON.stringify(batch, null, "\t"));
     	$('#mc-dialog').modal('hide');
 	}
@@ -673,7 +673,7 @@
 		var eventDateStr = asISO8601(eventDate);
 		var batch = {"hardwareId": hardwareId};
 		batch.alerts = [{"type": type, "message": message, "eventDate": eventDateStr,
-			"metadata": acMetadataDS.data()}];
+			"metadata": swMetadataAsLookup(acMetadataDS.data())}];
 		sendMessage(JSON.stringify(batch, null, "\t"));
     	$('#ac-dialog').modal('hide');
 	}

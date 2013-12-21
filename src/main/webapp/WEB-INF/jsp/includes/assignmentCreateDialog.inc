@@ -222,7 +222,7 @@
 				"siteToken": $('#ac-site-token').val(), 
 				"assignmentType": $('#ac-assignment-type').val(), 
 				"assetId": assetId, 
-				"metadata": acMetadataDS.data(),
+				"metadata": swMetadataAsLookup(acMetadataDS.data()),
 			}
 			$.postJSON("${pageContext.request.contextPath}/api/assignments", 
 					assignmentData, onCreateSuccess, onCreateFail);

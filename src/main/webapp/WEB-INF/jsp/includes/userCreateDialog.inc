@@ -150,7 +150,7 @@
 					"lastName": $('#uc-last-name').val(),
 					"authorities": auths,
 					"status": ucStatusList.dataItem().status,
-					"metadata": ucMetadataDS.data(),
+					"metadata": swMetadataAsLookup(ucMetadataDS.data()),
 			};
 			if (password.length > 0) {
 				userdata.password = password;
@@ -311,7 +311,7 @@
 		// Select correct status.
 		ucStatusList.value(data.status);
 		
-		ucMetadataDS.data(data.metadata);
+		ucMetadataDS.data(swLookupAsMetadata(data.metadata));
 		ucTabs.select(0);
 		
 		$.validity.clear();

@@ -130,7 +130,7 @@
 				"opacity": $("#zc-fill-picker").spectrum("get").alpha,
 				"name": $("#zc-zone-name").val(),
 				"coordinates": coords,
-				"metadata": zcMetadataDS.data(),
+				"metadata": swMetadataAsLookup(zcMetadataDS.data()),
 			}
 			if (zcZone) {
 				$.putJSON("${pageContext.request.contextPath}/api/zones/" + zcZone.token,
@@ -283,7 +283,7 @@
 		var fillColor = tinycolor(zone.fillColor).toHsv();
 		fillColor.a = zone.opacity;
 		$("#zc-fill-picker").spectrum("set", fillColor);
-		zcMetadataDS.data(zone.metadata);
+		zcMetadataDS.data(swLookupAsMetadata(zone.metadata));
 		
 		$('#zc-dialog').modal('show');
 		zcMap.invalidateSize();

@@ -107,7 +107,7 @@
 				"hardwareId": hardwareId, 
 				"comments": $('#du-comments').val(), 
 				"assetId": $('#du-asset-id').val(), 
-				"metadata": duMetadataDS.data(),
+				"metadata": swMetadataAsLookup(duMetadataDS.data()),
 			}
 			$.putJSON("${pageContext.request.contextPath}/api/devices/" + hardwareId, 
 					deviceData, onUpdateSuccess, onUpdateFail);
@@ -159,7 +159,7 @@
 		$('#du-hardware-id').val(data.hardwareId);
 		$('#du-comments').val(data.comments);
 		$('#du-asset-id').val(data.deviceAsset.id);
-		duMetadataDS.data(data.metadata);
+		duMetadataDS.data(swLookupAsMetadata(data.metadata));
 		
 		duTabs.select(0);
 		

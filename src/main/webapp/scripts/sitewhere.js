@@ -226,6 +226,16 @@ function swMetadataGridOptions(datasource, title) {
     }
 }
 
+/** Expands metadata into rows of name/value */
+function swLookupAsMetadata(lookup) {
+	var metadata = [];
+	var key;
+	for (key in lookup) {
+		metadata.push({"name": key, "value": lookup[key]});
+	}
+	return metadata;
+}
+
 /** Converts sitewhere metadata format into a lookup */
 function swMetadataAsLookup(metadata) {
 	var lookup = {};
@@ -236,8 +246,9 @@ function swMetadataAsLookup(metadata) {
 }
 
 /** Initializes a map based on site map metadata */
+/** TODO: This should be replaced by the sitewhere Leaflet library!! */
 function swInitMapForSite(map, site, tokenToSkip, onLoaded) {
-	var lookup = swMetadataAsLookup(site.mapMetadata.metadata);
+	var lookup = site.mapMetadata.metadata;
 	var latitude = (lookup.centerLatitude ? lookup.centerLatitude : 39.9853);
 	var longitude = (lookup.centerLongitude ? lookup.centerLongitude : -104.6688);
 	var zoomLevel = (lookup.zoomLevel ? lookup.zoomLevel : 10);

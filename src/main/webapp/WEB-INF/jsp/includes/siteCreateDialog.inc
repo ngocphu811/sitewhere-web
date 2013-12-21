@@ -231,7 +231,7 @@
 			"name": $('#gen-site-name').val(), 
 			"description": $('#gen-site-desc').val(), 
 			"imageUrl": $('#gen-site-image-url').val(), 
-			"metadata": scMetadataDS.data(),
+			"metadata": swMetadataAsLookup(scMetadataDS.data()),
 			"mapType": $('#sc-map-type').val(), 
 			"mapMetadata": mapMetadata,
 		}
@@ -322,7 +322,7 @@
 		$('#gen-site-desc').val(data.description);
 		$('#gen-site-image-url').val(data.imageUrl);
 		$('#site-token').val(data.token);
-		scMetadataDS.data(data.metadata);
+		scMetadataDS.data(swLookupAsMetadata(data.metadata));
 		scSelectMapType(data.mapType);
 		scLoadMapFormFromMetadata(data);
 		scTabs.select(0);
@@ -338,11 +338,7 @@
     
     /** Based on map type, load fields into proper form */
     function scLoadMapFormFromMetadata(data) {
-    	var metadata = data.mapMetadata.metadata;
-    	var lookup = {};
-    	for (var i = 0, len = metadata.length; i < len; i++) {
-    	    lookup[metadata[i].name] = metadata[i];
-    	}
+    	var lookup = data.mapMetadata.metadata;
     	
     	if (data.mapType == "mapquest") {
     		$('#mq-center-latitude').val(scGetMetadataValue(lookup, 'centerLatitude'));
@@ -359,7 +355,7 @@
     
     /** Pull data from map form and populate metadata */
     function scBuildMapMetadata() {
-    	var metadata = [];
+    	var metadata = {};
 		var mapType = $("#sc-map-type").val();
 		
 		if (mapType == "mapquest") {
@@ -392,14 +388,13 @@
     
     /** Add a single entry into the map metadata */
     function scAddMapMetadataEntry(metadata, name, value) {
-    	var entry = {"name": name, "value": value};
-    	metadata.push(entry);
+    	metadata[name] = value;
     }
     
     /** Gets the value associated with a given field name */
     function scGetMetadataValue(lookup, field) {
     	if (lookup && lookup[field]) {
-    		return lookup[field].value;
+    		return lookup[field];
     	}
     	return "";
     }

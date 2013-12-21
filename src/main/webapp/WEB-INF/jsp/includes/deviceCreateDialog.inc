@@ -125,7 +125,7 @@
 				"hardwareId": $('#dc-hardware-id').val(), 
 				"comments": $('#dc-comments').val(), 
 				"assetId": $('#dc-chosen-asset-id').val(), 
-				"metadata": dcMetadataDS.data(),
+				"metadata": swMetadataAsLookup(dcMetadataDS.data()),
 			}
 			$.postJSON("${pageContext.request.contextPath}/api/devices", 
 					deviceData, onCreateSuccess, onCreateFail);

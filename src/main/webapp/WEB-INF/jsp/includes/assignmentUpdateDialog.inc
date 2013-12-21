@@ -133,7 +133,7 @@
 	        
 			var token = $('#au-token').val();
 			var data = {
-				"metadata": auMetadataDS.data(),
+				"metadata": swMetadataAsLookup(auMetadataDS.data()),
 			}
 			$.putJSON("${pageContext.request.contextPath}/api/assignments/" + token + "/metadata", 
 					data, onUpdateSuccess, onUpdateFail);
@@ -180,7 +180,7 @@
 		var template = kendo.template($("#au-static-block").html());
 		$('#au-static-header').html(template(data));
 		$('#au-token').val(data.token);
-		auMetadataDS.data(data.metadata);
+		auMetadataDS.data(swLookupAsMetadata(data.metadata));
 		
 		auTabs.select(0);
 		
