@@ -251,18 +251,18 @@ function swMetadataAsLookup(metadata) {
 /** Initializes a map based on site map metadata */
 /** TODO: This should be replaced by the sitewhere Leaflet library!! */
 function swInitMapForSite(map, site, tokenToSkip, onLoaded) {
-	var lookup = site.mapMetadata.metadata;
+	var lookup = site.map.metadata;
 	var latitude = (lookup.centerLatitude ? lookup.centerLatitude : 39.9853);
 	var longitude = (lookup.centerLongitude ? lookup.centerLongitude : -104.6688);
 	var zoomLevel = (lookup.zoomLevel ? lookup.zoomLevel : 10);
 	var map = map.setView([latitude, longitude], zoomLevel);
-	if (site.mapType === MAP_TYPE_MAPQUEST) {
+	if (site.map.type === MAP_TYPE_MAPQUEST) {
 		var mapquestUrl = 'http://{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png';
 		var subDomains = ['otile1','otile2','otile3','otile4'];
 		var mapquestAttrib = 'MapQuest data';
 		var mapquest = new L.TileLayer(mapquestUrl, {maxZoom: 18, attribution: mapquestAttrib, subdomains: subDomains});		
 		mapquest.addTo(map);
-	} else if (site.mapType == MAP_TYPE_GEOSERVER) {
+	} else if (site.map.type == MAP_TYPE_GEOSERVER) {
 		var gsBaseUrl = (lookup.geoserverBaseUrl ? lookup.geoserverBaseUrl : "http://localhost:8080/geoserver/");
 		var gsRelativeUrl = "geoserver/gwc/service/gmaps?layers=";
 		var gsLayerName = (lookup.geoserverLayerName ? lookup.geoserverLayerName : "tiger:tiger_roads");

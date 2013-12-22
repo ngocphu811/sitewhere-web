@@ -232,8 +232,10 @@
 			"description": $('#gen-site-desc').val(), 
 			"imageUrl": $('#gen-site-image-url').val(), 
 			"metadata": swMetadataAsLookup(scMetadataDS.data()),
-			"mapType": $('#sc-map-type').val(), 
-			"mapMetadata": mapMetadata,
+			"map": {
+				"type": $('#sc-map-type').val(), 
+				"metadata": mapMetadata,
+			}
 		}
 		return siteData;
     }
@@ -323,8 +325,8 @@
 		$('#gen-site-image-url').val(data.imageUrl);
 		$('#site-token').val(data.token);
 		scMetadataDS.data(swLookupAsMetadata(data.metadata));
-		scSelectMapType(data.mapType);
-		scLoadMapFormFromMetadata(data);
+		scSelectMapType(data.map.type);
+		scLoadMapFormFromMetadata(data.map);
 		scTabs.select(0);
 		
 		$.validity.clear();
@@ -337,14 +339,14 @@
 	}
     
     /** Based on map type, load fields into proper form */
-    function scLoadMapFormFromMetadata(data) {
-    	var lookup = data.mapMetadata.metadata;
+    function scLoadMapFormFromMetadata(map) {
+    	var lookup = map.metadata;
     	
-    	if (data.mapType == "mapquest") {
+    	if (map.type == "mapquest") {
     		$('#mq-center-latitude').val(scGetMetadataValue(lookup, 'centerLatitude'));
     		$('#mq-center-longitude').val(scGetMetadataValue(lookup, 'centerLongitude'));
     		$('#mq-zoom-level').val(scGetMetadataValue(lookup, 'zoomLevel'));
-    	} else if (data.mapType == "geoserver") {
+    	} else if (map.type == "geoserver") {
     		$('#gs-base-url').val(scGetMetadataValue(lookup, 'geoserverBaseUrl'));
     		$('#gs-layer-name').val(scGetMetadataValue(lookup, 'geoserverLayerName'));
     		$('#gs-center-latitude').val(scGetMetadataValue(lookup, 'centerLatitude'));
@@ -369,21 +371,21 @@
 			scAddMapMetadataEntry(metadata, 'centerLongitude', $('#gs-center-longitude').val());
 			scAddMapMetadataEntry(metadata, 'zoomLevel', $('#gs-zoom-level').val());
 		}
-		return { "metadata": metadata };
+		return metadata;
     }
     
     /** Update existing form data from map settings */
     function scUpdateFormFromMap() {
-    	var mapMetadata = scBuildMapMetadata();
+    	var metadata = scBuildMapMetadata();
 		var center = scMap.getCenter();
 		var zoom = scMap.getZoom();
-		scAddMapMetadataEntry(mapMetadata.metadata, 'centerLatitude', center.lat);
-		scAddMapMetadataEntry(mapMetadata.metadata, 'centerLongitude', center.lng);
-		scAddMapMetadataEntry(mapMetadata.metadata, 'zoomLevel', zoom);
-		var data = {};
-		data.mapType = scGetMapType();
-		data.mapMetadata = mapMetadata;
-		scLoadMapFormFromMetadata(data);
+		scAddMapMetadataEntry(metadata, 'centerLatitude', center.lat);
+		scAddMapMetadataEntry(metadata, 'centerLongitude', center.lng);
+		scAddMapMetadataEntry(metadata, 'zoomLevel', zoom);
+		var map = {};
+		map.type = scGetMapType();
+		map.metadata = metadata;
+		scLoadMapFormFromMetadata(map);
     }
     
     /** Add a single entry into the map metadata */
