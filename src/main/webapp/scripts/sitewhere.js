@@ -99,11 +99,14 @@ function asISO8601(date) {
 /** Formats metadata array into a comma-delimited string */
 function formattedMetadata(metadata) {
 	var result = "";
-	for (var i = 0; i < metadata.length; i++) {
-		if (i > 0) {
+	var first = true;
+	for (var i in metadata) {
+		if (!first) {
 			result += ", ";
+		} else {
+			first = false;
 		}
-		result += metadata[i].name + "=" + metadata[i].value;
+		result += i + "=" + metadata[i];
 	}
 	return result;
 }

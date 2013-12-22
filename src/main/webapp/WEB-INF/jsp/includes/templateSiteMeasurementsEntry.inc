@@ -10,7 +10,7 @@
 			</div>
 		</td>
 		<td>
-			<div>#= formattedMetadata(measurements) #</div>
+			<div>#= measurementsSummary #</div>
 		</td>
 		<td>#= formattedDate(eventDate) #</td>
 		<td>#= formattedDate(receivedDate) #</td>

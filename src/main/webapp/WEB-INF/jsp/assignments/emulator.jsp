@@ -630,7 +630,8 @@
 		}
 		var eventDateStr = asISO8601(eventDate);
 		var batch = {"hardwareId": hardwareId};
-		batch.measurements = [{"eventDate": eventDateStr, "measurements": mcMeasurementsDS.data(), 
+		batch.measurements = [{"eventDate": eventDateStr, 
+			"measurements": swMetadataAsLookup(mcMeasurementsDS.data()), 
 			"metadata": swMetadataAsLookup(mcMetadataDS.data())}];
 		sendMessage(JSON.stringify(batch, null, "\t"));
     	$('#mc-dialog').modal('hide');
